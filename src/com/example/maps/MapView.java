@@ -14,7 +14,7 @@ public class MapView extends AbstractComponent {
 
 //	private String message = "Click here.";
 //	private int clicks = 0;
-	private String imageUrl = "http://www.google.com/images/logo.gif";
+	private String imageUrl = "http://totheweb.com/eichler/images/subpage_photos/floor-plan-1224.gif";
 	@Override
 	public void paintContent(PaintTarget target) throws PaintException {
 		super.paintContent(target);

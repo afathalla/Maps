@@ -45,9 +45,9 @@ MouseDownHandler, MouseUpHandler, MouseMoveHandler {
 	
 	private Image mapImage;
 
-	private int width = 300;
+	private int width = 1500;
 
-	private int height = 300;
+	private int height = 1500;
 	
 	//x and y coordinates for MouseClick
 	private int x=0;
@@ -55,6 +55,9 @@ MouseDownHandler, MouseUpHandler, MouseMoveHandler {
 	private int y=0;
 	
 	private String imageUrl = null;
+	
+	//FIXME
+	private Circle c= null;
 	
 	/**
 	 * The constructor should first call super() to initialize the component and
@@ -68,9 +71,7 @@ MouseDownHandler, MouseUpHandler, MouseMoveHandler {
 		canvas = new DrawingArea(width, height);
 		
 		mapImage= new Image();
-		//FIXME
-		//mapImage = new Image ("http://www.google.com/images/logo.gif");
-	
+		
 		setStyleName(CLASSNAME);
 		
 		DOM.setStyleAttribute(canvas.getElement(), "border", "1px solid black");
@@ -125,11 +126,10 @@ MouseDownHandler, MouseUpHandler, MouseMoveHandler {
 		canvas.setHeight(height);
 		canvas.getElement().getStyle().setPropertyPx("width", width);
 		canvas.getElement().getStyle().setPropertyPx("height", height);
+		canvas.addClickHandler(this);
+		canvas.addMouseMoveHandler(this);
+	
 		
-		Circle c= new Circle (100,100,50);
-    	c.setFillColor("blue");
-    	canvas.add(c);
-    	
 		mapImage.setUrl(imageUrl);
 		
 //		// Process attributes/variables from the server
@@ -151,8 +151,10 @@ MouseDownHandler, MouseUpHandler, MouseMoveHandler {
      public void onClick(ClickEvent event) {
 	
     	//Create a new initial point the user wants to get from
-    
-    	
+    		
+        	Circle circle= new Circle (x,y,5);
+        	circle.setFillColor("blue");
+        	canvas.add(circle);
     	// Send a variable change to the server side component so it knows the widget has been clicked
 		String button = "left click";
 		// The last parameter (immediate) tells that the update should be sent to the server
@@ -162,6 +164,9 @@ MouseDownHandler, MouseUpHandler, MouseMoveHandler {
 
 	public void onMouseDown(MouseDownEvent event) {
 		// TODO Auto-generated method stub
+		Circle c= new Circle (x,y,50);
+    	c.setFillColor("blue");
+    	canvas.add(c);
 		
 	}
 
