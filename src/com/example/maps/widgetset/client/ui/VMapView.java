@@ -1,6 +1,10 @@
 package com.example.maps.widgetset.client.ui;
 
+import java.util.ArrayList;
+
 import com.vaadin.contrib.gwtgraphics.client.DrawingArea;
+import com.vaadin.contrib.gwtgraphics.client.Line;
+import com.vaadin.contrib.gwtgraphics.client.animation.Animate;
 import com.vaadin.contrib.gwtgraphics.client.shape.Circle;
 import com.vaadin.terminal.gwt.client.ApplicationConnection;
 import com.vaadin.terminal.gwt.client.Paintable;
@@ -56,9 +60,9 @@ MouseDownHandler, MouseUpHandler, MouseMoveHandler {
 	
 	private String imageUrl = null;
 	
-	//FIXME
-	private Circle c= null;
+	private ArrayList<Circle> circleArray;
 	
+	private Boolean pathExists;
 	/**
 	 * The constructor should first call super() to initialize the component and
 	 * then handle any initialization relevant to Vaadin.
@@ -71,6 +75,10 @@ MouseDownHandler, MouseUpHandler, MouseMoveHandler {
 		canvas = new DrawingArea(width, height);
 		
 		mapImage= new Image();
+		
+		circleArray = new ArrayList<Circle>();
+		
+		pathExists=false;
 		
 		setStyleName(CLASSNAME);
 		
@@ -111,7 +119,8 @@ MouseDownHandler, MouseUpHandler, MouseMoveHandler {
 		// Clear Everything first
 		panel.clear();
 		canvas.clear();
-	
+		circleArray.clear();
+		
 		// Add Canvas and Image to Panel
 		panel.add(mapImage,50,0);
 		panel.add(canvas,50,0);
@@ -151,11 +160,29 @@ MouseDownHandler, MouseUpHandler, MouseMoveHandler {
      public void onClick(ClickEvent event) {
 	
     	//Create a new initial point the user wants to get from
-    		
+    	 if (circleArray.size() < 2)
+    	 {
         	Circle circle= new Circle (x,y,5);
         	circle.setFillColor("blue");
         	canvas.add(circle);
-    	// Send a variable change to the server side component so it knows the widget has been clicked
+        	circleArray.add(circle);
+    	 }
+    	 
+    	 if (circleArray.size()==2 && !pathExists)
+    	 {
+    		 Circle c1= circleArray.get(0);
+    		 Circle c2= circleArray.get(1);
+    		 
+//    		 Line line= new Line(c1.getX(),c1.getY(),c2.getX(),c2.getY());
+    		 Line line= new Line(c1.getX(),c1.getY(),c1.getX(),c1.getY());
+    		 canvas.add(line);
+    		 pathExists=true;
+    		 new Animate(line,"x2",c1.getX(),c2.getX(),600).start();
+    		 new Animate(line,"y2",c1.getY(),c2.getY(),600).start();
+    		 
+    	 }
+    	 
+       // Send a variable change to the server side component so it knows the widget has been clicked
 		String button = "left click";
 		// The last parameter (immediate) tells that the update should be sent to the server
 		// right away
