@@ -14,7 +14,9 @@ public class MapView extends AbstractComponent {
 
 //	private String message = "Click here.";
 //	private int clicks = 0;
+	//FIXME this has to be dynamic
 	private String imageUrl = "http://totheweb.com/eichler/images/subpage_photos/floor-plan-1224.gif";
+	//private String imageUrl = "images/csefloorlayout.jpg";
 	@Override
 	public void paintContent(PaintTarget target) throws PaintException {
 		super.paintContent(target);

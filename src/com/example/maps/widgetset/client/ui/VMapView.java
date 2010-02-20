@@ -49,9 +49,9 @@ MouseDownHandler, MouseUpHandler, MouseMoveHandler {
 	
 	private Image mapImage;
 
-	private int width = 1500;
+	private int width = 500;
 
-	private int height = 1500;
+	private int height = 500;
 	
 	//x and y coordinates for MouseClick
 	private int x=0;
@@ -63,6 +63,8 @@ MouseDownHandler, MouseUpHandler, MouseMoveHandler {
 	private ArrayList<Circle> circleArray;
 	
 	private Boolean pathExists;
+	
+	private Boolean mouseDown;
 	/**
 	 * The constructor should first call super() to initialize the component and
 	 * then handle any initialization relevant to Vaadin.
@@ -73,12 +75,18 @@ MouseDownHandler, MouseUpHandler, MouseMoveHandler {
 		initWidget(panel);
 
 		canvas = new DrawingArea(width, height);
-		
+		//FIXME removed click handler for the time being
+		//canvas.addClickHandler(this);
+		canvas.addMouseMoveHandler(this);
+		canvas.addMouseDownHandler(this);
+		canvas.addMouseUpHandler(this);
 		mapImage= new Image();
 		
 		circleArray = new ArrayList<Circle>();
 		
 		pathExists=false;
+		
+		mouseDown=false;
 		
 		setStyleName(CLASSNAME);
 		
@@ -122,22 +130,21 @@ MouseDownHandler, MouseUpHandler, MouseMoveHandler {
 		circleArray.clear();
 		
 		// Add Canvas and Image to Panel
-		panel.add(mapImage,50,0);
-		panel.add(canvas,50,0);
+		panel.add(mapImage,0,0);
+		panel.add(canvas,0,0);
 		
 		// Get Values from server
 		// TODO get values (like width and height) from Server
 		imageUrl= uidl.getStringAttribute("imageurl");
 		
 		// Set values after getting them from server
-		panel.setSize((50 + 1 + width) + "px", (25 + height) + "px");
-		canvas.setWidth(width);
+//		panel.setSize((50 + 1 + width) + "px", (25 + height) + "px");
+		panel.setSize(width + "px",height + "px");
+		
+		canvas.setWidth(width);		
 		canvas.setHeight(height);
 		canvas.getElement().getStyle().setPropertyPx("width", width);
 		canvas.getElement().getStyle().setPropertyPx("height", height);
-		canvas.addClickHandler(this);
-		canvas.addMouseMoveHandler(this);
-	
 		
 		mapImage.setUrl(imageUrl);
 		
@@ -162,8 +169,8 @@ MouseDownHandler, MouseUpHandler, MouseMoveHandler {
     	//Create a new initial point the user wants to get from
     	 if (circleArray.size() < 2)
     	 {
-        	Circle circle= new Circle (x,y,5);
-        	circle.setFillColor("blue");
+        	Circle circle= new Circle (x,y,7);
+        	circle.setFillColor("red");
         	canvas.add(circle);
         	circleArray.add(circle);
     	 }
@@ -175,6 +182,9 @@ MouseDownHandler, MouseUpHandler, MouseMoveHandler {
     		 
 //    		 Line line= new Line(c1.getX(),c1.getY(),c2.getX(),c2.getY());
     		 Line line= new Line(c1.getX(),c1.getY(),c1.getX(),c1.getY());
+    		 line.setStrokeWidth(3);
+    		 line.setStrokeOpacity(0.5);
+    		 line.setStrokeColor("blue");
     		 canvas.add(line);
     		 pathExists=true;
     		 new Animate(line,"x2",c1.getX(),c2.getX(),600).start();
@@ -190,22 +200,32 @@ MouseDownHandler, MouseUpHandler, MouseMoveHandler {
 	}
 
 	public void onMouseDown(MouseDownEvent event) {
-		// TODO Auto-generated method stub
-		Circle c= new Circle (x,y,50);
-    	c.setFillColor("blue");
-    	canvas.add(c);
-		
-	}
-
-	public void onMouseUp(MouseUpEvent event) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	public void onMouseMove(MouseMoveEvent event) {
 		
 		 x = event.getRelativeX(canvas.getElement());
 		 y = event.getRelativeY(canvas.getElement());
+
+		 canvas.getElement().getStyle().setProperty("cursor", "pointer");
+		 mouseDown=true;
+	}
+
+	public void onMouseUp(MouseUpEvent event) {
+		mouseDown=false;
+		canvas.getElement().getStyle().setProperty("cursor", "default");
+	}
+
+	public void onMouseMove(MouseMoveEvent event) {
+		if (mouseDown){
+			int newX=event.getRelativeX(canvas.getElement());
+			int newY=event.getRelativeY(canvas.getElement());
+			
+			int difX= newX-x;
+			int difY=newY-y;
+			
+			int newLeft= canvas.getAbsoluteLeft() + difX;
+			int newTop= canvas.getAbsoluteTop() + difY;
+		
+			mapImage.setVisibleRect(newLeft, newTop, canvas.getWidth(),canvas.getHeight());
+		}
 		 
 		 
 	}
