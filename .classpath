@@ -7,5 +7,6 @@
 	<classpathentry kind="con" path="org.eclipse.jst.j2ee.internal.module.container"/>
 	<classpathentry kind="var" path="VAADIN_DOWNLOAD/gwt-dev/1.7.0/gwt-dev-windows.jar"/>
 	<classpathentry kind="var" path="VAADIN_DOWNLOAD/gwt-user/1.7.0/gwt-user.jar"/>
+	<classpathentry kind="lib" path="/PathFinder/pathfinder.jar"/>
 	<classpathentry kind="output" path="build/classes"/>
 </classpath>
