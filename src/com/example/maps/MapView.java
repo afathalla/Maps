@@ -30,7 +30,26 @@ public class MapView extends AbstractComponent {
 //		target.addAttribute("clicks", clicks);
 //		target.addAttribute("message", message);
 		target.addAttribute("imageurl", imageUrl);
-		target.addAttribute("path",(Object)path);
+	if (path!=null){
+		String[] stepsX = new String[path.getLength()];
+		String[] stepsY = new String[path.getLength()];
+
+		for (int i=0; i<path.getLength();i++)
+		{
+			stepsX[i]= Integer.toString(path.getX(i));
+			stepsY[i]= Integer.toString(path.getY(i));
+		}
+		int startXPath=path.getX(0);
+		int startYPath=path.getY(0);
+		int endXPath=path.getX(path.getLength()-1);
+		int endYPath=path.getY(path.getLength()-1);
+		target.addAttribute("startXPath",startXPath);
+		target.addAttribute("startYPath",startYPath);
+		target.addAttribute("endXPath",endXPath);
+		target.addAttribute("endYPath",endYPath);
+		target.addAttribute("stepsX",stepsX);
+		target.addAttribute("stepsY",stepsY);
+	}
 		// We could also set variables in which values can be returned
 		// but declaring variables here is not required
 	}

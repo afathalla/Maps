@@ -6,6 +6,9 @@ import com.vaadin.contrib.gwtgraphics.client.DrawingArea;
 import com.vaadin.contrib.gwtgraphics.client.Line;
 import com.vaadin.contrib.gwtgraphics.client.animation.Animate;
 import com.vaadin.contrib.gwtgraphics.client.shape.Circle;
+import com.vaadin.contrib.gwtgraphics.client.shape.Path;
+import com.vaadin.contrib.gwtgraphics.client.shape.path.LineTo;
+import com.vaadin.contrib.gwtgraphics.client.shape.path.PathStep;
 import com.vaadin.terminal.gwt.client.ApplicationConnection;
 import com.vaadin.terminal.gwt.client.Paintable;
 import com.vaadin.terminal.gwt.client.UIDL;
@@ -58,6 +61,16 @@ MouseDownHandler, MouseUpHandler, MouseMoveHandler {
 	
 	private int y=0;
 	
+	//Path Variables
+	
+	int startXPath =0;
+	int startYPath =0; 
+	int endXPath =0; 
+	int endYPath=0;
+	
+	String[] stepsX=null;
+	String[] stepsY=null;
+	
 	private String imageUrl = null;
 	
 	private ArrayList<Circle> circleArray;
@@ -75,11 +88,11 @@ MouseDownHandler, MouseUpHandler, MouseMoveHandler {
 		initWidget(panel);
 
 		canvas = new DrawingArea(width, height);
-		//FIXME removed click handler for the time being
-		//canvas.addClickHandler(this);
+		//FIXME removed mouse up/down for the time being
+		canvas.addClickHandler(this);
 		canvas.addMouseMoveHandler(this);
-		canvas.addMouseDownHandler(this);
-		canvas.addMouseUpHandler(this);
+	//	canvas.addMouseDownHandler(this);
+//		canvas.addMouseUpHandler(this);
 		mapImage= new Image();
 		
 		circleArray = new ArrayList<Circle>();
@@ -125,9 +138,9 @@ MouseDownHandler, MouseUpHandler, MouseMoveHandler {
 		paintableId = uidl.getId();
 
 		// Clear Everything first
-		panel.clear();
-		canvas.clear();
-		circleArray.clear();
+	//	panel.clear();
+//		canvas.clear();
+//		circleArray.clear();
 		
 		// Add Canvas and Image to Panel
 		panel.add(mapImage,0,0);
@@ -147,6 +160,19 @@ MouseDownHandler, MouseUpHandler, MouseMoveHandler {
 		canvas.getElement().getStyle().setPropertyPx("height", height);
 		
 		mapImage.setUrl(imageUrl);
+		
+		if (uidl.getIntAttribute("startXPath")!=0)
+		{
+			pathExists=true;
+			startXPath=uidl.getIntAttribute("startXPath");
+			startYPath=uidl.getIntAttribute("startYPath");
+			endXPath=uidl.getIntAttribute("endXPath");
+			endYPath=uidl.getIntAttribute("endYPath");
+			stepsX= uidl.getStringArrayAttribute("stepsX");
+			stepsY= uidl.getStringArrayAttribute("stepsY");
+			
+			
+		}
 		
 //		// Process attributes/variables from the server
 //		// The attribute names are the same as we used in 
@@ -173,30 +199,72 @@ MouseDownHandler, MouseUpHandler, MouseMoveHandler {
         	circle.setFillColor("red");
         	canvas.add(circle);
         	circleArray.add(circle);
+        	if (circleArray.size()==1) //first time click
+        	{
+        		client.updateVariable(paintableId, "startX", x, false);
+        		client.updateVariable(paintableId, "startY", y, false);
+     	
+        	}
+        	else
+        	{
+         		client.updateVariable(paintableId, "endX", x, false);
+        		client.updateVariable(paintableId, "endY", y, true);
+     		
+        	}
     	 }
     	 
-    	 if (circleArray.size()==2 && !pathExists)
+    	 if (circleArray.size()==2 && pathExists)
     	 {
     		 Circle c1= circleArray.get(0);
     		 Circle c2= circleArray.get(1);
-    		 
+  
+    		 //Unanimated Line
 //    		 Line line= new Line(c1.getX(),c1.getY(),c2.getX(),c2.getY());
-    		 Line line= new Line(c1.getX(),c1.getY(),c1.getX(),c1.getY());
-    		 line.setStrokeWidth(3);
+    		 //Animated Line
+//    		 Line line= new Line(c1.getX(),c1.getY(),c1.getX(),c1.getY());
+    		//Animated Path Line
+  		 Line line= new Line(startXPath,startYPath,startXPath,startYPath);
+//    		 line.setStrokeWidth(3);
     		 line.setStrokeOpacity(0.5);
     		 line.setStrokeColor("blue");
     		 canvas.add(line);
-    		 pathExists=true;
-    		 new Animate(line,"x2",c1.getX(),c2.getX(),600).start();
-    		 new Animate(line,"y2",c1.getY(),c2.getY(),600).start();
-    		 
+//    	
+//    		 //Animated Line
+////    		 new Animate(line,"x2",c1.getX(),c2.getX(),600).start();
+////    		 new Animate(line,"y2",c1.getY(),c2.getY(),600).start();
+//    		 //Animated Path Line
+    		 new Animate(line,"x2",startXPath,endXPath,600).start();
+    		 new Animate(line,"y2",startYPath,endYPath,600).start();
+    		 pathExists=true;	 
+    		 if (stepsX!=null&& stepsY!=null)
+    		 {
+    			 Circle circle= new Circle (20,20,7);
+    	         circle.setFillColor("blue");
+    			 canvas.add(circle);
+    			
+    			 for (int i=0; i<stepsX.length;i++)
+    			 {
+    				Line stepLine= new Line(Integer.parseInt(stepsX[i]),Integer.parseInt(stepsY[i]),
+    						Integer.parseInt(stepsX[i+1]),Integer.parseInt(stepsY[i+1]));
+    				canvas.add(stepLine);
+    			 }
+//    	         Path path = new Path(startXPath,startYPath);
+//    			 for (int i=0;i<stepsX.length;i++){
+//    				path.lineRelativelyTo(Integer.parseInt(stepsX[i]), Integer.parseInt(stepsY[i]));
+//    				// path.setStep(i, new LineTo(true,Integer.parseInt(stepsX[i]),Integer.parseInt(stepsY[i])));
+//    			 }
+//    			 path.close();
+//    			 canvas.add(path);
+    			 
+    			 
+    		 }
     	 }
     	 
-       // Send a variable change to the server side component so it knows the widget has been clicked
-		String button = "left click";
-		// The last parameter (immediate) tells that the update should be sent to the server
-		// right away
-		client.updateVariable(paintableId, CLICK_EVENT_IDENTIFIER, button, true);
+//       // Send a variable change to the server side component so it knows the widget has been clicked
+//		String button = "left click";
+//		// The last parameter (immediate) tells that the update should be sent to the server
+//		// right away
+//		client.updateVariable(paintableId, CLICK_EVENT_IDENTIFIER, button, true);
 	}
 
 	public void onMouseDown(MouseDownEvent event) {
@@ -214,18 +282,22 @@ MouseDownHandler, MouseUpHandler, MouseMoveHandler {
 	}
 
 	public void onMouseMove(MouseMoveEvent event) {
-		if (mouseDown){
-			int newX=event.getRelativeX(canvas.getElement());
-			int newY=event.getRelativeY(canvas.getElement());
-			
-			int difX= newX-x;
-			int difY=newY-y;
-			
-			int newLeft= canvas.getAbsoluteLeft() + difX;
-			int newTop= canvas.getAbsoluteTop() + difY;
-		
-			mapImage.setVisibleRect(newLeft, newTop, canvas.getWidth(),canvas.getHeight());
-		}
+
+		x=event.getRelativeX(canvas.getElement());
+		y=event.getRelativeY(canvas.getElement());
+//TODO uncomment code for scrolling		
+//		//if (mouseDown){
+//			int newX=event.getRelativeX(canvas.getElement());
+//			int newY=event.getRelativeY(canvas.getElement());
+//			
+//			int difX= newX-x;
+//			int difY=newY-y;
+//			
+//			int newLeft= canvas.getAbsoluteLeft() + difX;
+//			int newTop= canvas.getAbsoluteTop() + difY;
+//		
+//	//		mapImage.setVisibleRect(newLeft, newTop, canvas.getWidth(),canvas.getHeight());
+////		}
 		 
 		 
 	}
