@@ -21,7 +21,7 @@ public class MapGrid implements TileBasedMap {
 	}
 	private void placeObstacles() {
 		// TODO Change this method to read obstacles from db instead of hardcoding
-		fillArea(0,0,10,10,WALL); 
+		fillArea(50,50,100,100,WALL); 
 		
 	}
 	
@@ -60,6 +60,11 @@ public class MapGrid implements TileBasedMap {
 	@Override
 	public void pathFinderVisited(int arg0, int arg1) {
 		// TODO Auto-generated method stub
+	}
+	
+	//Returns true if object at x,y is an obstacle,false otherwise
+	public Boolean isObstacle(int x,int y){
+		return grid[x][y]==WALL;
 	}
 
 }

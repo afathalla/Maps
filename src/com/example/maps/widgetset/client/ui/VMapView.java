@@ -71,6 +71,8 @@ MouseDownHandler, MouseUpHandler, MouseMoveHandler {
 	String[] stepsX=null;
 	String[] stepsY=null;
 	
+	String[] obstaclesX;
+	String[] obstaclesY;
 	private String imageUrl = null;
 	
 	private ArrayList<Circle> circleArray;
@@ -171,8 +173,32 @@ MouseDownHandler, MouseUpHandler, MouseMoveHandler {
 			stepsX= uidl.getStringArrayAttribute("stepsX");
 			stepsY= uidl.getStringArrayAttribute("stepsY");
 			
-			
 		}
+		
+		if (uidl.getBooleanAttribute("drawObstacles")){
+			obstaclesX= uidl.getStringArrayAttribute("obstaclesX");
+			obstaclesY= uidl.getStringArrayAttribute("obstaclesY");
+//			Circle test = new Circle (50,50,8);
+//			test.setFillColor("yellow");
+//			canvas.add(test);
+			
+			for (int i=0;i<obstaclesX.length;i++)
+			{
+//				Circle test = new Circle (50+i,50+i,8);
+//				test.setFillColor("brown");
+//				canvas.add(test);
+				
+				int xObs=Integer.parseInt(obstaclesX[i]);
+				int yObs=Integer.parseInt(obstaclesY[i]);
+				
+				Circle obstacle = new Circle (xObs,yObs,2);
+				obstacle.setFillColor("red");
+				canvas.add(obstacle);
+				
+			}
+		
+		}
+			
 		
 //		// Process attributes/variables from the server
 //		// The attribute names are the same as we used in 

@@ -21,35 +21,58 @@ public class MapView extends AbstractComponent {
 	private MapGrid floorMap = new MapGrid(881,1164);
 	private AStarPathFinder pathFinder = new AStarPathFinder(floorMap,500,true);
 	private Path path= null; //Path from the two user-clicked points
+	private Boolean drawObstacles=true; //Flag indicating if obstacles have been drawn
 	@Override
 	public void paintContent(PaintTarget target) throws PaintException {
 		super.paintContent(target);
 
 		// Paint any component specific content by setting attributes
 		// These attributes can be read in updateFromUIDL in the widget.
-//		target.addAttribute("clicks", clicks);
-//		target.addAttribute("message", message);
 		target.addAttribute("imageurl", imageUrl);
-	if (path!=null){
-		String[] stepsX = new String[path.getLength()];
-		String[] stepsY = new String[path.getLength()];
-
-		for (int i=0; i<path.getLength();i++)
-		{
-			stepsX[i]= Integer.toString(path.getX(i));
-			stepsY[i]= Integer.toString(path.getY(i));
+	
+		//If obstacles are yet to be drawn
+		if (drawObstacles){
+			String[] obstaclesX= new String[10000];
+			String[] obstaclesY= new String[10000];
+			int count=0;
+			for (int i=0;i<880;i++)
+			{
+				for (int j=0;j<1163;j++)
+				{
+					if (floorMap.isObstacle(i, j))
+					{
+						obstaclesX[count]=Integer.toString(i);
+						obstaclesY[count]=Integer.toString(j);
+						count++;
+					}
+				}
+			}
+			target.addAttribute("obstaclesX",obstaclesX);
+			target.addAttribute("obstaclesY",obstaclesY);
+			target.addAttribute("drawObstacles", drawObstacles);
+		//	drawObstacles=false;
 		}
-		int startXPath=path.getX(0);
-		int startYPath=path.getY(0);
-		int endXPath=path.getX(path.getLength()-1);
-		int endYPath=path.getY(path.getLength()-1);
-		target.addAttribute("startXPath",startXPath);
-		target.addAttribute("startYPath",startYPath);
-		target.addAttribute("endXPath",endXPath);
-		target.addAttribute("endYPath",endYPath);
-		target.addAttribute("stepsX",stepsX);
-		target.addAttribute("stepsY",stepsY);
-	}
+		
+		if (path!=null){
+			String[] stepsX = new String[path.getLength()];
+			String[] stepsY = new String[path.getLength()];
+	
+			for (int i=0; i<path.getLength();i++)
+			{
+				stepsX[i]= Integer.toString(path.getX(i));
+				stepsY[i]= Integer.toString(path.getY(i));
+			}
+			int startXPath=path.getX(0);
+			int startYPath=path.getY(0);
+			int endXPath=path.getX(path.getLength()-1);
+			int endYPath=path.getY(path.getLength()-1);
+			target.addAttribute("startXPath",startXPath);
+			target.addAttribute("startYPath",startYPath);
+			target.addAttribute("endXPath",endXPath);
+			target.addAttribute("endYPath",endYPath);
+			target.addAttribute("stepsX",stepsX);
+			target.addAttribute("stepsY",stepsY);
+		}
 		// We could also set variables in which values can be returned
 		// but declaring variables here is not required
 	}
