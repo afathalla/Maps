@@ -11,8 +11,9 @@ public class MapsApplication extends Application implements Button.ClickListener
 	            SplitPanel.ORIENTATION_HORIZONTAL);
 	  private Button searchButton = new Button("Search");
 	  private Button logoutButton = new Button("Logout");
-	  private TextField searchText= new TextField();
-	  private Label searchLabel= new Label ("<h2>Find Places</h2>",Label.CONTENT_XHTML);
+	  private TextField startText= new TextField();
+	  private TextField endText= new TextField();
+	  private Label searchLabel= new Label ("<h2>Find Directions</h2>",Label.CONTENT_XHTML);
 	  private ProgressIndicator progressIndicator= new ProgressIndicator(new Float(0.0));
 	//  private MapPanel mapPanel = new MapPanel();
 	  private MapView mapView= new MapView();
@@ -24,7 +25,7 @@ public class MapsApplication extends Application implements Button.ClickListener
 	}
 	
 	private void buildLayout(){
-		Window mainWindow = new Window("Navigator Application");
+		Window mainWindow = new Window("Maps Application");
 		VerticalLayout layout= new VerticalLayout();
 		layout.setSizeFull();
 		
@@ -45,11 +46,14 @@ public class MapsApplication extends Application implements Button.ClickListener
 	{
 		VerticalLayout searchLayout= new VerticalLayout();
 		
-		searchText.setInputPrompt("Where do you wanna go");
-		searchText.setWidth(175, TextField.UNITS_PIXELS);
+		startText.setInputPrompt("Enter Start Location");
+		endText.setInputPrompt("Enter End Location");
+		startText.setWidth(175, TextField.UNITS_PIXELS);
+		endText.setWidth(175, TextField.UNITS_PIXELS);
 		searchLayout.setSpacing(true);
 		searchLayout.addComponent(searchLabel);
-		searchLayout.addComponent(searchText);
+		searchLayout.addComponent(startText);
+		searchLayout.addComponent(endText);
 		searchLayout.addComponent(searchButton);
 		searchLayout.addComponent(logoutButton);
 		

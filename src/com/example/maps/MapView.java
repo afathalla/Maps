@@ -41,15 +41,26 @@ public class MapView extends AbstractComponent {
 				{
 					if (floorMap.isObstacle(i, j))
 					{
+						if (count<10000){
 						obstaclesX[count]=Integer.toString(i);
 						obstaclesY[count]=Integer.toString(j);
-						count++;
+						}
 					}
+					else
+					{
+						if (count<10000){
+						obstaclesX[count]="-1";
+						obstaclesY[count]="-1";
+						}
+					}
+					count++;
 				}
 			}
+			if (obstaclesX!=null && obstaclesY!=null){
 			target.addAttribute("obstaclesX",obstaclesX);
 			target.addAttribute("obstaclesY",obstaclesY);
 			target.addAttribute("drawObstacles", drawObstacles);
+			}
 		//	drawObstacles=false;
 		}
 		

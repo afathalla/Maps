@@ -21,7 +21,9 @@ public class MapGrid implements TileBasedMap {
 	}
 	private void placeObstacles() {
 		// TODO Change this method to read obstacles from db instead of hardcoding
-		fillArea(50,50,100,100,WALL); 
+		fillArea(361,266,3,178,WALL); 
+		fillArea(223,444,104,3,WALL);
+		fillArea(225,266,245,3,WALL);
 		
 	}
 	

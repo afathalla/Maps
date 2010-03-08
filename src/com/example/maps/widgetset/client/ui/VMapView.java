@@ -26,6 +26,8 @@ import com.google.gwt.user.client.Event;
 import com.google.gwt.user.client.ui.AbsolutePanel;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.Image;
+import com.google.gwt.user.client.ui.TextArea;
+import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.Widget;
 
 /**
@@ -46,6 +48,8 @@ MouseDownHandler, MouseUpHandler, MouseMoveHandler {
 	/** Reference to the server connection object. */
 	protected ApplicationConnection client;
 
+	private TextBox textBox;
+	
 	private AbsolutePanel panel;
 	
 	private DrawingArea canvas;
@@ -97,6 +101,8 @@ MouseDownHandler, MouseUpHandler, MouseMoveHandler {
 //		canvas.addMouseUpHandler(this);
 		mapImage= new Image();
 		
+		textBox= new TextBox();
+		
 		circleArray = new ArrayList<Circle>();
 		
 		pathExists=false;
@@ -147,6 +153,7 @@ MouseDownHandler, MouseUpHandler, MouseMoveHandler {
 		// Add Canvas and Image to Panel
 		panel.add(mapImage,0,0);
 		panel.add(canvas,0,0);
+		panel.add(textBox,350,10);
 		
 		// Get Values from server
 		// TODO get values (like width and height) from Server
@@ -175,39 +182,26 @@ MouseDownHandler, MouseUpHandler, MouseMoveHandler {
 			
 		}
 		
-		if (uidl.getBooleanAttribute("drawObstacles")){
-			obstaclesX= uidl.getStringArrayAttribute("obstaclesX");
-			obstaclesY= uidl.getStringArrayAttribute("obstaclesY");
-//			Circle test = new Circle (50,50,8);
-//			test.setFillColor("yellow");
-//			canvas.add(test);
-			
-			for (int i=0;i<obstaclesX.length;i++)
-			{
-//				Circle test = new Circle (50+i,50+i,8);
-//				test.setFillColor("brown");
-//				canvas.add(test);
-				
-				int xObs=Integer.parseInt(obstaclesX[i]);
-				int yObs=Integer.parseInt(obstaclesY[i]);
-				
-				Circle obstacle = new Circle (xObs,yObs,2);
-				obstacle.setFillColor("red");
-				canvas.add(obstacle);
-				
-			}
+		//Uncomment to draw obstacles on Map
 		
-		}
-			
-		
-//		// Process attributes/variables from the server
-//		// The attribute names are the same as we used in 
-//		// paintContent on the server-side
-//		int clicks = uidl.getIntAttribute("clicks");
-//		String message = uidl.getStringAttribute("message");
+//		if (uidl.getBooleanAttribute("drawObstacles")){
+//			obstaclesX= uidl.getStringArrayAttribute("obstaclesX");
+//			obstaclesY= uidl.getStringArrayAttribute("obstaclesY");
+//			
+//			for (int i=0;i<obstaclesX.length;i++)
+//			{
+//				if ((i==0 || i==obstaclesX.length-1) && Integer.parseInt(obstaclesX[i]) != -1){
+//				int xObs=Integer.parseInt(obstaclesX[i]);
+//				int yObs=Integer.parseInt(obstaclesY[i]);
+//				
+//				Circle obstacle = new Circle (xObs,yObs,1);
+//				obstacle.setFillColor("red");
+//				canvas.add(obstacle);
+//				}
+//			}
+//			
 //		
-//		getElement().setInnerHTML("After <b>"+clicks+"</b> mouse clicks:\n" + message);
-		
+//		}	
 	}
 
     /**
@@ -250,7 +244,7 @@ MouseDownHandler, MouseUpHandler, MouseMoveHandler {
 //    		 Line line= new Line(c1.getX(),c1.getY(),c1.getX(),c1.getY());
     		//Animated Path Line
   		 Line line= new Line(startXPath,startYPath,startXPath,startYPath);
-//    		 line.setStrokeWidth(3);
+    		 line.setStrokeWidth(3);
     		 line.setStrokeOpacity(0.5);
     		 line.setStrokeColor("blue");
     		 canvas.add(line);
@@ -264,14 +258,16 @@ MouseDownHandler, MouseUpHandler, MouseMoveHandler {
     		 pathExists=true;	 
     		 if (stepsX!=null&& stepsY!=null)
     		 {
-    			 Circle circle= new Circle (20,20,7);
-    	         circle.setFillColor("blue");
-    			 canvas.add(circle);
     			
     			 for (int i=0; i<stepsX.length;i++)
     			 {
     				Line stepLine= new Line(Integer.parseInt(stepsX[i]),Integer.parseInt(stepsY[i]),
     						Integer.parseInt(stepsX[i+1]),Integer.parseInt(stepsY[i+1]));
+    				
+    	    		 stepLine.setStrokeWidth(3);
+    	    		 stepLine.setStrokeOpacity(0.5);
+    	    		 stepLine.setStrokeColor("green");
+    	    		 
     				canvas.add(stepLine);
     			 }
 //    	         Path path = new Path(startXPath,startYPath);
@@ -311,6 +307,8 @@ MouseDownHandler, MouseUpHandler, MouseMoveHandler {
 
 		x=event.getRelativeX(canvas.getElement());
 		y=event.getRelativeY(canvas.getElement());
+		
+		textBox.setText("X= "+ Integer.toString(x) + " Y= " + Integer.toString(y));
 //TODO uncomment code for scrolling		
 //		//if (mouseDown){
 //			int newX=event.getRelativeX(canvas.getElement());
