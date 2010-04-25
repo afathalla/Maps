@@ -56,9 +56,9 @@ MouseDownHandler, MouseUpHandler, MouseMoveHandler {
 	
 	private Image mapImage;
 
-	private int width = 500;
+	private int width = 1000;
 
-	private int height = 500;
+	private int height = 1000;
 	
 	//x and y coordinates for MouseClick
 	private int x=0;
@@ -270,14 +270,6 @@ MouseDownHandler, MouseUpHandler, MouseMoveHandler {
     	    		 
     				canvas.add(stepLine);
     			 }
-//    	         Path path = new Path(startXPath,startYPath);
-//    			 for (int i=0;i<stepsX.length;i++){
-//    				path.lineRelativelyTo(Integer.parseInt(stepsX[i]), Integer.parseInt(stepsY[i]));
-//    				// path.setStep(i, new LineTo(true,Integer.parseInt(stepsX[i]),Integer.parseInt(stepsY[i])));
-//    			 }
-//    			 path.close();
-//    			 canvas.add(path);
-    			 
     			 
     		 }
     	 }
