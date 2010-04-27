@@ -6,7 +6,9 @@ import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.ArrayList;
 
+import com.vaadin.data.Container;
 import com.vaadin.data.util.BeanItemContainer;
 
 public class PlaceContainer extends BeanItemContainer<Place> 
@@ -14,7 +16,7 @@ public class PlaceContainer extends BeanItemContainer<Place>
   private static Connection conn=null;
   public PlaceContainer() throws InstantiationException, 
     IllegalAccessException {
-    
+ 
 	super (Place.class);
   }
   public static PlaceContainer getSimilarPlaces(String placeName) { 
@@ -23,17 +25,18 @@ public class PlaceContainer extends BeanItemContainer<Place>
 		placeContainer = new PlaceContainer();  
 	    if (conn== null) {
 		  conn=getConn();
+	    }
 		  Statement select = conn.createStatement();
 		  String selectStatement= "SELECT place_name from places where place_name LIKE " +
             "\"%"+ placeName + "%\";";
 		   System.out.println(selectStatement);
 		   ResultSet result = select.executeQuery(selectStatement);
 			while (result.next()) {
+			 System.out.println(result.getString(1));
 		     Place similarPlace = new Place();
 		     similarPlace.setPlaceName(result.getString(1));
-		     placeContainer.addItem(similarPlace);
+		     placeContainer.addBean(similarPlace);
 			}
-	    }
 	  } catch (SQLException e){
 	      e.printStackTrace();
 	    } catch (InstantiationException e) {
@@ -41,8 +44,23 @@ public class PlaceContainer extends BeanItemContainer<Place>
 	       } catch (IllegalAccessException e) {
 		       e.printStackTrace();    
 	         }
+	   //notifyListeners();
 	   return placeContainer;
   }
+  
+// private static void notifyListeners() {
+//      ArrayList<ItemSetChangeListener> cl = (ArrayList<ItemSetChangeListener>) listeners.clone();
+//      ItemSetChangeEvent event = new ItemSetChangeEvent() {
+//          public Container getContainer() {
+//              return PlaceContainer.this;
+//          }
+//      };
+//
+//      for (ItemSetChangeListener listener : cl) {
+//          listener.containerItemSetChange(event);
+//      }
+//}
+
   
   private static Connection getConn() {
 	Connection conn = null;
@@ -50,7 +68,7 @@ public class PlaceContainer extends BeanItemContainer<Place>
     String db = "makany_dev";
     String driver = "com.mysql.jdbc.Driver";
     String user = "root";
-    String pass = "";
+    String pass = "root";
     try {
       Class.forName(driver).newInstance();
     } catch (InstantiationException e) {

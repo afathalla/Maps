@@ -26,7 +26,8 @@ public class MapsApplication extends Application implements Button.ClickListener
 	//  private MapPanel mapPanel = new MapPanel();
 	  private MapView mapView= new MapView();
 	  private Connection conn=null;
-	  private PlaceContainer placeDataSource=null;
+	  private PlaceContainer placeDataSource=PlaceContainer.getSimilarPlaces("Dr."); //DataSource for placeList
+	  private PlaceList placeList = new PlaceList(this); //Table that will hold places matched by user query
 	  
 	  @Override
 	public void init() {
@@ -45,35 +46,19 @@ public class MapsApplication extends Application implements Button.ClickListener
 		layout.addComponent(horizontalSplit);
 		layout.setExpandRatio(horizontalSplit, 1);
 		
-		
-		
 		mainWindow.setContent(layout);
 		setMainWindow(mainWindow);
-		
 	}
 	
 	private VerticalLayout buildSearchBox()
 	{
-		try {
-		  if (conn==null) {
-		       conn = getConn();
-		  }
-		  Statement select = conn.createStatement();
-		  ResultSet result = select.executeQuery("SELECT * from places order by id asc;");
-//		  while (result.next()) {
-//			  locationLabel.setCaption(result.getString(2));
-//		  }
-	//	result.close();
-	//	conn.close();
-		} catch (Exception e) {
-		  System.err.println("Error executing Select Statement");
-		  e.printStackTrace();
-		}
+
 		VerticalLayout searchLayout= new VerticalLayout();
 		startText.setInputPrompt("Enter Start Location");
 		endText.setInputPrompt("Enter End Location");
 		startText.setWidth(175, TextField.UNITS_PIXELS);
 		endText.setWidth(175, TextField.UNITS_PIXELS);
+		placeList.setColumnHeaderMode(Table.COLUMN_HEADER_MODE_HIDDEN);
 		searchLayout.setSpacing(true);
 		searchLayout.addComponent(searchLabel);
 		searchLayout.addComponent(startText);
@@ -81,6 +66,7 @@ public class MapsApplication extends Application implements Button.ClickListener
 		searchLayout.addComponent(searchButton);
 		searchLayout.addComponent(logoutButton);
 		searchLayout.addComponent(locationLabel);
+		searchLayout.addComponent(placeList);
 		
 		searchButton.addListener((ClickListener)this);
 		logoutButton.addListener((ClickListener)this);
@@ -95,25 +81,11 @@ public class MapsApplication extends Application implements Button.ClickListener
 			getMainWindow().getApplication().close();
 		else if (sourceButton == searchButton)
 		{
-		  try {
-		    if (conn == null) {
-		      conn = getConn();	
-			}
-			Statement select = conn.createStatement();
-			String selectStatement= "SELECT place_name from places where place_name LIKE " +
-            "\"%"+ startText.getValue().toString() + "%\";";
-			System.out.println(selectStatement);
-			ResultSet result = select.executeQuery(selectStatement);
-			while (result.next()) {
-		     // locationLabel.setCaption(result.getString(1));
-			
-			}
-		  } catch (Exception e) {
-			  System.err.println("Error fetching search locations");
-			  e.printStackTrace();
-			}
-			setMainComponent(mapView);
-//			mapPanel.fetchMap();
+		  placeDataSource=PlaceContainer.getSimilarPlaces(startText.getValue().toString());
+		  placeList.refreshDataSource(this);
+		  placeList.setImmediate(true);
+		  
+		  setMainComponent(mapView);
 				
 		}
 			
@@ -128,7 +100,7 @@ public class MapsApplication extends Application implements Button.ClickListener
         String db           = "makany_dev";
         String driver       = "com.mysql.jdbc.Driver";
         String user         = "root";
-        String pass         = "";
+        String pass         = "root";
             
 	    try {
 	            Class.forName(driver).newInstance();

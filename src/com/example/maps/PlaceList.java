@@ -7,4 +7,7 @@ public class PlaceList extends Table {
   public PlaceList (MapsApplication app) {
     setContainerDataSource(app.getPlaceDataSource());	  
   }
+  public void refreshDataSource(MapsApplication app) {
+	  setContainerDataSource(app.getPlaceDataSource());	  
+  }
 }
