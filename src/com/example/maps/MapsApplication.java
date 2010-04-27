@@ -1,19 +1,17 @@
 package com.example.maps;
 
-
-import java.sql.ResultSet;
-import java.sql.Statement;
-
 import com.vaadin.Application;
+import com.vaadin.data.Container;
 import com.vaadin.ui.*;
 import com.vaadin.ui.Button.ClickEvent;
 import com.vaadin.ui.Button.ClickListener;
+import com.example.maps.containers.*;
 import com.mysql.jdbc.Driver;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.ResultSet;
+import java.sql.Statement;
 import java.sql.SQLException;
-
 
 public class MapsApplication extends Application implements Button.ClickListener{
 	  private SplitPanel horizontalSplit = new SplitPanel(
@@ -28,6 +26,7 @@ public class MapsApplication extends Application implements Button.ClickListener
 	//  private MapPanel mapPanel = new MapPanel();
 	  private MapView mapView= new MapView();
 	  private Connection conn=null;
+	  private PlaceContainer placeDataSource=null;
 	  
 	  @Override
 	public void init() {
@@ -57,15 +56,15 @@ public class MapsApplication extends Application implements Button.ClickListener
 	{
 		try {
 		  if (conn==null) {
-		    Connection conn = getConn();
+		       conn = getConn();
 		  }
 		  Statement select = conn.createStatement();
 		  ResultSet result = select.executeQuery("SELECT * from places order by id asc;");
-		  while (result.next()) {
-			  locationLabel.setCaption(result.getString(2));
-		  }
-		result.close();
-		conn.close();
+//		  while (result.next()) {
+//			  locationLabel.setCaption(result.getString(2));
+//		  }
+	//	result.close();
+	//	conn.close();
 		} catch (Exception e) {
 		  System.err.println("Error executing Select Statement");
 		  e.printStackTrace();
@@ -96,8 +95,22 @@ public class MapsApplication extends Application implements Button.ClickListener
 			getMainWindow().getApplication().close();
 		else if (sourceButton == searchButton)
 		{
-			if (conn == null) {
-				Connection conn = getConn();	
+		  try {
+		    if (conn == null) {
+		      conn = getConn();	
+			}
+			Statement select = conn.createStatement();
+			String selectStatement= "SELECT place_name from places where place_name LIKE " +
+            "\"%"+ startText.getValue().toString() + "%\";";
+			System.out.println(selectStatement);
+			ResultSet result = select.executeQuery(selectStatement);
+			while (result.next()) {
+		     // locationLabel.setCaption(result.getString(1));
+			
+			}
+		  } catch (Exception e) {
+			  System.err.println("Error fetching search locations");
+			  e.printStackTrace();
 			}
 			setMainComponent(mapView);
 //			mapPanel.fetchMap();
@@ -115,7 +128,7 @@ public class MapsApplication extends Application implements Button.ClickListener
         String db           = "makany_dev";
         String driver       = "com.mysql.jdbc.Driver";
         String user         = "root";
-        String pass         = "root";
+        String pass         = "";
             
 	    try {
 	            Class.forName(driver).newInstance();
@@ -134,4 +147,8 @@ public class MapsApplication extends Application implements Button.ClickListener
 	    }
 	            return conn;
   }
+
+	public PlaceContainer getPlaceDataSource() {
+      return placeDataSource;
+	}
 }
