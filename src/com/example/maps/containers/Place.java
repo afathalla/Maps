@@ -1,25 +1,25 @@
 package com.example.maps.containers;
 
 public class Place {
-  private String placeName="";
+  private String placeName;
   public String getPlaceName() {
 	return placeName;
 }
 public void setPlaceName(String placeName) {
 	this.placeName = placeName;
 }
-public int getLat() {
-	return lat;
+public int getX() {
+	return x;
 }
-public void setLat(int lat) {
-	this.lat = lat;
+public void setX(int x) {
+	this.x = x;
 }
-public int getLng() {
-	return lng;
+public int getY() {
+	return y;
 }
-public void setLng(int lng) {
-	this.lng = lng;
+public void setY(int y) {
+	this.y = y;
 }
-private int lat;
-  private int lng;
+private int x;
+private int y;
 }

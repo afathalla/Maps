@@ -27,14 +27,18 @@ public class PlaceContainer extends BeanItemContainer<Place>
 		  conn=getConn();
 	    }
 		  Statement select = conn.createStatement();
-		  String selectStatement= "SELECT place_name from places where place_name LIKE " +
+		  String selectStatement= "SELECT place_name,x,y from places where place_name LIKE " +
             "\"%"+ placeName + "%\";";
 		   System.out.println(selectStatement);
 		   ResultSet result = select.executeQuery(selectStatement);
 			while (result.next()) {
 			 System.out.println(result.getString(1));
+			 System.out.println(result.getString(2));
+			 System.out.println(result.getString(3));
 		     Place similarPlace = new Place();
 		     similarPlace.setPlaceName(result.getString(1));
+		     similarPlace.setX(result.getInt(2));
+		     similarPlace.setY(result.getInt(3));
 		     placeContainer.addBean(similarPlace);
 			}
 	  } catch (SQLException e){

@@ -1,6 +1,9 @@
 package com.example.maps;
 
+import java.util.ArrayList;
 import java.util.Map;
+
+import com.example.maps.containers.Place;
 import com.example.maps.navigate.MapGrid;
 import com.maps.util.*;
 import com.vaadin.terminal.PaintException;
@@ -21,7 +24,8 @@ public class MapView extends AbstractComponent {
 	private MapGrid floorMap = new MapGrid(881,1164);
 	private AStarPathFinder pathFinder = new AStarPathFinder(floorMap,500,true);
 	private Path path= null; //Path from the two user-clicked points
-	private Boolean drawObstacles=true; //Flag indicating if obstacles have been drawn
+	private ArrayList<Place> displayedPlaces = null;
+
 	@Override
 	public void paintContent(PaintTarget target) throws PaintException {
 		super.paintContent(target);
@@ -29,61 +33,42 @@ public class MapView extends AbstractComponent {
 		// Paint any component specific content by setting attributes
 		// These attributes can be read in updateFromUIDL in the widget.
 		target.addAttribute("imageurl", imageUrl);
-	
-		//If obstacles are yet to be drawn
-		if (drawObstacles){
-			String[] obstaclesX= new String[10000];
-			String[] obstaclesY= new String[10000];
-			int count=0;
-			for (int i=0;i<880;i++)
-			{
-				for (int j=0;j<1163;j++)
-				{
-					if (floorMap.isObstacle(i, j))
-					{
-						if (count<10000){
-						obstaclesX[count]=Integer.toString(i);
-						obstaclesY[count]=Integer.toString(j);
-						}
-					}
-					else
-					{
-						if (count<10000){
-						obstaclesX[count]="-1";
-						obstaclesY[count]="-1";
-						}
-					}
-					count++;
-				}
-			}
-			if (obstaclesX!=null && obstaclesY!=null){
-			target.addAttribute("obstaclesX",obstaclesX);
-			target.addAttribute("obstaclesY",obstaclesY);
-			target.addAttribute("drawObstacles", drawObstacles);
-			}
-		//	drawObstacles=false;
-		}
 		
-		if (path!=null){
-			String[] stepsX = new String[path.getLength()];
-			String[] stepsY = new String[path.getLength()];
-	
-			for (int i=0; i<path.getLength();i++)
-			{
-				stepsX[i]= Integer.toString(path.getX(i));
-				stepsY[i]= Integer.toString(path.getY(i));
+		if (displayedPlaces != null)
+		{
+			System.out.println("Displayed Places is not null");
+			String[] placesX = new String[displayedPlaces.size()];
+			String[] placesY = new String[displayedPlaces.size()];
+			for (int i=0; i<displayedPlaces.size();i++) {
+			  Place currentPlace = displayedPlaces.get(i);
+			  System.out.println(currentPlace.getX());
+			  System.out.println(currentPlace.getY());
+			  placesX[i]=Integer.toString(currentPlace.getX()); 
+			  placesY[i]=Integer.toString(currentPlace.getY()); 
 			}
-			int startXPath=path.getX(0);
-			int startYPath=path.getY(0);
-			int endXPath=path.getX(path.getLength()-1);
-			int endYPath=path.getY(path.getLength()-1);
-			target.addAttribute("startXPath",startXPath);
-			target.addAttribute("startYPath",startYPath);
-			target.addAttribute("endXPath",endXPath);
-			target.addAttribute("endYPath",endYPath);
-			target.addAttribute("stepsX",stepsX);
-			target.addAttribute("stepsY",stepsY);
+			target.addAttribute("placesX",placesX);
+			target.addAttribute("placesY",placesY);
 		}
+//		if (path!=null){
+//			String[] stepsX = new String[path.getLength()];
+//			String[] stepsY = new String[path.getLength()];
+//	
+//			for (int i=0; i<path.getLength();i++)
+//			{
+//				stepsX[i]= Integer.toString(path.getX(i));
+//				stepsY[i]= Integer.toString(path.getY(i));
+//			}
+//			int startXPath=path.getX(0);
+//			int startYPath=path.getY(0);
+//			int endXPath=path.getX(path.getLength()-1);
+//			int endYPath=path.getY(path.getLength()-1);
+//			target.addAttribute("startXPath",startXPath);
+//			target.addAttribute("startYPath",startYPath);
+//			target.addAttribute("endXPath",endXPath);
+//			target.addAttribute("endYPath",endYPath);
+//			target.addAttribute("stepsX",stepsX);
+//			target.addAttribute("stepsY",stepsY);
+//		}
 		// We could also set variables in which values can be returned
 		// but declaring variables here is not required
 	}
@@ -99,16 +84,16 @@ public class MapView extends AbstractComponent {
 
 		// Variables set by the widget are returned in the "variables" map.
 
-		if (variables.containsKey("startX") && variables.containsKey("endX") 
-		    && variables.containsKey("startY") && variables.containsKey("endY"))
-		{
-			path=pathFinder.findPath(null, Integer.parseInt(variables.get("startX").toString()),
-					Integer.parseInt(variables.get("startY").toString()), 
-					Integer.parseInt(variables.get("endX").toString()),
-					Integer.parseInt(variables.get("endY").toString()));
-			
-			requestRepaint();
-		}
+//		if (variables.containsKey("startX") && variables.containsKey("endX") 
+//		    && variables.containsKey("startY") && variables.containsKey("endY"))
+//		{
+//			path=pathFinder.findPath(null, Integer.parseInt(variables.get("startX").toString()),
+//					Integer.parseInt(variables.get("startY").toString()), 
+//					Integer.parseInt(variables.get("endX").toString()),
+//					Integer.parseInt(variables.get("endY").toString()));
+//			
+//			requestRepaint();
+//		}
 		
 //		if (variables.containsKey("click")) {
 //
@@ -121,5 +106,17 @@ public class MapView extends AbstractComponent {
 //			requestRepaint();
 //		}
 	}
+
+	
+	public ArrayList<Place> getDisplayedPlaces() {
+		return displayedPlaces;
+	}
+
+	public void setDisplayedPlaces(ArrayList<Place> displayedPlaces) {
+		System.out.println("Setting Displayed Places");
+		this.displayedPlaces = displayedPlaces;
+		requestRepaint();
+	}
+
 
 }

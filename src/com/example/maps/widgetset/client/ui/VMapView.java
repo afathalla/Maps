@@ -75,6 +75,9 @@ MouseDownHandler, MouseUpHandler, MouseMoveHandler {
 	String[] stepsX=null;
 	String[] stepsY=null;
 	
+	String[] placesX=null;
+	String[] placesY=null;
+	
 	String[] obstaclesX;
 	String[] obstaclesY;
 	private String imageUrl = null;
@@ -182,26 +185,18 @@ MouseDownHandler, MouseUpHandler, MouseMoveHandler {
 			
 		}
 		
-		//Uncomment to draw obstacles on Map
-		
-//		if (uidl.getBooleanAttribute("drawObstacles")){
-//			obstaclesX= uidl.getStringArrayAttribute("obstaclesX");
-//			obstaclesY= uidl.getStringArrayAttribute("obstaclesY");
-//			
-//			for (int i=0;i<obstaclesX.length;i++)
-//			{
-//				if ((i==0 || i==obstaclesX.length-1) && Integer.parseInt(obstaclesX[i]) != -1){
-//				int xObs=Integer.parseInt(obstaclesX[i]);
-//				int yObs=Integer.parseInt(obstaclesY[i]);
-//				
-//				Circle obstacle = new Circle (xObs,yObs,1);
-//				obstacle.setFillColor("red");
-//				canvas.add(obstacle);
-//				}
-//			}
-//			
-//		
-//		}	
+		if (uidl.getStringArrayAttribute("placesX") != null) {
+		  placesX = uidl.getStringArrayAttribute("placesX");
+		  placesY = uidl.getStringArrayAttribute("placesY");
+		  
+		  for (int i = 0; i< placesX.length; i++){
+			int placeX = Integer.parseInt(placesX[i]);
+			int placeY = Integer.parseInt(placesY[i]);
+	        Circle circle= new Circle (placeX,placeY,7);
+	        circle.setFillColor("red");
+	        canvas.add(circle);
+		  }
+		}
 	}
 
     /**
@@ -211,7 +206,6 @@ MouseDownHandler, MouseUpHandler, MouseMoveHandler {
      *            the {@link ClickEvent} that was fired
      */
      public void onClick(ClickEvent event) {
-	
     	//Create a new initial point the user wants to get from
     	 if (circleArray.size() < 2)
     	 {
