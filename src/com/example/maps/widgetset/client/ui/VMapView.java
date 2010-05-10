@@ -98,7 +98,7 @@ MouseDownHandler, MouseUpHandler, MouseMoveHandler {
 
 		canvas = new DrawingArea(width, height);
 		//FIXME removed mouse up/down for the time being
-		canvas.addClickHandler(this);
+//		canvas.addClickHandler(this);
 		canvas.addMouseMoveHandler(this);
 	//	canvas.addMouseDownHandler(this);
 //		canvas.addMouseUpHandler(this);
@@ -173,17 +173,7 @@ MouseDownHandler, MouseUpHandler, MouseMoveHandler {
 		
 		mapImage.setUrl(imageUrl);
 		
-		if (uidl.getIntAttribute("startXPath")!=0)
-		{
-			pathExists=true;
-			startXPath=uidl.getIntAttribute("startXPath");
-			startYPath=uidl.getIntAttribute("startYPath");
-			endXPath=uidl.getIntAttribute("endXPath");
-			endYPath=uidl.getIntAttribute("endYPath");
-			stepsX= uidl.getStringArrayAttribute("stepsX");
-			stepsY= uidl.getStringArrayAttribute("stepsY");
-			
-		}
+
 		
 		if (uidl.getStringArrayAttribute("placesX") != null) {
 		  placesX = uidl.getStringArrayAttribute("placesX");
@@ -197,9 +187,48 @@ MouseDownHandler, MouseUpHandler, MouseMoveHandler {
 	        canvas.add(circle);
 		  }
 		}
+		
+		if (uidl.getIntAttribute("startXPath")!=0)
+		{
+			pathExists=true;
+			startXPath=uidl.getIntAttribute("startXPath");
+			startYPath=uidl.getIntAttribute("startYPath");
+			endXPath=uidl.getIntAttribute("endXPath");
+			endYPath=uidl.getIntAttribute("endYPath");
+			stepsX= uidl.getStringArrayAttribute("stepsX");
+			stepsY= uidl.getStringArrayAttribute("stepsY");
+			drawPath();
+		}
 	}
 
-    /**
+    private void drawPath() {
+	  Line line= new Line(startXPath,startYPath,startXPath,startYPath);
+	  line.setStrokeWidth(3);
+	  line.setStrokeOpacity(0.5);
+	  line.setStrokeColor("blue");
+	 canvas.add(line);
+//		 //Animated Path Line
+	 new Animate(line,"x2",startXPath,endXPath,600).start();
+	 new Animate(line,"y2",startYPath,endYPath,600).start();
+	 pathExists=true;	 
+	 if (stepsX!=null&& stepsY!=null)
+	 {
+		
+		 for (int i=0; i<stepsX.length;i++)
+		 {
+			Line stepLine= new Line(Integer.parseInt(stepsX[i]),Integer.parseInt(stepsY[i]),
+					Integer.parseInt(stepsX[i+1]),Integer.parseInt(stepsY[i+1]));
+			
+    		 stepLine.setStrokeWidth(3);
+    		 stepLine.setStrokeOpacity(0.5);
+    		 stepLine.setStrokeColor("green");
+    		 
+			canvas.add(stepLine);
+		 }
+	 }
+	}
+    
+	/**
      * Called when a native click event is fired.
      * 
      * @param event

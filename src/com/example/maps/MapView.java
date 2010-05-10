@@ -49,26 +49,26 @@ public class MapView extends AbstractComponent {
 			target.addAttribute("placesX",placesX);
 			target.addAttribute("placesY",placesY);
 		}
-//		if (path!=null){
-//			String[] stepsX = new String[path.getLength()];
-//			String[] stepsY = new String[path.getLength()];
-//	
-//			for (int i=0; i<path.getLength();i++)
-//			{
-//				stepsX[i]= Integer.toString(path.getX(i));
-//				stepsY[i]= Integer.toString(path.getY(i));
-//			}
-//			int startXPath=path.getX(0);
-//			int startYPath=path.getY(0);
-//			int endXPath=path.getX(path.getLength()-1);
-//			int endYPath=path.getY(path.getLength()-1);
-//			target.addAttribute("startXPath",startXPath);
-//			target.addAttribute("startYPath",startYPath);
-//			target.addAttribute("endXPath",endXPath);
-//			target.addAttribute("endYPath",endYPath);
-//			target.addAttribute("stepsX",stepsX);
-//			target.addAttribute("stepsY",stepsY);
-//		}
+		if (path!=null){
+			String[] stepsX = new String[path.getLength()];
+			String[] stepsY = new String[path.getLength()];
+	
+			for (int i=0; i<path.getLength();i++)
+			{
+				stepsX[i]= Integer.toString(path.getX(i));
+				stepsY[i]= Integer.toString(path.getY(i));
+			}
+			int startXPath=path.getX(0);
+			int startYPath=path.getY(0);
+			int endXPath=path.getX(path.getLength()-1);
+			int endYPath=path.getY(path.getLength()-1);
+			target.addAttribute("startXPath",startXPath);
+			target.addAttribute("startYPath",startYPath);
+			target.addAttribute("endXPath",endXPath);
+			target.addAttribute("endYPath",endYPath);
+			target.addAttribute("stepsX",stepsX);
+			target.addAttribute("stepsY",stepsY);
+		}
 		// We could also set variables in which values can be returned
 		// but declaring variables here is not required
 	}
@@ -117,6 +117,12 @@ public class MapView extends AbstractComponent {
 		this.displayedPlaces = displayedPlaces;
 		requestRepaint();
 	}
-
-
+	
+	public void calculatePath() {
+		Place startPlace= displayedPlaces.get(0);
+		Place endPlace= displayedPlaces.get(1);
+		
+		path=pathFinder.findPath(null, startPlace.getX(),startPlace.getY(),
+				                 endPlace.getX(),endPlace.getY());
+	}
 }
