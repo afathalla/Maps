@@ -149,8 +149,8 @@ MouseDownHandler, MouseUpHandler, MouseMoveHandler {
 		paintableId = uidl.getId();
 
 		// Clear Everything first
-	//	panel.clear();
-//		canvas.clear();
+		panel.clear();
+		canvas.clear();
 //		circleArray.clear();
 		
 		// Add Canvas and Image to Panel

@@ -118,10 +118,7 @@ public class MapView extends AbstractComponent {
 		requestRepaint();
 	}
 	
-	public void calculatePath() {
-		Place startPlace= displayedPlaces.get(0);
-		Place endPlace= displayedPlaces.get(1);
-		
+	public void calculatePath(Place startPlace, Place endPlace) {
 		path=pathFinder.findPath(null, startPlace.getX(),startPlace.getY(),
 				                 endPlace.getX(),endPlace.getY());
 	}
