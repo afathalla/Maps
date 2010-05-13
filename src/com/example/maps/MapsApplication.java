@@ -34,10 +34,11 @@ public class MapsApplication extends Application implements Button.ClickListener
 	  private Boolean endPresented = false; // Indicates that list of end locations is displayed
 	  private Boolean startSelected = false; //Indicates correctly identified start location
 	  private Boolean endSelected = false; //Indicates correctly identified end location
-	  private  ArrayList<Place> displayedPlaces = null;
+	  private  ArrayList<Place> displayedPlaces = new ArrayList<Place>();
 	  private  ArrayList<Place> selectedPlaces = new ArrayList<Place>();
 	  @Override
 	public void init() {
+		setTheme("default");
 		buildLayout();
 	}
 	
@@ -65,7 +66,8 @@ public class MapsApplication extends Application implements Button.ClickListener
 		startText.setWidth(175, TextField.UNITS_PIXELS);
 		endText.setWidth(175, TextField.UNITS_PIXELS);
 		
-		placeList.setColumnHeaderMode(Table.COLUMN_HEADER_MODE_HIDDEN);
+		placeList.addStyleName("v-placeList");
+	//	placeList.setColumnHeaderMode(Table.COLUMN_HEADER_MODE_HIDDEN);
 		placeList.setSelectable(true);
 		placeList.setImmediate(true);
 		placeList.addListener(new Property.ValueChangeListener() {
@@ -114,7 +116,6 @@ public class MapsApplication extends Application implements Button.ClickListener
 			getMainWindow().getApplication().close();
 		else if (sourceButton == searchButton)
 		{
-		  displayedPlaces = new ArrayList<Place>();
 		  String startTextValue=startText.getValue().toString().trim();
           if (!startTextValue.isEmpty() && !startSelected) {
         	System.out.println("In Start Selection");
@@ -122,16 +123,19 @@ public class MapsApplication extends Application implements Button.ClickListener
 		    if (placeDataSource.size() == 0) { // Search returns no items
 		    	locationLabel.setVisible(true); 
 		    	locationLabel.setValue("No items match your chosen Starting Point");
+		    	startSelected = false;
 		    } else if (placeDataSource.size()== 1) { // Only one result returned
 		        Place foundPlace = placeDataSource.getIdByIndex(0);
 		        displayedPlaces.add(foundPlace);
 		        selectedPlaces.add(foundPlace);
 		    	startText.setValue(foundPlace.getPlaceName()); //Set the value 
+		    	startSelected = true;
 		      } else { // More than one item match search 
 		    	  for (int i=0;i<placeDataSource.size();i++) {
 		    	    displayedPlaces.add(placeDataSource.getIdByIndex(i));
 		    	  }
-		          locationLabel.setValue("Start location could be one yof these");
+		          locationLabel.setValue("Start location could be one of these");
+		          locationLabel.setVisible(true);
 		          placeList.setVisible(true);
 		          placeList.refreshDataSource(this);
 		          startPresented = true;
@@ -144,19 +148,20 @@ public class MapsApplication extends Application implements Button.ClickListener
   		    if (placeDataSource.size() == 0) { // Search returns no items
   		    	locationLabel.setVisible(true); 
   		    	locationLabel.setValue("No items match your chosen Ending Point");
+  		    	endSelected = false;
   		    } else if (placeDataSource.size()== 1) { // Only one result returned
   		        Place foundPlace = placeDataSource.getIdByIndex(0);
   		        displayedPlaces.add(foundPlace);
   		        selectedPlaces.add(foundPlace);
   		    	endText.setValue(foundPlace.getPlaceName()); //Set the value 
+  		    	endSelected = true;
   		      } else { // More than one item match search 
 		    	  for (int i=0;i<placeDataSource.size();i++) {
 			    	    displayedPlaces.add(placeDataSource.getIdByIndex(i));
 			    	  }
-  		    	  System.out.println("More than one place found");
+  		    	  System.out.println("More than one end place found");
   		          locationLabel.setValue("End location could be one of these");
   		          locationLabel.setVisible(true);
-  		          locationLabel.setImmediate(true);
   		          placeList.setVisible(true);
   		          placeList.refreshDataSource(this);
   		          endPresented = true;
@@ -172,8 +177,10 @@ public class MapsApplication extends Application implements Button.ClickListener
 		    			       "and " + endPlace.getPlaceName());
 		    mapView.calculatePath(startPlace,endPlace);
 		  }
+		  else {
+		    System.out.println("Selected places size is " + selectedPlaces.size());
+		  }
 		  setMainComponent(mapView);
-		
 		}
 	}
 	
