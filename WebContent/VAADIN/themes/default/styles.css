@@ -3,4 +3,24 @@
 .v-table {
 	width: 100%
 }
-
+/*
+.v-button {
+      display: block;
+      width: 65px;
+      height: 55px;
+      background: transparent;
+      border: none;
+      text-align: center;
+}
+ 
+.v-button img {
+      display: block;
+      margin-left: auto;
+      margin-right: auto;
+      margin-bottom: 5px;
+}
+.v-button span {
+      font-size: x-small;
+      text-shadow: #fafafa 1px 1px 0;
+}
+*/

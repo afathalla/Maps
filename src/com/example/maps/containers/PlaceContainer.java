@@ -10,6 +10,8 @@ import java.util.ArrayList;
 
 import com.vaadin.data.Container;
 import com.vaadin.data.util.BeanItemContainer;
+import com.vaadin.terminal.ThemeResource;
+import com.vaadin.ui.Embedded;
 
 public class PlaceContainer extends BeanItemContainer<Place> 
   implements Serializable {
@@ -31,6 +33,7 @@ public class PlaceContainer extends BeanItemContainer<Place>
             "\"%"+ placeName + "%\";";
 		   System.out.println(selectStatement);
 		   ResultSet result = select.executeQuery(selectStatement);
+		   int resultCounter = 1;
 			while (result.next()) {
 			 System.out.println(result.getString(1));
 			 System.out.println(result.getString(2));
@@ -39,6 +42,9 @@ public class PlaceContainer extends BeanItemContainer<Place>
 		     similarPlace.setPlaceName(result.getString(1));
 		     similarPlace.setX(result.getInt(2));
 		     similarPlace.setY(result.getInt(3));
+		     similarPlace.setPlaceIcon(new Embedded("Number", new ThemeResource("icons/number_"
+		    		                   + resultCounter + ".png")));
+		     resultCounter++;
 		     placeContainer.addBean(similarPlace);
 			}
 	  } catch (SQLException e){

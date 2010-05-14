@@ -4,6 +4,7 @@ import com.vaadin.Application;
 import com.vaadin.data.Container;
 import com.vaadin.data.Property;
 import com.vaadin.data.Property.ValueChangeEvent;
+import com.vaadin.terminal.ThemeResource;
 import com.vaadin.ui.*;
 import com.vaadin.ui.Button.ClickEvent;
 import com.vaadin.ui.Button.ClickListener;
@@ -48,7 +49,7 @@ public class MapsApplication extends Application implements Button.ClickListener
 		layout.setSizeFull();
 		
 		horizontalSplit.setFirstComponent(buildSearchBox());
-		horizontalSplit.setSplitPosition(200, SplitPanel.UNITS_PIXELS);
+		horizontalSplit.setSplitPosition(300, SplitPanel.UNITS_PIXELS);
 		
 		layout.addComponent(horizontalSplit);
 		layout.setExpandRatio(horizontalSplit, 1);
@@ -64,10 +65,7 @@ public class MapsApplication extends Application implements Button.ClickListener
 		startText.setInputPrompt("Enter Starting Point");
 		endText.setInputPrompt("Enter Destination");
 		startText.setWidth(175, TextField.UNITS_PIXELS);
-		endText.setWidth(175, TextField.UNITS_PIXELS);
-		
-		placeList.addStyleName("v-placeList");
-	//	placeList.setColumnHeaderMode(Table.COLUMN_HEADER_MODE_HIDDEN);
+		endText.setWidth(175, TextField.UNITS_PIXELS);	
 		placeList.setSelectable(true);
 		placeList.setImmediate(true);
 		placeList.addListener(new Property.ValueChangeListener() {
@@ -103,7 +101,9 @@ public class MapsApplication extends Application implements Button.ClickListener
 		searchLayout.addComponent(logoutButton);
 		searchLayout.addComponent(locationLabel);
 		searchLayout.addComponent(placeList);
-		
+	
+		searchButton.setIcon(new ThemeResource("icons/search.gif"));
+		logoutButton.setStyleName(Button.STYLE_LINK);
 		searchButton.addListener((ClickListener)this);
 		logoutButton.addListener((ClickListener)this);
 		return searchLayout;
