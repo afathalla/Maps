@@ -12,6 +12,7 @@ import com.vaadin.contrib.gwtgraphics.client.shape.path.PathStep;
 import com.vaadin.terminal.gwt.client.ApplicationConnection;
 import com.vaadin.terminal.gwt.client.Paintable;
 import com.vaadin.terminal.gwt.client.UIDL;
+import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Document;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
@@ -185,6 +186,9 @@ MouseDownHandler, MouseUpHandler, MouseMoveHandler {
 	        Circle circle= new Circle (placeX,placeY,7);
 	        circle.setFillColor("red");
 	        canvas.add(circle);
+	        Image placeImage = new Image();
+	        placeImage.setUrl(GWT.getModuleBaseURL()+"images/number_"+ (i+1) +".png");
+	        panel.add(placeImage, placeX, placeY);
 		  }
 		}
 		
@@ -219,7 +223,7 @@ MouseDownHandler, MouseUpHandler, MouseMoveHandler {
 			Line stepLine= new Line(Integer.parseInt(stepsX[i]),Integer.parseInt(stepsY[i]),
 					Integer.parseInt(stepsX[i+1]),Integer.parseInt(stepsY[i+1]));
 			
-    		 stepLine.setStrokeWidth(3);
+    		 stepLine.setStrokeWidth(5);
     		 stepLine.setStrokeOpacity(0.5);
     		 stepLine.setStrokeColor("green");
     		 

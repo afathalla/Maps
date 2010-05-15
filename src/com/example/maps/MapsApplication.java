@@ -60,7 +60,6 @@ public class MapsApplication extends Application implements Button.ClickListener
 	
 	private VerticalLayout buildSearchBox()
 	{
-
 		VerticalLayout searchLayout= new VerticalLayout();
 		startText.setInputPrompt("Enter Starting Point");
 		endText.setInputPrompt("Enter Destination");
