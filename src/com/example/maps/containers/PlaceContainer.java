@@ -78,7 +78,8 @@ public class PlaceContainer extends BeanItemContainer<Place>
     String db = "makany_dev";
     String driver = "com.mysql.jdbc.Driver";
     String user = "root";
-    String pass = "root";
+   // String pass = "root";
+    String pass = ""; //Other machine has no root password
     try {
       Class.forName(driver).newInstance();
     } catch (InstantiationException e) {

@@ -16,7 +16,12 @@ import java.sql.ResultSet;
 import java.sql.Statement;
 import java.sql.SQLException;
 import java.util.ArrayList;
-
+/** 
+ * Main Application class. Contains layout information.
+ * 
+ * 
+ *
+ */
 public class MapsApplication extends Application implements Button.ClickListener{
 	  private SplitPanel horizontalSplit = new SplitPanel(
 	            SplitPanel.ORIENTATION_HORIZONTAL);

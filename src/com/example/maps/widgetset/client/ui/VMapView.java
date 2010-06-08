@@ -99,7 +99,7 @@ MouseDownHandler, MouseUpHandler, MouseMoveHandler {
 
 		canvas = new DrawingArea(width, height);
 		//FIXME removed mouse up/down for the time being
-//		canvas.addClickHandler(this);
+		canvas.addClickHandler(this);
 		canvas.addMouseMoveHandler(this);
 	//	canvas.addMouseDownHandler(this);
 //		canvas.addMouseUpHandler(this);
@@ -172,7 +172,7 @@ MouseDownHandler, MouseUpHandler, MouseMoveHandler {
 		canvas.getElement().getStyle().setPropertyPx("width", width);
 		canvas.getElement().getStyle().setPropertyPx("height", height);
 		
-		mapImage.setUrl(imageUrl);
+		mapImage.setUrl(GWT.getModuleBaseURL() + imageUrl);
 		
 
 		
@@ -188,7 +188,7 @@ MouseDownHandler, MouseUpHandler, MouseMoveHandler {
 	        canvas.add(circle);
 	        Image placeImage = new Image();
 	        placeImage.setUrl(GWT.getModuleBaseURL()+"images/number_"+ (i+1) +".png");
-	        panel.add(placeImage, placeX, placeY);
+	        panel.add(placeImage, placeX -15, placeY -15);
 		  }
 		}
 		
@@ -239,66 +239,24 @@ MouseDownHandler, MouseUpHandler, MouseMoveHandler {
      *            the {@link ClickEvent} that was fired
      */
      public void onClick(ClickEvent event) {
-    	//Create a new initial point the user wants to get from
-    	 if (circleArray.size() < 2)
-    	 {
-        	Circle circle= new Circle (x,y,7);
-        	circle.setFillColor("red");
-        	canvas.add(circle);
-        	circleArray.add(circle);
-        	if (circleArray.size()==1) //first time click
-        	{
-        		client.updateVariable(paintableId, "startX", x, false);
-        		client.updateVariable(paintableId, "startY", y, false);
-     	
-        	}
-        	else
-        	{
-         		client.updateVariable(paintableId, "endX", x, false);
-        		client.updateVariable(paintableId, "endY", y, true);
-     		
-        	}
-    	 }
+    	 //Use approximation to find out if the user has clicked on a displayed point
+    	 int startX = x - 50;
+    	 int endX= x + 50;
+    	 int startY = y - 50;
+    	 int endY = y + 50;
     	 
-    	 if (circleArray.size()==2 && pathExists)
-    	 {
-    		 Circle c1= circleArray.get(0);
-    		 Circle c2= circleArray.get(1);
-  
-    		 //Unanimated Line
-//    		 Line line= new Line(c1.getX(),c1.getY(),c2.getX(),c2.getY());
-    		 //Animated Line
-//    		 Line line= new Line(c1.getX(),c1.getY(),c1.getX(),c1.getY());
-    		//Animated Path Line
-  		 Line line= new Line(startXPath,startYPath,startXPath,startYPath);
-    		 line.setStrokeWidth(3);
-    		 line.setStrokeOpacity(0.5);
-    		 line.setStrokeColor("blue");
-    		 canvas.add(line);
-//    	
-//    		 //Animated Line
-////    		 new Animate(line,"x2",c1.getX(),c2.getX(),600).start();
-////    		 new Animate(line,"y2",c1.getY(),c2.getY(),600).start();
-//    		 //Animated Path Line
-    		 new Animate(line,"x2",startXPath,endXPath,600).start();
-    		 new Animate(line,"y2",startYPath,endYPath,600).start();
-    		 pathExists=true;	 
-    		 if (stepsX!=null&& stepsY!=null)
-    		 {
-    			
-    			 for (int i=0; i<stepsX.length;i++)
-    			 {
-    				Line stepLine= new Line(Integer.parseInt(stepsX[i]),Integer.parseInt(stepsY[i]),
-    						Integer.parseInt(stepsX[i+1]),Integer.parseInt(stepsY[i+1]));
-    				
-    	    		 stepLine.setStrokeWidth(3);
-    	    		 stepLine.setStrokeOpacity(0.5);
-    	    		 stepLine.setStrokeColor("green");
-    	    		 
-    				canvas.add(stepLine);
-    			 }
-    			 
-    		 }
+    	 for (int i =0; i<placesX.length; i++) {
+ 			int placeX = Integer.parseInt(placesX[i]);
+			int placeY = Integer.parseInt(placesY[i]);
+				
+		//	if ((placeX >= startX && placeX<= endX) && (placeY >= startY && placeY<= endY)) {
+			if (i == 0) {
+				textBox.setText("placeX= "+ Integer.toString(placeX) + " Y= " + Integer.toString(placeY));
+				client.updateVariable(paintableId, "clickedX", placeX, false);
+				client.updateVariable(paintableId, "clickedY", placeY, true);
+				break;
+			}
+			
     	 }
     	 
 //       // Send a variable change to the server side component so it knows the widget has been clicked

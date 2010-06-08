@@ -9,6 +9,8 @@ import com.maps.util.*;
 import com.vaadin.terminal.PaintException;
 import com.vaadin.terminal.PaintTarget;
 import com.vaadin.ui.AbstractComponent;
+import com.vaadin.ui.Label;
+import com.vaadin.ui.Window;
 
 /**
  * Server side component for the VMapView widget.
@@ -19,7 +21,8 @@ public class MapView extends AbstractComponent {
 //	private String message = "Click here.";
 //	private int clicks = 0;
 	//FIXME this has to be dynamic
-	private String imageUrl = "http://totheweb.com/eichler/images/subpage_photos/floor-plan-1224.gif";
+	// private String imageUrl = "http://totheweb.com/eichler/images/subpage_photos/floor-plan-1224.gif";
+	   private String imageUrl = "images/floor-plan-1224.gif";
 	//TODO dynamically discover size of image or retrieve from db
 	private MapGrid floorMap = new MapGrid(881,1164);
 	private AStarPathFinder pathFinder = new AStarPathFinder(floorMap,500,true);
@@ -83,18 +86,20 @@ public class MapView extends AbstractComponent {
 		super.changeVariables(source, variables);
 
 		// Variables set by the widget are returned in the "variables" map.
-
-//		if (variables.containsKey("startX") && variables.containsKey("endX") 
-//		    && variables.containsKey("startY") && variables.containsKey("endY"))
-//		{
-//			path=pathFinder.findPath(null, Integer.parseInt(variables.get("startX").toString()),
-//					Integer.parseInt(variables.get("startY").toString()), 
-//					Integer.parseInt(variables.get("endX").toString()),
-//					Integer.parseInt(variables.get("endY").toString()));
-//			
-//			requestRepaint();
-//		}
 		
+		if (variables.containsKey("clickedX") && variables.containsKey("clickedY")) {
+			Window detailWindow = new Window();
+			detailWindow.setModal(true);
+			Label message = new Label ("Besm ALLAH");
+			detailWindow.addComponent(message);
+			getWindow().addWindow(detailWindow);
+			int clickedX =Integer.parseInt((String)variables.get("clickedX"));
+			int clickedY =Integer.parseInt((String)variables.get("clickedY"));
+			System.out.println("Clicked X : " + (String)variables.get("clickedX"));
+			System.out.println("Clicked Y : " + (String)variables.get("clickedY"));
+			detailWindow.setPositionX(clickedX);
+			detailWindow.setPositionY(clickedY);
+		}
 //		if (variables.containsKey("click")) {
 //
 //			// When the user has clicked the component we increase the 
