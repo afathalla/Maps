@@ -4,6 +4,7 @@ import com.vaadin.Application;
 import com.vaadin.data.Container;
 import com.vaadin.data.Property;
 import com.vaadin.data.Property.ValueChangeEvent;
+import com.vaadin.terminal.Sizeable;
 import com.vaadin.terminal.ThemeResource;
 import com.vaadin.ui.*;
 import com.vaadin.ui.Button.ClickEvent;
@@ -22,26 +23,25 @@ import java.util.ArrayList;
  * 
  *
  */
-public class MapsApplication extends Application implements Button.ClickListener{
-	  private SplitPanel horizontalSplit = new SplitPanel(
-	            SplitPanel.ORIENTATION_HORIZONTAL);
-	  private Button searchButton = new Button("Search");
-	  private Button logoutButton = new Button("Logout");
-	  private TextField startText= new TextField();
-	  private TextField endText= new TextField();
-	  private Label locationLabel= new Label();
-	  private Label searchLabel= new Label ("<h2>Find Directions</h2>",Label.CONTENT_XHTML);
-	  private ProgressIndicator progressIndicator= new ProgressIndicator(new Float(0.0));
-	  private MapView mapView= new MapView();
-	  private Connection conn=null;
-	  private PlaceContainer placeDataSource = null;
-	  private PlaceList placeList = new PlaceList(this); //Table that will hold places matched by user query
-	  private Boolean startPresented = false ; // Indicates that list of start locations is displayed
-	  private Boolean endPresented = false; // Indicates that list of end locations is displayed
-	  private Boolean startSelected = false; //Indicates correctly identified start location
-	  private Boolean endSelected = false; //Indicates correctly identified end location
-	  private  ArrayList<Place> displayedPlaces = new ArrayList<Place>();
-	  private  ArrayList<Place> selectedPlaces = new ArrayList<Place>();
+public class MapsApplication extends Application implements Button.ClickListener {
+	private SplitPanel horizontalSplit = new SplitPanel(SplitPanel.ORIENTATION_HORIZONTAL);
+	private Button searchButton = new Button("Search");
+	private Button logoutButton = new Button("Logout");
+	private TextField startText= new TextField();
+	private TextField endText= new TextField();
+	private Label locationLabel= new Label();
+	private Label searchLabel= new Label ("<h2>Find Directions</h2>",Label.CONTENT_XHTML);
+	private ProgressIndicator progressIndicator= new ProgressIndicator(new Float(0.0));
+	private MapView mapView= new MapView();
+	private Connection conn=null;
+	private PlaceContainer placeDataSource = null;
+	private PlaceList placeList = new PlaceList(this); //Table that will hold places matched by user query
+	private Boolean startPresented = false ; // Indicates that list of start locations is displayed
+	private Boolean endPresented = false; // Indicates that list of end locations is displayed
+	private Boolean startSelected = false; //Indicates correctly identified start location
+	private Boolean endSelected = false; //Indicates correctly identified end location
+	private  ArrayList<Place> displayedPlaces = new ArrayList<Place>();
+	private  ArrayList<Place> selectedPlaces = new ArrayList<Place>();
 	  @Override
 	public void init() {
 		setTheme("default");
@@ -220,4 +220,18 @@ public class MapsApplication extends Application implements Button.ClickListener
 	public PlaceContainer getPlaceDataSource() {
       return placeDataSource;
 	}
+
+	@Override
+	public Window getWindow(String name) {
+        if (name.equals("admin") && super.getWindow(name) == null) {
+        	AdminWindow adminWindow = new AdminWindow ("Maps Administration");
+        	adminWindow.setName("admin");
+        	adminWindow.buildLayout();
+        	addWindow(adminWindow);
+        	return adminWindow;
+        }
+        return super.getWindow(name);
+	}
+
+
 }
