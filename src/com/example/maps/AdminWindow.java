@@ -10,7 +10,7 @@ public class AdminWindow extends Window implements Property.ValueChangeListener{
 	private Label status = new Label("-");
 	
 	public AdminWindow(String name) {
-		super("name");
+		super(name);
 	}
 	public void buildLayout() {
 		VerticalLayout layout = new VerticalLayout();

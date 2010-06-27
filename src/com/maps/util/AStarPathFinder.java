@@ -24,7 +24,7 @@ public class AStarPathFinder implements PathFinder {
 	
 	/** The complete set of nodes across the map */
 	private Node[][] nodes;
-	/** True if we allow diaganol movement */
+	/** True if we allow diagonal movement */
 	private boolean allowDiagMovement;
 	/** The heuristic we're applying to determine which nodes to search first */
 	private AStarHeuristic heuristic;
@@ -97,16 +97,16 @@ public class AStarPathFinder implements PathFinder {
 			removeFromOpen(current);
 			addToClosed(current);
 			
-			// search through all the neighbours of the current node evaluating
+			// search through all the neighbors of the current node evaluating
 			// them as next steps
 			for (int x=-1;x<2;x++) {
 				for (int y=-1;y<2;y++) {
-					// not a neighbour, its the current tile
+					// not a neighbor, its the current tile
 					if ((x == 0) && (y == 0)) {
 						continue;
 					}
 					
-					// if we're not allowing diaganol movement then only 
+					// if we're not allowing diagonal movement then only 
 					// one of x or y can be set
 					if (!allowDiagMovement) {
 						if ((x != 0) && (y != 0)) {
@@ -114,13 +114,13 @@ public class AStarPathFinder implements PathFinder {
 						}
 					}
 					
-					// determine the location of the neighbour and evaluate it
+					// determine the location of the neighbor and evaluate it
 					int xp = x + current.x;
 					int yp = y + current.y;
 					
 					if (isValidLocation(mover,sx,sy,xp,yp)) {
 						// the cost to get to this node is cost the current plus the movement
-						// cost to reach this node. Note that the heursitic value is only used
+						// cost to reach this node. Note that the heuristic value is only used
 						// in the sorted open list
 						float nextStepCost = current.cost + getMovementCost(mover, current.x, current.y, xp, yp);
 						Node neighbour = nodes[xp][yp];
@@ -265,7 +265,7 @@ public class AStarPathFinder implements PathFinder {
 	 * 
 	 * @param mover The entity that is being moved
 	 * @param sx The x coordinate of the tile whose cost is being determined
-	 * @param sy The y coordiante of the tile whose cost is being determined
+	 * @param sy The y coordinate of the tile whose cost is being determined
 	 * @param tx The x coordinate of the target location
 	 * @param ty The y coordinate of the target location
 	 * @return The cost of movement through the given tile
@@ -280,7 +280,7 @@ public class AStarPathFinder implements PathFinder {
 	 * 
 	 * @param mover The entity that is being moved
 	 * @param x The x coordinate of the tile whose cost is being determined
-	 * @param y The y coordiante of the tile whose cost is being determined
+	 * @param y The y coordinate of the tile whose cost is being determined
 	 * @param tx The x coordinate of the target location
 	 * @param ty The y coordinate of the target location
 	 * @return The heuristic cost assigned to the tile

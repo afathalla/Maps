@@ -1,36 +1,50 @@
 package com.example.maps.containers;
 
-import com.vaadin.terminal.Resource;
-import com.vaadin.terminal.gwt.client.ui.Icon;
 import com.vaadin.ui.Embedded;
 
 public class Place {
+	
   public String getPlaceName() {
 	return placeName;
   }
+  
   public void setPlaceName(String placeName) {
 	this.placeName = placeName;
   }
-  public int getX() {
-	return x;
+
+  public void setPlaceDescription(String placeDescription) {
+	this.placeDescription = placeDescription;
   }
-  public void setX(int x) {
-	this.x = x;
+  public String getPlaceDescription() {
+	return placeDescription;
   }
-  public int getY() {
-	return y;
-  }
-  public void setY(int y) {
-	this.y = y;
-  }
-  public void setPlaceIcon(Embedded placeIcon) {
+  
+  public void setPlaceType(String placeType) {
+		this.placeType = placeType;
+	  }
+	  public String getPlaceType() {
+		return placeType;
+	  }
+
+public void setPlaceLocation(String placeLocation) {
+		this.placeLocation = placeLocation;
+	  }
+public String getPlaceLocation() {
+		return placeLocation;
+	  }
+
+public void setPlaceIcon(Embedded placeIcon) {
 	this.placeIcon = placeIcon;
-  }
-  public Embedded getPlaceIcon() {
+	this.placeIcon.setWidth("100");
+	this.placeIcon.setHeight("100");
+}
+public Embedded getPlaceIcon() {
 	return placeIcon;
-  }
-  private int x;
-  private int y;
+}	 
   private String placeName;
+  private String placeDescription;
+  private String placeLocation;
+  private String placeType;
   private Embedded placeIcon;
+  
 }
