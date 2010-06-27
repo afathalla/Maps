@@ -21,7 +21,8 @@ public class PlaceContainer extends BeanItemContainer<Place>
  
 	super (Place.class);
   }
-  public static PlaceContainer getSimilarPlaces(String placeName) { 
+  
+  public static PlaceContainer getAllPlaces() { 
 	  PlaceContainer placeContainer = null;
 	  try{
 		placeContainer = new PlaceContainer();  
@@ -29,24 +30,21 @@ public class PlaceContainer extends BeanItemContainer<Place>
 		  conn=getConn();
 	    }
 		  Statement select = conn.createStatement();
-		  String selectStatement= "SELECT place_name,x,y from places where place_name LIKE " +
-            "\"%"+ placeName + "%\";";
+		  String selectStatement= "SELECT Name, Type, Location, Description, place.Image_Url from place, place_type where place_type_id = place_type.Id";
+		  
 		   System.out.println(selectStatement);
 		   ResultSet result = select.executeQuery(selectStatement);
-		   int resultCounter = 1;
-			while (result.next()) {
-			 System.out.println(result.getString(1));
-			 System.out.println(result.getString(2));
-			 System.out.println(result.getString(3));
-		     Place similarPlace = new Place();
-		     similarPlace.setPlaceName(result.getString(1));
-		     similarPlace.setX(result.getInt(2));
-		     similarPlace.setY(result.getInt(3));
-		     similarPlace.setPlaceIcon(new Embedded("Number", new ThemeResource("icons/number_"
-		    		                   + resultCounter + ".png")));
-		     resultCounter++;
-		     placeContainer.addBean(similarPlace);
-			}
+		   
+		   while (result.next()) {
+		     Place place= new Place();
+		     place.setPlaceName(result.getString(1));
+		     place.setPlaceType(result.getString(2));
+		     place.setPlaceLocation(result.getString(3));
+		     place.setPlaceDescription(result.getString(4));
+		     place.setPlaceIcon(new Embedded("Place", new ThemeResource(result.getString(5))));
+
+		     placeContainer.addBean(place);
+		   }
 	  } catch (SQLException e){
 	      e.printStackTrace();
 	    } catch (InstantiationException e) {
@@ -58,28 +56,14 @@ public class PlaceContainer extends BeanItemContainer<Place>
 	   return placeContainer;
   }
   
-// private static void notifyListeners() {
-//      ArrayList<ItemSetChangeListener> cl = (ArrayList<ItemSetChangeListener>) listeners.clone();
-//      ItemSetChangeEvent event = new ItemSetChangeEvent() {
-//          public Container getContainer() {
-//              return PlaceContainer.this;
-//          }
-//      };
-//
-//      for (ItemSetChangeListener listener : cl) {
-//          listener.containerItemSetChange(event);
-//      }
-//}
-
-  
   private static Connection getConn() {
 	Connection conn = null;
     String url = "jdbc:mysql://localhost:3306/";
-    String db = "makany_dev";
+//    String db = "makany_dev";
+    String db = "makany_test";
     String driver = "com.mysql.jdbc.Driver";
     String user = "root";
-   // String pass = "root";
-    String pass = ""; //Other machine has no root password
+    String pass = "";
     try {
       Class.forName(driver).newInstance();
     } catch (InstantiationException e) {

@@ -29,7 +29,6 @@ public class MapsApplication extends Application implements Button.ClickListener
 	            SplitPanel.ORIENTATION_HORIZONTAL);
 	 
 	  private SplitPanel verticalSplit = new SplitPanel(SplitPanel.ORIENTATION_VERTICAL);
-//	  private SplitPanel verticalSplit2 = new SplitPanel(SplitPanel.ORIENTATION_VERTICAL);
 	  private Button directionSearchButton = new Button("Get Direction");
 	  private Button locationSearchButton = new Button("Spot Location");
 	  private Button upperSearchButton = new Button("Spot Location");
@@ -891,5 +890,16 @@ public class MapsApplication extends Application implements Button.ClickListener
 	
 	public UnitContainer getUnitDataSource() {
       return unitDataSource;
+	}
+	@Override
+	public Window getWindow(String name) {
+        if (name.equals("admin") && super.getWindow(name) == null) {
+        	AdminWindow adminWindow = new AdminWindow ("Maps Administration");
+        	adminWindow.setName("admin");
+        	adminWindow.buildLayout();
+        	addWindow(adminWindow);
+        	return adminWindow;
+        }
+        return super.getWindow(name);
 	}
 }

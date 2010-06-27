@@ -29,6 +29,7 @@ import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.TextArea;
 import com.google.gwt.user.client.ui.TextBox;
+import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.Widget;
 
 /**
@@ -54,8 +55,6 @@ MouseDownHandler, MouseUpHandler, MouseMoveHandler {
 	private AbsolutePanel panel;
 	
 	private DrawingArea canvas;
-	
-	private Image mapImage;
 
 	private int width = 1000;
 
@@ -81,7 +80,19 @@ MouseDownHandler, MouseUpHandler, MouseMoveHandler {
 	
 	String[] obstaclesX;
 	String[] obstaclesY;
-	private String imageUrl = null;
+	
+	private int windowWidth=1243;
+	private int windowHeight=931;
+	
+	private int mapWidth;
+	private int mapHeight;
+	private String mapDescription;
+	private String mapImageUrl;
+	private String[] placesImages = null;
+//	private Image placeImage;
+	private Label mapDescriptionLabel;
+	private Image mapImage;
+	private Image placeImage = null;
 	
 	private ArrayList<Circle> circleArray;
 	
@@ -97,24 +108,21 @@ MouseDownHandler, MouseUpHandler, MouseMoveHandler {
 		panel = new AbsolutePanel();
 		initWidget(panel);
 
-		canvas = new DrawingArea(width, height);
-		//FIXME removed mouse up/down for the time being
-		canvas.addClickHandler(this);
+		canvas = new DrawingArea(windowWidth, windowHeight);
+		
+		//FIXME removed mouse click,down and up for the time being
+//		canvas.addClickHandler(this);
 		canvas.addMouseMoveHandler(this);
-	//	canvas.addMouseDownHandler(this);
-//		canvas.addMouseUpHandler(this);
+//		canvas.addMouseDownHandler(this);
+	//	canvas.addMouseUpHandler(this);
+		mapDescriptionLabel = new Label();
 		mapImage= new Image();
-		
 		textBox= new TextBox();
-		
 		circleArray = new ArrayList<Circle>();
-		
 		pathExists=false;
-		
 		mouseDown=false;
 		
 		setStyleName(CLASSNAME);
-		
 		DOM.setStyleAttribute(canvas.getElement(), "border", "1px solid black");
 		
 		// TODO This example code is extending the GWT Widget class so it must set a root element.
@@ -148,6 +156,14 @@ MouseDownHandler, MouseUpHandler, MouseMoveHandler {
 
 		// Save the client side identifier (paintable id) for the widget
 		paintableId = uidl.getId();
+		
+		// Get Values from server
+		// TODO get values (like width and height) from Server
+		mapImageUrl= uidl.getStringAttribute("mapImageUrl");
+		mapWidth = uidl.getIntAttribute("mapWidth");
+		mapHeight = uidl.getIntAttribute("mapHeight");
+		mapDescription = uidl.getStringAttribute("mapDescription");
+		mapDescriptionLabel = new Label (mapDescription);
 
 		// Clear Everything first
 		panel.clear();
@@ -158,37 +174,35 @@ MouseDownHandler, MouseUpHandler, MouseMoveHandler {
 		panel.add(mapImage,0,0);
 		panel.add(canvas,0,0);
 		panel.add(textBox,350,10);
-		
-		// Get Values from server
-		// TODO get values (like width and height) from Server
-		imageUrl= uidl.getStringAttribute("imageurl");
+		panel.add(mapDescriptionLabel,10,10);
 		
 		// Set values after getting them from server
-//		panel.setSize((50 + 1 + width) + "px", (25 + height) + "px");
-		panel.setSize(width + "px",height + "px");
+	//	panel.setSize((50 + 1 + width) + "px", (25 + height) + "px");
+		panel.setSize(mapWidth + "px",mapHeight + "px");
 		
-		canvas.setWidth(width);		
-		canvas.setHeight(height);
-		canvas.getElement().getStyle().setPropertyPx("width", width);
-		canvas.getElement().getStyle().setPropertyPx("height", height);
+		canvas.setWidth(mapWidth);		
+		canvas.setHeight(mapHeight);
+		canvas.getElement().getStyle().setPropertyPx("width", mapWidth);
+		canvas.getElement().getStyle().setPropertyPx("height", mapHeight);
 		
-		mapImage.setUrl(GWT.getModuleBaseURL() + imageUrl);
-		
-
+		mapImage.setUrl(GWT.getModuleBaseURL()+mapImageUrl);
 		
 		if (uidl.getStringArrayAttribute("placesX") != null) {
+		  placesImages = uidl.getStringArrayAttribute("placesImages");
 		  placesX = uidl.getStringArrayAttribute("placesX");
 		  placesY = uidl.getStringArrayAttribute("placesY");
 		  
 		  for (int i = 0; i< placesX.length; i++){
 			int placeX = Integer.parseInt(placesX[i]);
 			int placeY = Integer.parseInt(placesY[i]);
-	        Circle circle= new Circle (placeX,placeY,7);
+	        Circle circle= new Circle (placeX,placeY,13);
 	        circle.setFillColor("red");
 	        canvas.add(circle);
-	        Image placeImage = new Image();
-	        placeImage.setUrl(GWT.getModuleBaseURL()+"images/number_"+ (i+1) +".png");
-	        panel.add(placeImage, placeX -15, placeY -15);
+	        placeImage = new Image();
+	        placeImage.setUrl(GWT.getModuleBaseURL()+placesImages[i]);
+	        placeImage.addClickHandler(this);
+
+	        panel.add(placeImage, placeX - 15, placeY - 15);
 		  }
 		}
 		
@@ -223,7 +237,7 @@ MouseDownHandler, MouseUpHandler, MouseMoveHandler {
 			Line stepLine= new Line(Integer.parseInt(stepsX[i]),Integer.parseInt(stepsY[i]),
 					Integer.parseInt(stepsX[i+1]),Integer.parseInt(stepsY[i+1]));
 			
-    		 stepLine.setStrokeWidth(5);
+    		 stepLine.setStrokeWidth(4);
     		 stepLine.setStrokeOpacity(0.5);
     		 stepLine.setStrokeColor("green");
     		 
@@ -239,26 +253,12 @@ MouseDownHandler, MouseUpHandler, MouseMoveHandler {
      *            the {@link ClickEvent} that was fired
      */
      public void onClick(ClickEvent event) {
-    	 //Use approximation to find out if the user has clicked on a displayed point
-    	 int startX = x - 50;
-    	 int endX= x + 50;
-    	 int startY = y - 50;
-    	 int endY = y + 50;
-    	 
-    	 for (int i =0; i<placesX.length; i++) {
- 			int placeX = Integer.parseInt(placesX[i]);
-			int placeY = Integer.parseInt(placesY[i]);
-				
-		//	if ((placeX >= startX && placeX<= endX) && (placeY >= startY && placeY<= endY)) {
-			if (i == 0) {
-				textBox.setText("placeX= "+ Integer.toString(placeX) + " Y= " + Integer.toString(placeY));
-				client.updateVariable(paintableId, "clickedX", placeX, false);
-				client.updateVariable(paintableId, "clickedY", placeY, true);
-				break;
-			}
-			
-    	 }
-    	 
+   // 	if (placeImage != null && event.getSource().getClass() == placeImage.getClass()) {
+    		Image image = (Image) event.getSource();
+    	 	client.updateVariable(paintableId, "clickedX", x, false);
+    		client.updateVariable(paintableId, "clickedY", y, false);
+    		client.updateVariable(paintableId, "unitIconUrl", image.getUrl(), true);
+   // 	}
 //       // Send a variable change to the server side component so it knows the widget has been clicked
 //		String button = "left click";
 //		// The last parameter (immediate) tells that the update should be sent to the server
@@ -287,19 +287,18 @@ MouseDownHandler, MouseUpHandler, MouseMoveHandler {
 		
 		textBox.setText("X= "+ Integer.toString(x) + " Y= " + Integer.toString(y));
 //TODO uncomment code for scrolling		
-//		//if (mouseDown){
-//			int newX=event.getRelativeX(canvas.getElement());
-//			int newY=event.getRelativeY(canvas.getElement());
-//			
-//			int difX= newX-x;
-//			int difY=newY-y;
-//			
-//			int newLeft= canvas.getAbsoluteLeft() + difX;
-//			int newTop= canvas.getAbsoluteTop() + difY;
-//		
-//	//		mapImage.setVisibleRect(newLeft, newTop, canvas.getWidth(),canvas.getHeight());
-////		}
-		 
+	if (mouseDown){
+			int newX=event.getRelativeX(canvas.getElement());
+			int newY=event.getRelativeY(canvas.getElement());
+			
+			int difX= newX-x;
+			int difY=newY-y;
+			
+			int newLeft= canvas.getAbsoluteLeft() + difX;
+			int newTop= canvas.getAbsoluteTop() + difY;
+		
+    		mapImage.setVisibleRect(newLeft, newTop, canvas.getWidth(),canvas.getHeight());
+		}
 		 
 	}
 }
