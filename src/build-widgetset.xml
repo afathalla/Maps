@@ -54,7 +54,7 @@ See configure target to adjust this buildfile.
         <echo>Modify this example Ant script to compile your own widget sets.</echo>
 
         <!-- Name of the widget set -->
-        <property name="widgetset" value="com.example.maps.widgetset.MapsWidgetset"/>
+        <property name="widgetset" value="com.boslla.maps.widgetset.MapsWidgetset"/>
 
         <!-- Define if the widget set be generated automatically -->
         <!-- from all widget sets included in the class path.    -->
