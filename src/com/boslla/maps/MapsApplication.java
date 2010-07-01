@@ -29,6 +29,7 @@ public class MapsApplication extends Application implements Button.ClickListener
 	            SplitPanel.ORIENTATION_HORIZONTAL);
 	 
 	  private SplitPanel verticalSplit = new SplitPanel(SplitPanel.ORIENTATION_VERTICAL);
+//	  private SplitPanel verticalSplit2 = new SplitPanel(SplitPanel.ORIENTATION_VERTICAL);
 	  private Button directionSearchButton = new Button("Get Direction");
 	  private Button locationSearchButton = new Button("Spot Location");
 	  private Button upperSearchButton = new Button("Spot Location");
@@ -304,9 +305,26 @@ public class MapsApplication extends Application implements Button.ClickListener
 			  }
 		});
 		
+		HorizontalLayout startLocationLayout= new HorizontalLayout();
+		HorizontalLayout endLocationLayout= new HorizontalLayout();
+		Embedded startLocationIcon = new Embedded("", new ThemeResource("numbers/location_1.png"));
+		Embedded endLocationIcon = new Embedded("", new ThemeResource("numbers/location_2.png"));
+		
+		startLocationLayout.setSpacing(true);
+		startLocationLayout.addComponent(startLocationIcon);
+		startLocationLayout.setComponentAlignment(startLocationIcon, Alignment.BOTTOM_LEFT);
+		startLocationLayout.addComponent(startText);
+		startLocationLayout.setComponentAlignment(startText, Alignment.BOTTOM_LEFT);
+
+		endLocationLayout.setSpacing(true);
+		endLocationLayout.addComponent(endLocationIcon);
+		endLocationLayout.setComponentAlignment(endLocationIcon, Alignment.BOTTOM_LEFT);
+		endLocationLayout.addComponent(endText);
+		endLocationLayout.setComponentAlignment(endText, Alignment.BOTTOM_LEFT);
+		
 		verticalViewLayout.setSpacing(true);
-		verticalViewLayout.addComponent(startText);
-		verticalViewLayout.addComponent(endText);
+		verticalViewLayout.addComponent(startLocationLayout);
+		verticalViewLayout.addComponent(endLocationLayout);
 		verticalViewLayout.addComponent(directionSearchButton);
 		verticalViewLayout.addComponent(locationLabel);
 		verticalViewLayout.addComponent(directionLocationList);
@@ -888,18 +906,33 @@ public class MapsApplication extends Application implements Button.ClickListener
 		horizontalSplit.setSecondComponent(c);
 	}
 	
+	private Connection getConn() {
+		Connection conn = null;
+        String url          = "jdbc:mysql://localhost:3306/";
+        String db           = "makany_dev";
+        String driver       = "com.mysql.jdbc.Driver";
+        String user         = "root";
+        String pass         = "root";
+            
+	    try {
+	            Class.forName(driver).newInstance();
+	    } catch (InstantiationException e) {
+	            e.printStackTrace();
+	    } catch (IllegalAccessException e) {
+	            e.printStackTrace();
+	    } catch (ClassNotFoundException e) {
+	            e.printStackTrace();
+	    }
+	    try {       
+	                    conn = DriverManager.getConnection(url+db, user, pass);
+	    } catch (SQLException e) {
+	                    System.err.println("Mysql Connection Error: ");
+	            e.printStackTrace();
+	    }
+	            return conn;
+  }
+
 	public UnitContainer getUnitDataSource() {
       return unitDataSource;
-	}
-	@Override
-	public Window getWindow(String name) {
-        if (name.equals("admin") && super.getWindow(name) == null) {
-        	AdminWindow adminWindow = new AdminWindow ("Maps Administration");
-        	adminWindow.setName("admin");
-        	adminWindow.buildLayout();
-        	addWindow(adminWindow);
-        	return adminWindow;
-        }
-        return super.getWindow(name);
 	}
 }

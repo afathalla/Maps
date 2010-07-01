@@ -102,8 +102,7 @@ public class UnitContainer extends BeanItemContainer<Unit>
   private static Connection getConn() {
 	Connection conn = null;
     String url = "jdbc:mysql://localhost:3306/";
-  //  String db = "makany_dev";
-    String db = "makany_test";
+    String db = "makany_dev";
     String driver = "com.mysql.jdbc.Driver";
     String user = "root";
     String pass = "";

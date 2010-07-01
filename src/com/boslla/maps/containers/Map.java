@@ -39,6 +39,13 @@ public int getMapHeight() {
 	return mapHeight;
 }
 
+public void setMapScale(float mapScale) {	
+	  this.mapScale = mapScale ;
+}
+public float getMapScale() {
+	return mapScale;
+}
+
 public void setMapIcon(Embedded mapIcon) {
 	this.mapIcon = mapIcon;
 	this.mapIcon.setWidth("100");
@@ -54,4 +61,5 @@ public Embedded getMapIcon() {
   private Embedded mapIcon;
   private int mapWidth;
   private int mapHeight;
+  private float mapScale;
 }

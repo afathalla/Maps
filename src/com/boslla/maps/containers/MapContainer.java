@@ -72,7 +72,7 @@ public class MapContainer extends BeanItemContainer<Map>
 		    }
 	    
 		Statement select = conn.createStatement();
-		String selectStatement= "SELECT map.Image_Url, map.Description, map.Width, map.Height from map where map.Image_Url="+
+		String selectStatement= "SELECT map.Image_Url, map.Description, map.Width, map.Height, map.Scale from map where map.Image_Url="+
 			 "\""+ mapImageUrl + "\";";
 		System.out.println(selectStatement);
 		ResultSet result = select.executeQuery(selectStatement);
@@ -84,6 +84,7 @@ public class MapContainer extends BeanItemContainer<Map>
 		map.setMapDescription(result.getString(2));
 		map.setMapWidth(result.getInt(3));
 		map.setMapHeight(result.getInt(4));
+	    map.setMapScale(result.getFloat(5));
 		}
 	  }  	
 	  catch (SQLException e){
@@ -95,8 +96,7 @@ public class MapContainer extends BeanItemContainer<Map>
  private static Connection getConn() {
 	Connection conn = null;
     String url = "jdbc:mysql://localhost:3306/";
-    //String db = "makany_dev";
-    String db = "makany_test";
+    String db = "makany_dev";
     String driver = "com.mysql.jdbc.Driver";
     String user = "root";
     String pass = "";
