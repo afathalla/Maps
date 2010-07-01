@@ -4,12 +4,13 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.Map;
 
-import com.boslla.maps.containers.*;
+import com.boslla.maps.containers.Unit;
+import com.boslla.maps.containers.UnitContainer;
+import com.boslla.maps.containers.StepContainer;
 import com.boslla.maps.navigate.MapGrid;
-import com.boslla.maps.widgetset.client.ui.VMapView;
-import com.boslla.path.*;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.ui.TextArea;
+import com.boslla.path.*;
 import com.vaadin.terminal.FileResource;
 import com.vaadin.terminal.PaintException;
 import com.vaadin.terminal.PaintTarget;
@@ -17,6 +18,8 @@ import com.vaadin.terminal.gwt.client.ApplicationConnection;
 import com.vaadin.terminal.gwt.client.Paintable;
 import com.vaadin.terminal.gwt.client.UIDL;
 import com.vaadin.ui.*;
+import com.boslla.maps.containers.*;
+import com.boslla.maps.widgetset.client.ui.VMapView;
 
 /**
  * Server side component for the VMapView widget.
@@ -254,8 +257,6 @@ public void calculateSteps()
 			
 			Unit selectedUnit = displayedUnits.get(i);
 			
-			System.out.println("Unit Name is " + selectedUnit.getUnitName());
-			
 			Window subWindow = new Window (selectedUnit.getUnitName());
 			subWindow.setModal(true);
 			
@@ -336,6 +337,8 @@ public void calculateSteps()
 		
 		int i =1;
 		int distance=0;
+		float realDistance = 0;
+		float mapScale = map.getMapScale();
 		int X;
 		int Y;
 		int previousX;
@@ -350,6 +353,7 @@ public void calculateSteps()
 		
 		while (i<path.getLength())
 		{			
+
 			previousMapDirection=currentMapDirection;
 			
 			previousX= path.getX(i-1);
@@ -359,7 +363,7 @@ public void calculateSteps()
 		
 			System.out.println("X:"+X+"- Y:"+Y+"- NextX:"+previousX+"- NextY:"+previousY);
 						
-			if (previousX < X  && previousY > Y )	
+			if (previousX < X  && previousY > Y )
 			{
 				currentMapDirection = "Move right Upward Diagonal for about ";
 			}
@@ -397,14 +401,16 @@ public void calculateSteps()
 			
 			if (!previousMapDirection.equals(currentMapDirection)&& distance!=0)
 			{	
-				stepsArray[stepsCounter] = previousMapDirection+distance+" "+unit+".";	
+				realDistance = distance*mapScale;
+				stepsArray[stepsCounter] = previousMapDirection+realDistance+" "+unit+".";	
 				stepsCounter++;
 				distance=-1;
 			}
 		
 			if (i==(path.getLength()-1))
 			{
-				stepsArray[stepsCounter] = previousMapDirection+distance+" "+unit+".";	
+				realDistance = distance*mapScale;
+				stepsArray[stepsCounter] = previousMapDirection+realDistance+" "+unit+".";	
 				stepsCounter++;
 				currentMapDirection = "You have reached your Destination.";
 				stepsArray[stepsCounter] = currentMapDirection;
