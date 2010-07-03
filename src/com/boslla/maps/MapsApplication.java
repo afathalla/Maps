@@ -16,13 +16,10 @@ import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.util.ArrayList;
 
-import com.vaadin.contrib.gwtgraphics.client.DrawingArea;
-import com.vaadin.contrib.gwtgraphics.client.Line;
 import com.vaadin.ui.TabSheet;
 import com.vaadin.ui.TabSheet.SelectedTabChangeEvent;
 import com.vaadin.ui.TabSheet.SelectedTabChangeListener;
 import com.vaadin.ui.TabSheet.Tab;
-
 
 public class MapsApplication extends Application implements Button.ClickListener{
 	  private SplitPanel horizontalSplit = new SplitPanel(
@@ -89,8 +86,6 @@ public class MapsApplication extends Application implements Button.ClickListener
 
 	@Override
 	public void init() {
-		//setTheme("runo");
-		//setTheme("chameleon");
 		setTheme("reindeermods");
 		buildLayout("mainView");
 	}
@@ -144,19 +139,20 @@ public class MapsApplication extends Application implements Button.ClickListener
 		
 		//Initialize Buttons
 		upperSearchButton.setClickShortcut(KeyCode.ENTER);
-		resetButton.setStyleName(Button.STYLE_LINK);
+		String styleLink = "link";
+		resetButton.setStyleName(styleLink);
 		resetButton.addListener((ClickListener)this);
-		getDirectionButton.setStyleName(Button.STYLE_LINK);
+		getDirectionButton.setStyleName(styleLink);
 		getDirectionButton.addListener((ClickListener)this);
-		findAnotherLocationButton.setStyleName(Button.STYLE_LINK);
-		showStepsButton.setStyleName(Button.STYLE_LINK);
+		findAnotherLocationButton.setStyleName(styleLink);
+		showStepsButton.setStyleName(styleLink);
 		showStepsButton.addListener((ClickListener)this);
-		hideStepsButton.setStyleName(Button.STYLE_LINK);
+		hideStepsButton.setStyleName(styleLink);
 		hideStepsButton.addListener((ClickListener)this);
-		myPlacesButton.setStyleName(Button.STYLE_LINK);
+		myPlacesButton.setStyleName(styleLink);
 		myPlacesButton.addListener((ClickListener)this);
-		findLocationOnMapButton.setStyleName(Button.STYLE_LINK);
-		signOutButton.setStyleName(Button.STYLE_LINK);
+		findLocationOnMapButton.setStyleName(styleLink);
+		signOutButton.setStyleName(styleLink);
 		signOutButton.addListener((ClickListener)this);
 		findLocationOnMapButton.addListener((ClickListener)this);
 		directionSearchButton.setClickShortcut(KeyCode.ENTER);
@@ -733,8 +729,10 @@ public class MapsApplication extends Application implements Button.ClickListener
 		//directionLocationList.setVisible(false);
 		mapView.clearPath();
 				
-		if (sourceButton == signOutButton)
+		if (sourceButton == signOutButton) {
 			getMainWindow().getApplication().close();
+			
+		}
 		else if (sourceButton == resetButton)
 		{
 			Tab tab = tabSheet.getTab(tabSheet.getSelectedTab());
@@ -906,33 +904,21 @@ public class MapsApplication extends Application implements Button.ClickListener
 		horizontalSplit.setSecondComponent(c);
 	}
 	
-	private Connection getConn() {
-		Connection conn = null;
-        String url          = "jdbc:mysql://localhost:3306/";
-        String db           = "makany_dev";
-        String driver       = "com.mysql.jdbc.Driver";
-        String user         = "root";
-        String pass         = "root";
-            
-	    try {
-	            Class.forName(driver).newInstance();
-	    } catch (InstantiationException e) {
-	            e.printStackTrace();
-	    } catch (IllegalAccessException e) {
-	            e.printStackTrace();
-	    } catch (ClassNotFoundException e) {
-	            e.printStackTrace();
-	    }
-	    try {       
-	                    conn = DriverManager.getConnection(url+db, user, pass);
-	    } catch (SQLException e) {
-	                    System.err.println("Mysql Connection Error: ");
-	            e.printStackTrace();
-	    }
-	            return conn;
-  }
-
 	public UnitContainer getUnitDataSource() {
       return unitDataSource;
 	}
+	
+	 @Override
+	 public Window getWindow(String name) {
+	         if (name.equals("admin") && super.getWindow(name) == null) {
+	          AdminWindow adminWindow = new AdminWindow ("Maps Administration");
+	          adminWindow.setName("admin");
+	          //adminWindow.buildLayout();
+	          adminWindow.login();
+	          addWindow(adminWindow);
+	          return adminWindow;
+	         }
+	         return super.getWindow(name);
+	 }
+	
 }

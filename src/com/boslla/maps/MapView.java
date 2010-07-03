@@ -263,9 +263,6 @@ public void calculateSteps()
 	        subWindow.setWidth("50%");
 	        subWindow.setHeight("50%");
 			
-//			subWindow.setPositionX(clickedX.intValue());
-//			subWindow.setPositionY(clickedY.intValue());
-			
 			subWindow.center();
 			
 			HorizontalLayout layout = new HorizontalLayout();

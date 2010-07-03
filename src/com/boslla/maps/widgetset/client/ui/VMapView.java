@@ -2,13 +2,13 @@ package com.boslla.maps.widgetset.client.ui;
 
 import java.util.ArrayList;
 
-import com.vaadin.contrib.gwtgraphics.client.DrawingArea;
-import com.vaadin.contrib.gwtgraphics.client.Line;
-import com.vaadin.contrib.gwtgraphics.client.animation.Animate;
-import com.vaadin.contrib.gwtgraphics.client.shape.Circle;
-import com.vaadin.contrib.gwtgraphics.client.shape.Path;
-import com.vaadin.contrib.gwtgraphics.client.shape.path.LineTo;
-import com.vaadin.contrib.gwtgraphics.client.shape.path.PathStep;
+import org.vaadin.gwtgraphics.client.DrawingArea;
+import org.vaadin.gwtgraphics.client.Line;
+import org.vaadin.gwtgraphics.client.animation.Animate;
+import org.vaadin.gwtgraphics.client.shape.Circle;
+import org.vaadin.gwtgraphics.client.shape.Path;
+import org.vaadin.gwtgraphics.client.shape.path.LineTo;
+import org.vaadin.gwtgraphics.client.shape.path.PathStep;
 import com.vaadin.terminal.gwt.client.ApplicationConnection;
 import com.vaadin.terminal.gwt.client.Paintable;
 import com.vaadin.terminal.gwt.client.UIDL;
