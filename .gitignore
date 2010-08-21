@@ -2,3 +2,6 @@
 *.html
 *.class
 *.js
+.classpath
+.project
+.settings/*

@@ -59,10 +59,10 @@ public class PlaceContainer extends BeanItemContainer<Place>
   private static Connection getConn() {
 	Connection conn = null;
     String url = "jdbc:mysql://localhost:3306/";
-    String db = "makany_dev";
+    String db = "makany_test";
     String driver = "com.mysql.jdbc.Driver";
     String user = "root";
-    String pass = "";
+    String pass = "root";
     try {
       Class.forName(driver).newInstance();
     } catch (InstantiationException e) {

@@ -1,0 +1,7 @@
+*.jar
+*.html
+*.class
+*.js
+.classpath
+.project
+
