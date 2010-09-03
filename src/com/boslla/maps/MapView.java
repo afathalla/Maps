@@ -31,7 +31,11 @@ public class MapView extends AbstractComponent {
 //	private int clicks = 0;
 	
 	private int scale = 1; // This is the scale of the map (every pixel matches how many meters).
-	private String unit = "meters";
+	private String distanceUnit = "meters";
+	private float walkingSpeed = 80; //Average walking speed 80 meters/minute
+	private float walkingTime;
+	private float walkingDistance;
+	private String walkingTimeUnit = "minutes";
 	private MapGrid floorMap;
 	private AStarPathFinder pathFinder;
 	private Path path= null; //Path from the two user-clicked points
@@ -338,6 +342,7 @@ public void calculateSteps()
 		int i =1;
 		int distance=0;
 		float realDistance = 0;
+		float totalDistance =0;
 		float mapScale = map.getMapScale();
 		int X;
 		int Y;
@@ -402,7 +407,8 @@ public void calculateSteps()
 			if (!previousMapDirection.equals(currentMapDirection)&& distance!=0)
 			{	
 				realDistance = distance*mapScale;
-				stepsArray[stepsCounter] = previousMapDirection+realDistance+" "+unit+".";	
+				totalDistance = totalDistance + realDistance;
+				stepsArray[stepsCounter] = previousMapDirection+realDistance+" "+distanceUnit+".";	
 				stepsCounter++;
 				distance=-1;
 			}
@@ -410,11 +416,16 @@ public void calculateSteps()
 			if (i==(path.getLength()-1))
 			{
 				realDistance = distance*mapScale;
-				stepsArray[stepsCounter] = previousMapDirection+realDistance+" "+unit+".";	
+				totalDistance = totalDistance + realDistance;
+				stepsArray[stepsCounter] = previousMapDirection+realDistance+" "+distanceUnit+".";	
 				stepsCounter++;
 				currentMapDirection = "You have reached your Destination.";
 				stepsArray[stepsCounter] = currentMapDirection;
 				stepsCounter++;
+				
+				walkingDistance = totalDistance;
+				walkingTime = totalDistance/walkingSpeed;
+				System.out.println(walkingTime);
 			}	
 			
 			distance++;	//Move one step forward
@@ -436,6 +447,16 @@ public void calculateSteps()
 	public int getStepsCounter()
 	{
 		return stepsCounter;
+	}
+	
+	public String getWalkingTime()
+	{
+		return Float.toString(walkingTime);
+	}
+	
+	public String getWalkingDistance()
+	{
+		return Float.toString(walkingDistance);
 	}
 	
 	public void clearView()

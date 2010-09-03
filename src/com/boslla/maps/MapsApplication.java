@@ -52,7 +52,8 @@ public class MapsApplication extends Application implements Button.ClickListener
 	  private Label locationLabel= new Label("<h3></h3>",Label.CONTENT_XHTML);
 	  private Label homeLabel= new Label ("<h2>Welcome to BOSLLA.COM !!</h2></ br> You can find locations and directions to your favorite places here...",Label.CONTENT_XHTML);
 	  private Label stepsTitleLabel = new Label ("<h2>Steps to Destination:</h2>",Label.CONTENT_XHTML);
-	  private Label stepsLabel = new Label ("",Label.CONTENT_XHTML);
+	  private Label walkingDistance = new Label ("Total Distance:",Label.CONTENT_XHTML);
+	  private Label walkingTime = new Label ("Total Walking Time:",Label.CONTENT_XHTML);
 	  private ProgressIndicator progressIndicator= new ProgressIndicator(new Float(0.0));
 	  private static MapView mapView= new MapView();
 	  private Connection conn=null;
@@ -255,6 +256,8 @@ public class MapsApplication extends Application implements Button.ClickListener
 		showStepsButton.setVisible(false);
 		hideStepsButton.setVisible(false);
 		stepList.setVisible(false);
+		walkingDistance.setVisible(false);
+		walkingTime.setVisible(false);
 		
 		//Reset Parameters
 		directionLocationList.removeAllItems();
@@ -331,6 +334,8 @@ public class MapsApplication extends Application implements Button.ClickListener
 		verticalViewLayout.addComponent(resultList);
 		verticalViewLayout.addComponent(showStepsButton);
 		verticalViewLayout.addComponent(hideStepsButton);
+		verticalViewLayout.addComponent(walkingTime);
+		verticalViewLayout.addComponent(walkingDistance);
     	verticalViewLayout.addComponent(stepList);
 		verticalViewLayout.addComponent(resetButton);
 
@@ -579,6 +584,11 @@ public class MapsApplication extends Application implements Button.ClickListener
 	public void showDirectionResults()
 	{
     	System.out.println("Inside Show Direction Results");
+    	System.out.println(mapView.getWalkingDistance());
+    	System.out.println(mapView.getWalkingTime());
+    	
+    	walkingDistance.setValue("Total Distance: "+ mapView.getWalkingDistance()+" meters");
+  	  	walkingTime.setValue("Total Walking Time: "+mapView.getWalkingTime()+" minutes");
     	stepList.refreshDataSource(this, StepContainer.getStepContainer(mapView.getStepsCounter(), mapView.getStepsArray()));
 	}
 /*	public void showPathResults()
@@ -890,6 +900,8 @@ public class MapsApplication extends Application implements Button.ClickListener
 			System.out.println("Inside showStepsButton");
 			showDirectionResults();
 			stepList.setVisible(true);
+			walkingTime.setVisible(true);
+			walkingDistance.setVisible(true);
 	    	showStepsButton.setVisible(false);
 	    	hideStepsButton.setVisible(true);
 		}
@@ -897,6 +909,8 @@ public class MapsApplication extends Application implements Button.ClickListener
 		{
 			System.out.println("Inside hideStepsButton");
 			stepList.setVisible(false);
+			walkingTime.setVisible(false);
+			walkingDistance.setVisible(false);
 	    	hideStepsButton.setVisible(false);
 	    	showStepsButton.setVisible(true);
 		}
