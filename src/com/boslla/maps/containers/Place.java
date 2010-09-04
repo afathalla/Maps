@@ -1,5 +1,10 @@
 package com.boslla.maps.containers;
 
+import javax.jdo.annotations.IdGeneratorStrategy;
+import javax.jdo.annotations.Persistent;
+import javax.jdo.annotations.PrimaryKey;
+
+import com.google.appengine.api.datastore.Key;
 import com.vaadin.ui.Embedded;
 
 public class Place {
@@ -40,11 +45,23 @@ public void setPlaceIcon(Embedded placeIcon) {
 }
 public Embedded getPlaceIcon() {
 	return placeIcon;
-}	 
-  private String placeName;
-  private String placeDescription;
-  private String placeLocation;
-  private String placeType;
-  private Embedded placeIcon;
+}
+public Key getKey() {
+	return key;
+}
+
+@PrimaryKey
+@Persistent(valueStrategy = IdGeneratorStrategy.IDENTITY)
+private Key key;
+@Persistent
+private String placeName;
+@Persistent
+private String placeDescription;
+@Persistent
+private String placeLocation;
+@Persistent
+private String placeType;
+@Persistent
+private Embedded placeIcon;
   
 }

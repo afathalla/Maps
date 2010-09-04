@@ -8,6 +8,8 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
 
+import javax.jdo.PersistenceManager;
+
 import com.vaadin.data.Container;
 import com.vaadin.data.util.BeanItemContainer;
 import com.vaadin.terminal.ThemeResource;
@@ -16,6 +18,8 @@ import com.vaadin.ui.Embedded;
 public class MapContainer extends BeanItemContainer<Map> 
   implements Serializable {
   private static Connection conn=null;
+  private static PersistenceManager pm = PMF.get().getPersistenceManager();
+
   public MapContainer() throws InstantiationException, 
     IllegalAccessException {
  

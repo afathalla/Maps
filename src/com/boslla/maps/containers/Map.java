@@ -1,7 +1,14 @@
 package com.boslla.maps.containers;
 
 import com.vaadin.ui.Embedded;
+import com.google.appengine.api.datastore.Key;
+import javax.jdo.annotations.PersistenceCapable;
+import javax.jdo.annotations.Persistent;
+import javax.jdo.annotations.PrimaryKey;
+import javax.jdo.annotations.IdGeneratorStrategy;
 
+
+@PersistenceCapable
 public class Map {
 	
   public void setMapName(String mapName) {
@@ -50,16 +57,30 @@ public void setMapIcon(Embedded mapIcon) {
 	this.mapIcon = mapIcon;
 	this.mapIcon.setWidth("100");
 	this.mapIcon.setHeight("100");
-	}
+}
 public Embedded getMapIcon() {
-			return mapIcon;
-		  }	 
+	return mapIcon;
+}	 
+public Key getKey() {
+	return key;
+}
 
-  private String mapName;
-  private String mapDescription;
-  private String imageUrl;
-  private Embedded mapIcon;
-  private int mapWidth;
-  private int mapHeight;
-  private float mapScale;
+@PrimaryKey
+@Persistent(valueStrategy = IdGeneratorStrategy.IDENTITY)
+private Key key;
+@Persistent
+private String mapName;
+@Persistent
+private String mapDescription;
+@Persistent
+private String imageUrl;
+@Persistent
+private Embedded mapIcon;
+@Persistent
+private int mapWidth;
+@Persistent
+private int mapHeight;
+@Persistent
+private float mapScale;
+
 }
