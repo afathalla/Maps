@@ -154,7 +154,6 @@ public class MapView extends AbstractComponent {
 				// If the two units are NOT on the same map
 				else
 				{
-					
 				}
 			}
 			  
@@ -162,6 +161,7 @@ public class MapView extends AbstractComponent {
 			paintTarget.addAttribute("mapWidth", mapWidth);
 			paintTarget.addAttribute("mapHeight", mapHeight);
 			paintTarget.addAttribute("mapDescription", mapDescription);
+			
 			target.addAttribute("placesX",placesX);
 			target.addAttribute("placesY",placesY);
 			target.addAttribute("placesImages",placesImages);
@@ -251,9 +251,11 @@ public void calculateSteps()
 
 			System.out.println ("clickedX: " + clickedX + "clickedY: " + clickedY 
 					            + "unitIconUrl" + variables.get("unitIconUrl"));
-			//imageUrl = imageUrl.substring(imageNumber.indexOf("_") + 1,imageNumber.indexOf(".png"));
 			
+			//imageUrl = imageUrl.substring(imageNumber.indexOf("_") + 1,imageNumber.indexOf(".png"));
 			//Unit selectedUnit = displayedUnits.get(Integer.parseInt(imageNumber) -1);
+			
+			System.out.println(displayedUnits.get(0).getUnitIconUrl());
 			
 			int i = 0;
 			while (!unitIconUrl.contains(displayedUnits.get(i).getUnitIconUrl()))
@@ -263,14 +265,12 @@ public void calculateSteps()
 			
 			Window subWindow = new Window (selectedUnit.getUnitName());
 			subWindow.setModal(true);
-			
 	        subWindow.setWidth("50%");
 	        subWindow.setHeight("50%");
+	        subWindow.center();
 			
 //			subWindow.setPositionX(clickedX.intValue());
 //			subWindow.setPositionY(clickedY.intValue());
-			
-			subWindow.center();
 			
 			HorizontalLayout layout = new HorizontalLayout();
 			layout.setMargin(true);

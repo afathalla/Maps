@@ -65,6 +65,93 @@ public class UnitContainer extends BeanItemContainer<Unit>
 	   return unitContainer;
   }
   
+  public static UnitContainer getUnits(String[] unitsArray) { 
+	  UnitContainer unitContainer = null;
+	  try{
+		unitContainer = new UnitContainer();  
+	    if (conn== null) {
+		  conn=getConn();
+	    }
+		  Statement select = conn.createStatement();
+		  int resultCounter = 1;
+		  for (int i=0; i<unitsArray.length; i++) 
+			  
+		  {			  
+		   String selectStatement= "SELECT unit.Name, X, Y, unit.Description,unit.Image_Url, map.Image_Url, map.Description from unit, map where unit.Map_ID=map.Id and name = " + "\"" + unitsArray[i]+"\"";
+		   System.out.println(selectStatement);
+		   ResultSet result = select.executeQuery(selectStatement);
+		   
+		   while (result.next()) {
+			 System.out.println(result.getString(1));
+			 System.out.println(result.getString(2));
+			 System.out.println(result.getString(3));
+		     Unit unit = new Unit();
+		     unit.setUnitName(result.getString(1));
+		     unit.setX(result.getInt(2));
+		     unit.setY(result.getInt(3));
+		     unit.setDescription(result.getString(4));
+		     unit.setImageUrl(new Embedded("",new ThemeResource(result.getString(5))));
+		     unit.setMapImageUrl(result.getString(6));
+		     unit.setMapDescription(result.getString(7));
+		     unit.setUnitIconUrl("numbers/location_"+resultCounter+".png");
+		     unit.setUnitIcon(new Embedded("Unit Icon",new ThemeResource("numbers/location_"+resultCounter+".png")));
+		     resultCounter++;
+		     
+		     unitContainer.addBean(unit);
+		   }
+		 }
+	  } catch (SQLException e){
+	      e.printStackTrace();
+	    } catch (InstantiationException e) {
+		    e.printStackTrace(); 
+	       } catch (IllegalAccessException e) {
+		       e.printStackTrace();    
+	         }
+	   //notifyListeners();
+	   return unitContainer;
+  }
+  
+  public static UnitContainer getAllUnits() { 
+	  UnitContainer unitContainer = null;
+	  try{
+		unitContainer = new UnitContainer();  
+	    if (conn== null) {
+		  conn=getConn();
+	    }
+	    Statement select = conn.createStatement();
+	    String selectStatement= "SELECT unit.Name, X, Y, unit.Description,unit.Image_Url, map.Image_Url, map.Description from unit, map where unit.Map_ID=map.Id";
+		System.out.println(selectStatement);
+		ResultSet result = select.executeQuery(selectStatement);
+		   
+		   int resultCounter = 1;
+		   
+		   while (result.next()) {
+			   
+		     Unit unit= new Unit();
+		     unit.setUnitName(result.getString(1));
+		     unit.setX(result.getInt(2));
+		     unit.setY(result.getInt(3));
+		     unit.setDescription(result.getString(4));
+		     unit.setImageUrl(new Embedded("",new ThemeResource(result.getString(5))));
+		     unit.setMapImageUrl(result.getString(6));
+		     unit.setMapDescription(result.getString(7));
+		     unit.setUnitIconUrl("numbers/location_"+resultCounter+".png");
+		     unit.setUnitIcon(new Embedded("Unit Icon",new ThemeResource("numbers/location_"+resultCounter+".png")));
+		     resultCounter++;
+		     
+		     unitContainer.addBean(unit);
+		   }
+	  } catch (SQLException e){
+	      e.printStackTrace();
+	    } catch (InstantiationException e) {
+		    e.printStackTrace(); 
+	       } catch (IllegalAccessException e) {
+		       e.printStackTrace();    
+	         }
+	   //notifyListeners();
+	   return unitContainer;
+  }
+  
   public static UnitContainer addUnits(Unit unit1, Unit unit2)
   {
 	  UnitContainer unitContainer = null;
