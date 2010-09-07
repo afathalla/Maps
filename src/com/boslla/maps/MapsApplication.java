@@ -3,9 +3,12 @@ package com.boslla.maps;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import com.boslla.maps.util.*;
+
 import com.vaadin.Application;
 import com.vaadin.data.Property;
 import com.vaadin.data.Property.ValueChangeEvent;
+import com.vaadin.terminal.Sizeable;
 import com.vaadin.terminal.ThemeResource;
 import com.vaadin.terminal.gwt.server.HttpServletRequestListener;
 import com.vaadin.ui.*;
@@ -33,7 +36,9 @@ public class MapsApplication extends Application implements Button.ClickListener
 	            SplitPanel.ORIENTATION_HORIZONTAL);
 	 
 	  private SplitPanel verticalSplit = new SplitPanel(SplitPanel.ORIENTATION_VERTICAL);
-//	  private SplitPanel verticalSplit2 = new SplitPanel(SplitPanel.ORIENTATION_VERTICAL);
+	  private SplitPanel verticalSplit2 = new SplitPanel(SplitPanel.ORIENTATION_VERTICAL);
+	  private VerticalLayout BottomBar = new VerticalLayout();
+	  private VerticalLayout upperBar = new VerticalLayout();
 	  private Button directionSearchButton = new Button("Get Direction");
 	  private Button locationSearchButton = new Button("Spot Location");
 	  private Button upperSearchButton = new Button("Spot Location");
@@ -47,19 +52,22 @@ public class MapsApplication extends Application implements Button.ClickListener
 	  private Button addToMyPlacesButton = new Button("Add Location to My Places");
 	  private Button showStepsButton = new Button("Show Steps");
 	  private Button hideStepsButton = new Button("Hide Steps");
-	  //private Button hidePanelButton = new Button("<<");
-	  //private Button showPanelButton = new Button(">>");
+	  private Button setDefaultLocationButton = new Button("Set Default Location");
+	  private Button saveDefaultLocationButton = new Button("Save");
+	  private Button removeDefaultLocationButton = new Button("Remove");
+	  private Button cancelDefaultLocationButton = new Button("Cancel");
+	  private Button hidePanelButton = new Button("<<");
+	  private Button showPanelButton = new Button(">>");
+      private ComboBox setDefaultLocationComboBox = new ComboBox();
 	  private TextField startText= new TextField();
 	  private TextField locationSearchText= new TextField();
 	  private TextField upperSearchText= new TextField();
 	  private TextField endText= new TextField();
-	  //private Label startLocationLabel= new Label("<h3></h3>",Label.CONTENT_XHTML);
-	  //private Label endLocationLabel= new Label("<h3></h3>",Label.CONTENT_XHTML);
 	  private Label locationLabel= new Label("<h3></h3>",Label.CONTENT_XHTML);
-	  private Label homeLabel= new Label ("<h2>Welcome to BOSLLA.COM !!</h2></ br> You can find locations and directions to your favorite places here...",Label.CONTENT_XHTML);
 	  private Label stepsTitleLabel = new Label ("<h2>Steps to Destination:</h2>",Label.CONTENT_XHTML);
 	  private Label walkingDistance = new Label ("Total Distance:",Label.CONTENT_XHTML);
 	  private Label walkingTime = new Label ("Total Walking Time:",Label.CONTENT_XHTML);
+	  private Label setDefaultLocationLabel = new Label("<b>Set default location</b>",Label.CONTENT_XHTML);
 	  private ProgressIndicator progressIndicator= new ProgressIndicator(new Float(0.0));
 	  private static MapView mapView= new MapView();
 	  private UnitContainer unitDataSource = null;
@@ -76,6 +84,8 @@ public class MapsApplication extends Application implements Button.ClickListener
 	  private StepList stepList = new StepList(this);
 	  private Boolean startSelected = false; //Indicates correctly identified start location
 	  private Boolean endSelected = false; //Indicates correctly identified end location
+	  private boolean defaultLocationFound = false;
+	  private String defaultLocationValue = null;
 	  private  ArrayList<Unit> displayedUnits = new ArrayList<Unit>();
 	  private Unit startSelectedUnit;
 	  private Unit endSelectedUnit;
@@ -87,10 +97,10 @@ public class MapsApplication extends Application implements Button.ClickListener
       private VerticalLayout l4 = new VerticalLayout();
       private VerticalLayout l5 = new VerticalLayout();
       private static VerticalLayout verticalViewLayout= new VerticalLayout();
-      
+      private HorizontalLayout defaultLocationHorizontalLayout = new HorizontalLayout();
       private Embedded startLocationIcon = new Embedded("", new ThemeResource("numbers/location_1.png"));
       private Embedded endLocationIcon = new Embedded("", new ThemeResource("numbers/location_2.png"));
-
+      private int horizontalSplitPosition = 33;
       private HttpServletResponse response;
       private HttpServletRequest request;
 
@@ -100,11 +110,17 @@ public class MapsApplication extends Application implements Button.ClickListener
 		//setTheme("runo");
 		//setTheme("chameleon");
 		setTheme("reindeermods");
+
 		buildLayout("mainView");
+
 	}
 	
 	public void onRequestStart(HttpServletRequest request,
             HttpServletResponse response) {
+		
+		// Get Default Location Cookie
+		getDefaultLocationCookie();
+		
 		this.response = response;
 		this.request = request;
 		System.out.println("[Start of request");
@@ -122,12 +138,11 @@ public class MapsApplication extends Application implements Button.ClickListener
 				
 		//Initialize text boxes
 		startText.setInputPrompt("Enter Starting Point");
-		endText.setInputPrompt("Enter Destination");
 		startText.setWidth(175, TextField.UNITS_PIXELS);
+		endText.setInputPrompt("Enter Destination");
 		endText.setWidth(175, TextField.UNITS_PIXELS);
 		locationSearchText.setInputPrompt("Location Search");
 		locationSearchText.setWidth(175, TextField.UNITS_PIXELS);
-		upperSearchText.setWidth(100, TextField.UNITS_PERCENTAGE);
 		
 		//Initialize Buttons
 		upperSearchButton.setClickShortcut(KeyCode.ENTER);
@@ -152,18 +167,19 @@ public class MapsApplication extends Application implements Button.ClickListener
 		locationSearchButton.addListener((ClickListener)this);
 		findAnotherLocationButton.addListener((ClickListener)this);
 		upperSearchButton.addListener((ClickListener)this);
-		
 		addToMyPlacesButton.setStyleName(Button.STYLE_LINK);
 		addToMyPlacesButton.addListener((ClickListener)this);
-		
 		clearMyPlacesButton.setStyleName(Button.STYLE_LINK);
 		clearMyPlacesButton.addListener((ClickListener)this);
+		saveDefaultLocationButton.addListener((ClickListener)this);
+		removeDefaultLocationButton.addListener((ClickListener)this);
+		cancelDefaultLocationButton.addListener((ClickListener)this);
 		
 		//Show & Hide Panel Buttons
-//	    hidePanelButton.setDescription("Hide Panel");
-//	    showPanelButton.setDescription("Show Panel");
-//	    hidePanelButton.addListener((ClickListener)this);
-//	    showPanelButton.addListener((ClickListener)this);
+	    hidePanelButton.setDescription("Hide Panel");
+	    showPanelButton.setDescription("Show Panel");
+	    hidePanelButton.addListener((ClickListener)this);
+	    showPanelButton.addListener((ClickListener)this);
 		
 		//Initialize tabSheet
 		l1.setMargin(true);	
@@ -187,55 +203,154 @@ public class MapsApplication extends Application implements Button.ClickListener
 		layout.setSizeFull();
 		
 		// Second, aHorizontal Split
-		horizontalSplit.setFirstComponent(buildVerticalView());
-		horizontalSplit.setSplitPosition(33, SplitPanel.UNITS_PERCENTAGE);
+		horizontalSplit.setSplitPosition(horizontalSplitPosition, SplitPanel.UNITS_PERCENTAGE);
 		horizontalSplit.setLocked(false);
-//		horizontalSplit.setSecondComponent(hidePanelButton);
 		
 		//Another horizontal split
-		
-		AbsoluteLayout buttonBar = new AbsoluteLayout();
-		buttonBar = buildButtonBar();
-		
-		verticalSplit.addComponent(buttonBar);
+				
+		verticalSplit.addComponent(buildButtonBar());
 		verticalSplit.setSplitPosition(100, SplitPanel.UNITS_PERCENTAGE);
 		verticalSplit.setLocked(true);
 		
+		BottomBar.setWidth(100, TextField.UNITS_PERCENTAGE);
+		BottomBar.setHeight(6, TextField.UNITS_PERCENTAGE);
+		
+		upperBar.setWidth(100, TextField.UNITS_PERCENTAGE);
+		upperBar.setHeight(100,TextField.UNITS_PERCENTAGE);;
+		upperBar.addComponent(hidePanelButton);
+		upperBar.setComponentAlignment(hidePanelButton, Alignment.MIDDLE_LEFT);
+		
+		verticalSplit2.setSplitPosition(5, SplitPanel.UNITS_PERCENTAGE);
+		verticalSplit2.setLocked(true);
+		
+		verticalSplit2.setFirstComponent(upperBar);
+		
+		horizontalSplit.setFirstComponent(buildVerticalView());
+		horizontalSplit.setSecondComponent(verticalSplit2);
+
 		layout.addComponent(verticalSplit);
-		layout.setExpandRatio(verticalSplit, 1);
+		layout.setExpandRatio(verticalSplit, 3);
 		layout.addComponent(horizontalSplit);
-		layout.setExpandRatio(horizontalSplit,10);
-	
+		layout.setExpandRatio(horizontalSplit,20);
+		layout.addComponent(BottomBar);
+		layout.setExpandRatio(BottomBar, 1);
+		
 		mainWindow.setContent(layout);
 		setMainWindow(mainWindow);
 	}
 	
-	private AbsoluteLayout buildButtonBar()
+	private VerticalLayout buildButtonBar()
 	{
-		AbsoluteLayout upperViewLayout= new AbsoluteLayout();
 
-		upperViewLayout.addComponent(signOutButton, "right: 1%; top: 1%;");
+		VerticalLayout upperViewLayout= new VerticalLayout();
 		
+		upperViewLayout.setHeight(100, SplitPanel.UNITS_PERCENTAGE);
+		upperViewLayout.setWidth(100, SplitPanel.UNITS_PERCENTAGE);
+		
+		HorizontalLayout upperButtonBar = new HorizontalLayout();
+//		upperButtonBar.addComponent(signOutButton, "right: 1%; top: 1%;");
+		upperButtonBar.setWidth(100, SplitPanel.UNITS_PERCENTAGE);
+		upperButtonBar.setHeight(100, SplitPanel.UNITS_PERCENTAGE);
+		upperButtonBar.addComponent(signOutButton);
+		upperButtonBar.setComponentAlignment(signOutButton, Alignment.TOP_RIGHT);
+
 		HorizontalLayout searchBarLayout= new HorizontalLayout();
-		searchBarLayout.setWidth(75, TextField.UNITS_PERCENTAGE);
-		//searchBarLayout.setSpacing(true);
-		//searchBarLayout.setMargin(true, false, true, false);
+
+		searchBarLayout.setWidth(95, TextField.UNITS_PERCENTAGE);
+		searchBarLayout.setHeight(100, SplitPanel.UNITS_PERCENTAGE);
+		searchBarLayout.setMargin(false, true, false, false);
 		
-		Label brandLabel= new Label ("<h1><b>boslla.com</b></h1>",Label.CONTENT_XHTML);
-		//brandLabel.setWidth(10, TextField.UNITS_PERCENTAGE);
-		searchBarLayout.addComponent(brandLabel);
-		searchBarLayout.setComponentAlignment(brandLabel, Alignment.MIDDLE_LEFT);
+		Embedded brandIcon = new Embedded(null, new ThemeResource("images/boslla.png"));
+		brandIcon.setWidth(100, TextField.UNITS_PERCENTAGE);
+		brandIcon.setHeight(100, TextField.UNITS_PERCENTAGE);
+		
+		upperSearchText.setWidth(85, TextField.UNITS_PERCENTAGE);
+		
+		searchBarLayout.addComponent(brandIcon);
+		searchBarLayout.setComponentAlignment(brandIcon, Alignment.TOP_LEFT);
+		
 		searchBarLayout.addComponent(upperSearchText);
-		searchBarLayout.setComponentAlignment(upperSearchText, Alignment.MIDDLE_LEFT);
+		searchBarLayout.setComponentAlignment(upperSearchText, Alignment.MIDDLE_RIGHT);
+		
 		searchBarLayout.addComponent(upperSearchButton);
 		searchBarLayout.setComponentAlignment(upperSearchButton, Alignment.MIDDLE_LEFT);
+				
+		searchBarLayout.setExpandRatio(brandIcon,1);
+		searchBarLayout.setExpandRatio(upperSearchText,4);
+		searchBarLayout.setExpandRatio(upperSearchButton,1);
 		
+		upperViewLayout.addComponent(upperButtonBar);
+		upperViewLayout.setComponentAlignment(upperButtonBar, Alignment.TOP_RIGHT);
+		upperViewLayout.setExpandRatio(upperButtonBar,1);
 		upperViewLayout.addComponent(searchBarLayout);
+		upperViewLayout.setExpandRatio(searchBarLayout,2);
 		
 		return upperViewLayout;
 	}
+	/**************************************************************************/
+	private SplitPanel buildVerticalView()
+		{
+			verticalViewLayout.removeAllComponents();
+			verticalViewLayout.setSpacing(true);
 
-/*****************************************************************************/
+			tabSheet.addTab(l3,"Home", null);
+			tabSheet.addTab(l4,"My Maps",null);
+			tabSheet.addTab(l5,"My Places",null);
+		    tabSheet.addTab(l1,"Find Location",null);
+		    tabSheet.addTab(l2,"Find Direction",null);
+
+		    tabSheet.setSelectedTab(l3);
+		    tabSheet.setSizeFull();
+
+		    SplitPanel verticalSplit3 = new SplitPanel(SplitPanel.ORIENTATION_VERTICAL);
+			
+		    verticalSplit3.setSplitPosition(5, TextField.UNITS_PERCENTAGE);
+		    verticalSplit3.setLocked(true);
+		    verticalSplit3.setFirstComponent(tabSheet);
+		    verticalSplit3.setSecondComponent(verticalViewLayout);
+		     
+		    buildHomeTab();
+
+		  	tabSheet.addListener(new SelectedTabChangeListener() 
+			{
+			    public void selectedTabChange(SelectedTabChangeEvent event) {
+			        TabSheet tabSheet = event.getTabSheet();
+			        Tab tab = tabSheet.getTab(tabSheet.getSelectedTab());
+			        System.out.println(tab.getCaption().toString());
+			        
+			        if (tab.getCaption().equals("Find Location"))
+			        {
+			        	verticalViewLayout.removeAllComponents();
+			        	buildFindLocation();
+			        }
+			        else if (tab.getCaption().equals("Find Direction"))
+			        {
+			        	verticalViewLayout.removeAllComponents();
+			        	buildFindDirection();
+			        }
+			        else if (tab.getCaption().equals("Home"))
+			        {
+			        	verticalViewLayout.removeAllComponents();
+			        	buildHomeTab();
+			        }
+			        else if (tab.getCaption().equals("My Maps"))
+			        {
+			        	verticalViewLayout.removeAllComponents();;
+			        	buildMyMaps();
+			        }
+			        else if (tab.getCaption().equals("My Places"))
+			        {
+			        	verticalViewLayout.removeAllComponents();
+			        	buildMyPlaces();
+			        }
+			    }
+			});
+
+			return verticalSplit3;	 
+		}
+/****************************************************************************
+	This method builds the Find Direction tab
+*****************************************************************************/
 	
 	private VerticalLayout buildFindDirection()
 	{
@@ -256,10 +371,25 @@ public class MapsApplication extends Application implements Button.ClickListener
 		//Initialize start and end Text Boxes
 		startText.setValue("");
 		startSelected=false;
-	
+		
+		if (defaultLocationFound)
+		{
+			startText.setValue(defaultLocationValue);
+			startSelected = true;
+			
+			String[] s = defaultLocationValue.split(",");
+			System.out.println("Find Direction: "+s[0]);
+			startUnitDataSource=UnitContainer.getSimilarUnits(s[0]);
+			startSelectedUnit = startUnitDataSource.getIdByIndex(0);
+			displayedUnits.clear();
+			displayedUnits.add(startSelectedUnit);
+			mapView.setDisplayedUnits(displayedUnits);
+			setMainComponent(mapView);
+		}
+		else
 		if (startSelectedUnit !=null)
 		{
-			startText.setValue(startSelectedUnit.getUnitName());
+			startText.setValue(startSelectedUnit.getUnitName()+", "+startSelectedUnit.getMapDescription());
 			startSelected=true;
 			startUnitDataSource=UnitContainer.getSimilarUnits(startSelectedUnit.getUnitName());
 			displayedUnits.clear();
@@ -277,7 +407,7 @@ public class MapsApplication extends Application implements Button.ClickListener
 			  if (!startSelected && directionLocationList.size()!=0)
 			  {
 				  startSelectedUnit= (Unit) directionLocationList.getValue();
-				  startText.setValue(startSelectedUnit.getUnitName());
+				  startText.setValue(startSelectedUnit.getUnitName()+", "+startSelectedUnit.getMapDescription());
 				  startSelected = true;
 				  locationLabel.setVisible(false);
 				  directionLocationList.setVisible(false);
@@ -288,7 +418,7 @@ public class MapsApplication extends Application implements Button.ClickListener
 			  if (startSelected && !endSelected && directionLocationList.size()!=0)
 			  {
 				  endSelectedUnit= (Unit) directionLocationList.getValue();
-				  endText.setValue(endSelectedUnit.getUnitName());
+				  endText.setValue(endSelectedUnit.getUnitName()+", "+endSelectedUnit.getMapDescription());
 				  endSelected = true;
 				  locationLabel.setVisible(false);
 				  directionLocationList.setVisible(false);
@@ -365,7 +495,7 @@ public class MapsApplication extends Application implements Button.ClickListener
 			  	displayedUnits.clear();
 			  	displayedUnits.add(selectedUnit);
 				// Show Results
-				locationLabel.setValue("<h3>One Unit was found that matches your chosen location.</h3>");
+				locationLabel.setValue("<h3>Matches to your chosen location:</h3>");
 				locationLabel.setVisible(true); 
 				mapView.setDisplayedUnits(displayedUnits);
 				setMainComponent(mapView);
@@ -392,70 +522,10 @@ public class MapsApplication extends Application implements Button.ClickListener
 		
 		return verticalViewLayout;
 	}
-	
-	private VerticalLayout buildVerticalView()
-	{
-		verticalViewLayout.removeAllComponents();
-		verticalViewLayout.setSpacing(true);
 
-		tabSheet.addTab(l3,"Home", null);
-		tabSheet.addTab(l4,"My Maps",null);
-		tabSheet.addTab(l5,"My Places",null);
-	    tabSheet.addTab(l1,"Find Location",null);
-	    tabSheet.addTab(l2,"Find Direction",null);
-
-		tabSheet.setSelectedTab(null);
-	    
-	    verticalViewLayout.addComponent(tabSheet);
-	    buildHomeTab();
-
-	  	tabSheet.addListener(new SelectedTabChangeListener() 
-		{
-		    public void selectedTabChange(SelectedTabChangeEvent event) {
-		        TabSheet tabSheet = event.getTabSheet();
-		        Tab tab = tabSheet.getTab(tabSheet.getSelectedTab());
-		        System.out.println(tab.getCaption().toString());
-		        
-		        if (tab.getCaption().equals("Find Location"))
-		        {
-		        	verticalViewLayout.removeAllComponents();
-		        	verticalViewLayout.addComponent(tabSheet);
-		        	buildFindLocation();
-		        }
-		        else if (tab.getCaption().equals("Find Direction"))
-		        {
-		        	verticalViewLayout.removeAllComponents();
-		        	verticalViewLayout.addComponent(tabSheet);
-		        	buildFindDirection();
-		        }
-		        else if (tab.getCaption().equals("Home"))
-		        {
-		        	verticalViewLayout.removeAllComponents();
-		        	verticalViewLayout.addComponent(tabSheet);
-		        	buildHomeTab();
-		        }
-		        else if (tab.getCaption().equals("My Maps"))
-		        {
-		        	verticalViewLayout.removeAllComponents();
-		        	verticalViewLayout.addComponent(tabSheet);
-		        	buildMyMaps();
-		        }
-		        else if (tab.getCaption().equals("My Places"))
-		        {
-		        	verticalViewLayout.removeAllComponents();
-		        	verticalViewLayout.addComponent(tabSheet);
-		        	buildMyPlaces();
-		        }
-		    }
-		});
-
-		return verticalViewLayout;	 
-	}
-	
 	public void buildMyMaps()
 	{	
 		verticalViewLayout.removeAllComponents();
-    	verticalViewLayout.addComponent(tabSheet);
     	tabSheet.setSelectedTab(l4);
     	
 		Label label = new Label("<h3>Please select a Map:</h3>",Label.CONTENT_XHTML);
@@ -483,7 +553,6 @@ public class MapsApplication extends Application implements Button.ClickListener
 	public void buildMyMaps(Place selectedPlace)
 	{
 		verticalViewLayout.removeAllComponents();
-    	verticalViewLayout.addComponent(tabSheet);
     	tabSheet.setSelectedTab(l4);
     	
 		mapDataSource = MapContainer.getMyMaps(selectedPlace.getPlaceName());
@@ -525,7 +594,6 @@ public class MapsApplication extends Application implements Button.ClickListener
 	public void buildMyPlaces()
 	{	
 		verticalViewLayout.removeAllComponents();
-    	verticalViewLayout.addComponent(tabSheet);
     	tabSheet.setSelectedTab(l5);
     	
     	getDirectionFromHereButton.setVisible(false);
@@ -574,33 +642,28 @@ public class MapsApplication extends Application implements Button.ClickListener
 		}
 	}
 	
-	private String getMyPlacesCookie() {
-		
-		String myplaces = null;
-		
-		try 
-		{
-			Cookie[] cookies = request.getCookies();
-			System.out.println("Cookie Length: "+cookies.length);
-			System.out.println("Cookie Name: "+cookies[0].getName());
-			for (int i=0; i<cookies.length; i++) {
-				if (cookies[i].getName().equals("myplaces"))
-                myplaces = cookies[i].getValue();
-			}
-			System.out.println("Cookie Found: "+ myplaces);
-		}
-		catch (Exception e)
-		{
-			//Unable to get Cookie
-			return null;
-		}
-        return myplaces;
-        
-	}
-
 	public void buildHomeTab()
 	{
+    	tabSheet.setSelectedTab(l3);
+
+		Label homeLabel= new Label ("<h2>Welcome to BOSLLA.COM !!</h2></ br> You can find locations and directions to your favorite places here...",Label.CONTENT_XHTML);
 		verticalViewLayout.addComponent(homeLabel);
+
+		if (getDefaultLocationCookie() != null)
+		{
+			Label defaultLocationLabel = new Label ("Default Location: "+defaultLocationValue);
+			verticalViewLayout.addComponent(defaultLocationLabel);
+			setDefaultLocationButton.setCaption("Change Default Location");
+		}
+		else 
+			setDefaultLocationButton.setCaption("Set Default Location");
+		
+		setDefaultLocationButton.setClickShortcut(KeyCode.ENTER);
+		setDefaultLocationButton.addListener((ClickListener)this);
+		setDefaultLocationButton.setStyleName(Button.STYLE_LINK);
+		
+		setDefaultLocationButton.setVisible(true);
+		verticalViewLayout.addComponent(setDefaultLocationButton);
 	}
 	
 	public void showDirectionResults()
@@ -723,7 +786,6 @@ public class MapsApplication extends Application implements Button.ClickListener
 	  }
 	}
 	
-	
 	public void showNotification(String caption, String description, int type)
 	{
 		Notification n = new Notification(caption,description, type);
@@ -750,7 +812,6 @@ public class MapsApplication extends Application implements Button.ClickListener
 	        {
 	        	verticalViewLayout.removeAllComponents();
 	        	mapView.setDisplayedUnits(null);
-	        	verticalViewLayout.addComponent(tabSheet);
 	        	buildFindLocation();
 	        }
 	        else if (tab.getCaption().equals("Find Direction"))
@@ -758,39 +819,53 @@ public class MapsApplication extends Application implements Button.ClickListener
 	        	verticalViewLayout.removeAllComponents();
 	        	mapView.setDisplayedUnits(null);
 	        	mapView.clearPath();
-	        	verticalViewLayout.addComponent(tabSheet);
 	        	startSelectedUnit=null;
 	        	buildFindDirection();
 	        }
 	        else if (tab.getCaption().equals("My Maps"))
 	        {
 	        	verticalViewLayout.removeAllComponents();
-	        	verticalViewLayout.addComponent(tabSheet);
 	        	buildMyMaps();
 	        }
 	        else if (tab.getCaption().equals("My Places"))
 	        {
 	        	verticalViewLayout.removeAllComponents();
-	        	verticalViewLayout.addComponent(tabSheet);
 	        	buildMyPlaces();
 	        }
 		}
-/*		else if (sourceButton == hidePanelButton)
+		else if (sourceButton == hidePanelButton)
 		{
-			horizontalSplit.setVisible(false);
-		    horizontalSplit.removeComponent(hidePanelButton);
-		    horizontalSplit.addComponent(showPanelButton);
+			horizontalSplit.setSplitPosition(0, SplitPanel.UNITS_PERCENTAGE);
+		    upperBar.removeComponent(hidePanelButton);
+		    upperBar.addComponent(showPanelButton);
 		}
 		else if (sourceButton == showPanelButton)
 		{
-		    horizontalSplit.removeComponent(showPanelButton);
-		    horizontalSplit.addComponent(hidePanelButton);
-		    horizontalSplit.setVisible(true);
+			upperBar.removeComponent(showPanelButton);
+			upperBar.addComponent(hidePanelButton);
+			horizontalSplit.setSplitPosition(horizontalSplitPosition, SplitPanel.UNITS_PERCENTAGE);
 		}
-*/		else if (sourceButton == getDirectionFromHereButton)
+		
+		else if (sourceButton == setDefaultLocationButton)
+		{   	
+			buildSetDefaultLocation();			
+		}
+		else if (sourceButton == saveDefaultLocationButton)
+		{ 
+			saveSetDefaultLocation();
+		}
+		else if (sourceButton == removeDefaultLocationButton)
+		{ 
+			removeSetDefaultLocation();
+		}
+		else if (sourceButton == cancelDefaultLocationButton)
+		{  
+			cancelSetDefaultLocation();
+		}
+		
+		else if (sourceButton == getDirectionFromHereButton)
 		{   	
         	verticalViewLayout.removeAllComponents();
-        	verticalViewLayout.addComponent(tabSheet);
         	tabSheet.setSelectedTab(l2);
         	mapView.setDisplayedUnits(null);
         	mapView.clearPath();
@@ -807,7 +882,6 @@ public class MapsApplication extends Application implements Button.ClickListener
 			if (removeMyPlacesCookie())		
 			{
 				verticalViewLayout.removeAllComponents();
-		    	verticalViewLayout.addComponent(tabSheet);
 		    	tabSheet.setSelectedTab(l5);
 				Label label = new Label("<h3>There are no saved Locations in My Places</h3>",Label.CONTENT_XHTML);	
 				verticalViewLayout.addComponent(label);
@@ -819,7 +893,6 @@ public class MapsApplication extends Application implements Button.ClickListener
 		else if (sourceButton == findAnotherLocationButton || sourceButton == findLocationOnMapButton)
 		{
         	verticalViewLayout.removeAllComponents();
-        	verticalViewLayout.addComponent(tabSheet);
         	tabSheet.setSelectedTab(l1);
         	locationSearchText.setValue("");
         	mapView.setDisplayedUnits(null);
@@ -829,14 +902,12 @@ public class MapsApplication extends Application implements Button.ClickListener
 		else if (sourceButton == myMapsButton)
 		{
         	verticalViewLayout.removeAllComponents();
-        	verticalViewLayout.addComponent(tabSheet);
         	tabSheet.setSelectedTab(l4);
         	buildMyMaps();
 		}
 		else if (sourceButton == upperSearchButton)
 		{
         	verticalViewLayout.removeAllComponents();
-        	verticalViewLayout.addComponent(tabSheet);
         	tabSheet.setSelectedTab(l1);
         	
         	buildFindLocation();
@@ -930,6 +1001,90 @@ public class MapsApplication extends Application implements Button.ClickListener
 		}
 	}
 	
+/*******************************************************************/
+	
+private void buildSetDefaultLocation() {
+
+	
+		System.out.println("Inside Build Default Location");
+        setDefaultLocationComboBox.setNewItemsAllowed(false);      
+        setDefaultLocationComboBox.setImmediate(true);
+        setDefaultLocationComboBox.setNullSelectionAllowed(false);
+ 
+        unitDataSource = UnitContainer.getAllUnits();       
+        String item;
+        for (int i = 0; i < unitDataSource.size(); i++) {
+        	item = unitDataSource.getIdByIndex(i).getUnitName() +", "+unitDataSource.getIdByIndex(i).getMapDescription();
+        	setDefaultLocationComboBox.addItem(item);
+        }
+
+		System.out.println("Build Default Location:" + defaultLocationValue);
+		
+		if (defaultLocationFound == false)
+		    setDefaultLocationComboBox.setInputPrompt("Enter Default Location");
+		else
+			setDefaultLocationComboBox.setInputPrompt(defaultLocationValue);
+		
+		setDefaultLocationButton.setVisible(false);
+
+		defaultLocationHorizontalLayout.setSpacing(true);
+		
+		verticalViewLayout.addComponent(setDefaultLocationLabel);
+		defaultLocationHorizontalLayout.addComponent(setDefaultLocationComboBox);
+		defaultLocationHorizontalLayout.setComponentAlignment(setDefaultLocationComboBox, Alignment.BOTTOM_LEFT);
+		defaultLocationHorizontalLayout.addComponent(saveDefaultLocationButton);
+		defaultLocationHorizontalLayout.setComponentAlignment(saveDefaultLocationButton, Alignment.BOTTOM_LEFT);
+		defaultLocationHorizontalLayout.addComponent(removeDefaultLocationButton);
+		defaultLocationHorizontalLayout.setComponentAlignment(removeDefaultLocationButton, Alignment.BOTTOM_LEFT);			
+		defaultLocationHorizontalLayout.addComponent(cancelDefaultLocationButton);
+		defaultLocationHorizontalLayout.setComponentAlignment(cancelDefaultLocationButton, Alignment.BOTTOM_LEFT);
+		
+		verticalViewLayout.addComponent(defaultLocationHorizontalLayout);
+	}
+	
+	private void cancelSetDefaultLocation() {
+	
+    	verticalViewLayout.removeAllComponents();
+    	buildHomeTab();
+	}
+	
+	private void removeSetDefaultLocation() {
+		
+		if (removeDefaultLocationCookie())
+			{
+				showNotification("Default Location is removed successfully","",Notification.TYPE_HUMANIZED_MESSAGE);
+				defaultLocationFound = false;
+				defaultLocationValue = null;
+				cancelSetDefaultLocation();
+			}
+		else 
+			showNotification("Unable to remove default location. Please check if you have cookies enabled on your browser.","",Notification.TYPE_ERROR_MESSAGE);
+		
+	}
+	
+	private void saveSetDefaultLocation() {
+		
+		if (setDefaultLocationComboBox.getValue() != null)
+		{
+			defaultLocationValue = setDefaultLocationComboBox.getValue().toString();
+			
+			if (setDefaultLocationCookie(defaultLocationValue))
+			{
+				setDefaultLocationCookie(defaultLocationValue);
+				showNotification("Selected default location: ",defaultLocationValue, Notification.TYPE_HUMANIZED_MESSAGE);
+				defaultLocationFound = true;
+				cancelSetDefaultLocation();
+			}
+			else				
+				showNotification("Unable to set Default Location. Please make sure that cookies are enabled on your browser.","", Notification.TYPE_ERROR_MESSAGE);
+		}
+		else
+			showNotification("Please select a location","", Notification.TYPE_ERROR_MESSAGE);
+
+	}
+
+/*******************************************************************/
+	
 	private boolean removeMyPlacesCookie() {
 	
 		try
@@ -980,8 +1135,91 @@ public class MapsApplication extends Application implements Button.ClickListener
 		return true;
 	}
 
+	private String getMyPlacesCookie() {
+		
+		String myplaces = null;
+		
+		try 
+		{
+			Cookie[] cookies = request.getCookies();
+			System.out.println("Cookie Length: "+cookies.length);
+			System.out.println("Cookie Name: "+cookies[0].getName());
+			for (int i=0; i<cookies.length; i++) {
+				if (cookies[i].getName().equals("myplaces"))
+	            myplaces = cookies[i].getValue();
+			}
+			System.out.println("Cookie Found: "+ myplaces);
+		}
+		catch (Exception e)
+		{
+			//Unable to get Cookie
+			return null;
+		}
+	    return myplaces;
+	    
+	}
+	
+	private String getDefaultLocationCookie() {
+		
+		try 
+		{
+			Cookie[] cookies = request.getCookies();
+			System.out.println("Cookie Length: "+cookies.length);
+			for (int i=0; i<cookies.length; i++) {
+				if (cookies[i].getName().equals("defaultlocation"))
+				{
+					defaultLocationValue = cookies[i].getValue();
+					defaultLocationFound = true;
+					System.out.println("Cookie Found: "+ defaultLocationValue);
+					return defaultLocationValue;
+				}
+			}
+		    return null;
+		}
+		catch (Exception e)
+		{
+			//Unable to get Cookie
+			return null;
+		}   
+	}
+	
+	private boolean setDefaultLocationCookie(String defaultLocation) {
+		try
+		{			
+			Cookie cookie = new Cookie("defaultlocation",defaultLocation);
+			// Use a fixed path
+			//cookie.setPath("/My-Places");
+			cookie.setMaxAge(1000000000); // Unlimited Time
+			response.addCookie(cookie);
+			System.out.println("Set cookie: Default Location");
+		}
+		catch (Exception e)
+		{
+			return false;
+		}
+		return true;
+	}
+	
+	private boolean removeDefaultLocationCookie() {
+		
+		try
+		{
+			Cookie cookie = new Cookie("defaultlocation","");
+			// Use a fixed path
+			//cookie.setPath("/My-Places");
+			cookie.setMaxAge(0); // Unlimited Time
+			response.addCookie(cookie);
+			System.out.println("Removed cookie: defaultlocation");
+		}
+		catch (Exception e)
+		{
+			return false;
+		}
+		return true;
+	}
+
 	private void setMainComponent(Component c){
-		horizontalSplit.setSecondComponent(c);
+		verticalSplit2.setSecondComponent(c);
 	}
 	
 	private Connection getConn() {
@@ -1009,8 +1247,4 @@ public class MapsApplication extends Application implements Button.ClickListener
 	    }
 	            return conn;
   }
-
-	public UnitContainer getUnitDataSource() {
-      return unitDataSource;
-	}
 }
