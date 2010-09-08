@@ -265,21 +265,31 @@ public void calculateSteps()
 			
 			Window subWindow = new Window (selectedUnit.getUnitName());
 			subWindow.setModal(true);
-	        subWindow.setWidth("50%");
-	        subWindow.setHeight("50%");
+	        subWindow.setWidth("40%");
+	        subWindow.setHeight("40%");
 	        subWindow.center();
 			
 //			subWindow.setPositionX(clickedX.intValue());
 //			subWindow.setPositionY(clickedY.intValue());
 			
 			HorizontalLayout layout = new HorizontalLayout();
-			layout.setMargin(true);
-			layout.setSpacing(true);
+			layout.setSizeFull();
+			layout.setMargin(true, true, true, true);
 
 			Embedded placeImage = selectedUnit.getImageUrl();
-			Label placeDescription = new Label(selectedUnit.getDescription());
+			placeImage.setWidth(90, TextField.UNITS_PERCENTAGE);
+			placeImage.setHeight(90, TextField.UNITS_PERCENTAGE);
+			
+			String description = selectedUnit.getDescription()+"<br>"+"<br>"+"Category: "+selectedUnit.getUnitType()+"<br>"+"Location: "+selectedUnit.getMapDescription();
+			Label placeDescription = new Label(description,Label.CONTENT_XHTML);
+			placeDescription.setWidth(90, TextField.UNITS_PERCENTAGE);
+			placeDescription.setHeight(90, TextField.UNITS_PERCENTAGE);
 			layout.addComponent(placeImage);
+			layout.setComponentAlignment(placeImage, Alignment.TOP_LEFT);
+			layout.setExpandRatio(placeImage,1);
 			layout.addComponent(placeDescription);
+			layout.setComponentAlignment(placeDescription, Alignment.MIDDLE_LEFT);
+			layout.setExpandRatio(placeDescription,1);
 
 			subWindow.setContent(layout);						
 			getWindow().addWindow(subWindow);	

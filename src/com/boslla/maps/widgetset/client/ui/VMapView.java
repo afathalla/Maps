@@ -179,12 +179,13 @@ MouseDownHandler, MouseUpHandler, MouseMoveHandler {
 		// Set values after getting them from server
 	//	panel.setSize((50 + 1 + width) + "px", (25 + height) + "px");
 		panel.setSize(mapWidth + "px",mapHeight + "px");
+		panel.setTitle(mapDescriptionLabel.getText());
 		
 		canvas.setWidth(mapWidth);		
 		canvas.setHeight(mapHeight);
 		canvas.getElement().getStyle().setPropertyPx("width", mapWidth);
 		canvas.getElement().getStyle().setPropertyPx("height", mapHeight);
-		
+
 		mapImage.setUrl(GWT.getModuleBaseURL()+mapImageUrl);
 		
 		if (uidl.getStringArrayAttribute("placesX") != null) {

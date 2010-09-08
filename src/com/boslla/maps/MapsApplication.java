@@ -3,12 +3,9 @@ package com.boslla.maps;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import com.boslla.maps.util.*;
-
 import com.vaadin.Application;
 import com.vaadin.data.Property;
 import com.vaadin.data.Property.ValueChangeEvent;
-import com.vaadin.terminal.Sizeable;
 import com.vaadin.terminal.ThemeResource;
 import com.vaadin.terminal.gwt.server.HttpServletRequestListener;
 import com.vaadin.ui.*;
@@ -98,9 +95,9 @@ public class MapsApplication extends Application implements Button.ClickListener
       private VerticalLayout l5 = new VerticalLayout();
       private static VerticalLayout verticalViewLayout= new VerticalLayout();
       private HorizontalLayout defaultLocationHorizontalLayout = new HorizontalLayout();
-      private Embedded startLocationIcon = new Embedded("", new ThemeResource("numbers/location_1.png"));
-      private Embedded endLocationIcon = new Embedded("", new ThemeResource("numbers/location_2.png"));
-      private int horizontalSplitPosition = 33;
+      private Embedded startLocationIcon = new Embedded(null, new ThemeResource("numbers/location_1.png"));
+      private Embedded endLocationIcon = new Embedded(null, new ThemeResource("numbers/location_2.png"));
+      private int horizontalSplitPosition = 30;
       private HttpServletResponse response;
       private HttpServletRequest request;
 
@@ -108,8 +105,9 @@ public class MapsApplication extends Application implements Button.ClickListener
 	@Override
 	public void init() {
 		//setTheme("runo");
-		//setTheme("chameleon");
-		setTheme("reindeermods");
+		setTheme("chameleon");
+		//setTheme("reindeermods-2");
+		//setTheme("default");
 
 		buildLayout("mainView");
 
@@ -162,8 +160,8 @@ public class MapsApplication extends Application implements Button.ClickListener
 		signOutButton.addListener((ClickListener)this);
 		findLocationOnMapButton.addListener((ClickListener)this);
 		directionSearchButton.addListener((ClickListener)this);
-		directionSearchButton.setIcon(new ThemeResource("icons/search.gif"));
-		locationSearchButton.setIcon(new ThemeResource("icons/search.gif"));
+//		directionSearchButton.setIcon(new ThemeResource("icons/search.gif"));
+//		locationSearchButton.setIcon(new ThemeResource("icons/search.gif"));
 		locationSearchButton.addListener((ClickListener)this);
 		findAnotherLocationButton.addListener((ClickListener)this);
 		upperSearchButton.addListener((ClickListener)this);
@@ -180,7 +178,9 @@ public class MapsApplication extends Application implements Button.ClickListener
 	    showPanelButton.setDescription("Show Panel");
 	    hidePanelButton.addListener((ClickListener)this);
 	    showPanelButton.addListener((ClickListener)this);
-		
+	    hidePanelButton.setStyleName(Button.STYLE_LINK);
+	    showPanelButton.setStyleName(Button.STYLE_LINK);
+	    
 		//Initialize tabSheet
 		l1.setMargin(true);	
 		l2.setMargin(true);
@@ -188,13 +188,18 @@ public class MapsApplication extends Application implements Button.ClickListener
 		l4.setMargin(true);
 		l5.setMargin(true);
 		
-	    l1.setWidth(20, TextField.UNITS_PERCENTAGE);
-	    l2.setWidth(20, TextField.UNITS_PERCENTAGE);
-	    l3.setWidth(20, TextField.UNITS_PERCENTAGE);
-	    l4.setWidth(20, TextField.UNITS_PERCENTAGE);
-	    l5.setWidth(20, TextField.UNITS_PERCENTAGE);
+	    //l1.setWidth(20, TextField.UNITS_PERCENTAGE);
+	    //l2.setWidth(20, TextField.UNITS_PERCENTAGE);
+	    //l3.setWidth(20, TextField.UNITS_PERCENTAGE);
+	    //l4.setWidth(20, TextField.UNITS_PERCENTAGE);
+	    //l5.setWidth(20, TextField.UNITS_PERCENTAGE);
+	    l1.setSizeFull();
+	    l2.setSizeFull();
+	    l3.setSizeFull();
+	    l4.setSizeFull();
+	    l5.setSizeFull();
 	    
-	    tabSheet.setHeight("34px");
+	    tabSheet.setHeight(4, TextField.UNITS_PERCENTAGE);
 	    tabSheet.setWidth("100%");
 	    tabSheet.setImmediate(true);
 	    
@@ -204,7 +209,7 @@ public class MapsApplication extends Application implements Button.ClickListener
 		
 		// Second, aHorizontal Split
 		horizontalSplit.setSplitPosition(horizontalSplitPosition, SplitPanel.UNITS_PERCENTAGE);
-		horizontalSplit.setLocked(false);
+		horizontalSplit.setLocked(true);
 		
 		//Another horizontal split
 				
@@ -220,9 +225,8 @@ public class MapsApplication extends Application implements Button.ClickListener
 		upperBar.addComponent(hidePanelButton);
 		upperBar.setComponentAlignment(hidePanelButton, Alignment.MIDDLE_LEFT);
 		
-		verticalSplit2.setSplitPosition(5, SplitPanel.UNITS_PERCENTAGE);
+		verticalSplit2.setSplitPosition(4, SplitPanel.UNITS_PERCENTAGE);
 		verticalSplit2.setLocked(true);
-		
 		verticalSplit2.setFirstComponent(upperBar);
 		
 		horizontalSplit.setFirstComponent(buildVerticalView());
@@ -253,21 +257,25 @@ public class MapsApplication extends Application implements Button.ClickListener
 		upperButtonBar.setHeight(100, SplitPanel.UNITS_PERCENTAGE);
 		upperButtonBar.addComponent(signOutButton);
 		upperButtonBar.setComponentAlignment(signOutButton, Alignment.TOP_RIGHT);
+		
+		SplitPanel upperVerticalSplit = new SplitPanel(SplitPanel.ORIENTATION_VERTICAL);
+		upperVerticalSplit.setSplitPosition(25, SplitPanel.UNITS_PERCENTAGE);
+		upperVerticalSplit.setLocked(true);
 
 		HorizontalLayout searchBarLayout= new HorizontalLayout();
 
-		searchBarLayout.setWidth(95, TextField.UNITS_PERCENTAGE);
+		searchBarLayout.setWidth(100, TextField.UNITS_PERCENTAGE);
 		searchBarLayout.setHeight(100, SplitPanel.UNITS_PERCENTAGE);
 		searchBarLayout.setMargin(false, true, false, false);
 		
 		Embedded brandIcon = new Embedded(null, new ThemeResource("images/boslla.png"));
 		brandIcon.setWidth(100, TextField.UNITS_PERCENTAGE);
-		brandIcon.setHeight(100, TextField.UNITS_PERCENTAGE);
+		brandIcon.setHeight(90, TextField.UNITS_PERCENTAGE);
 		
-		upperSearchText.setWidth(85, TextField.UNITS_PERCENTAGE);
+		upperSearchText.setWidth(90, TextField.UNITS_PERCENTAGE);
 		
 		searchBarLayout.addComponent(brandIcon);
-		searchBarLayout.setComponentAlignment(brandIcon, Alignment.TOP_LEFT);
+		searchBarLayout.setComponentAlignment(brandIcon, Alignment.MIDDLE_LEFT);
 		
 		searchBarLayout.addComponent(upperSearchText);
 		searchBarLayout.setComponentAlignment(upperSearchText, Alignment.MIDDLE_RIGHT);
@@ -276,19 +284,19 @@ public class MapsApplication extends Application implements Button.ClickListener
 		searchBarLayout.setComponentAlignment(upperSearchButton, Alignment.MIDDLE_LEFT);
 				
 		searchBarLayout.setExpandRatio(brandIcon,1);
-		searchBarLayout.setExpandRatio(upperSearchText,4);
+		searchBarLayout.setExpandRatio(upperSearchText,2);
 		searchBarLayout.setExpandRatio(upperSearchButton,1);
 		
-		upperViewLayout.addComponent(upperButtonBar);
-		upperViewLayout.setComponentAlignment(upperButtonBar, Alignment.TOP_RIGHT);
-		upperViewLayout.setExpandRatio(upperButtonBar,1);
-		upperViewLayout.addComponent(searchBarLayout);
-		upperViewLayout.setExpandRatio(searchBarLayout,2);
+		upperVerticalSplit.addComponent(upperButtonBar);
+		upperVerticalSplit.addComponent(searchBarLayout);
 		
+		upperViewLayout.addComponent(upperVerticalSplit);
+
+
 		return upperViewLayout;
 	}
 	/**************************************************************************/
-	private SplitPanel buildVerticalView()
+	private VerticalLayout buildVerticalView()
 		{
 			verticalViewLayout.removeAllComponents();
 			verticalViewLayout.setSpacing(true);
@@ -302,12 +310,11 @@ public class MapsApplication extends Application implements Button.ClickListener
 		    tabSheet.setSelectedTab(l3);
 		    tabSheet.setSizeFull();
 
-		    SplitPanel verticalSplit3 = new SplitPanel(SplitPanel.ORIENTATION_VERTICAL);
+		    VerticalLayout tabViewLayout =  new VerticalLayout();
+		    tabViewLayout.setSizeFull();
 			
-		    verticalSplit3.setSplitPosition(5, TextField.UNITS_PERCENTAGE);
-		    verticalSplit3.setLocked(true);
-		    verticalSplit3.setFirstComponent(tabSheet);
-		    verticalSplit3.setSecondComponent(verticalViewLayout);
+		   // tabSheet.addComponent(verticalViewLayout);
+		    tabViewLayout.addComponent(tabSheet);
 		     
 		    buildHomeTab();
 
@@ -346,7 +353,7 @@ public class MapsApplication extends Application implements Button.ClickListener
 			    }
 			});
 
-			return verticalSplit3;	 
+			return tabViewLayout;	 
 		}
 /****************************************************************************
 	This method builds the Find Direction tab
@@ -354,39 +361,30 @@ public class MapsApplication extends Application implements Button.ClickListener
 	
 	private VerticalLayout buildFindDirection()
 	{
+		l2.addComponent(verticalViewLayout);
+		
 		// Hide Labels and Lists
 		locationLabel.setVisible(false);
 		directionLocationList.setVisible(false);
 		resultList.setVisible(false);
 		showStepsButton.setVisible(false);
 		hideStepsButton.setVisible(false);
+		resetButton.setVisible(false);
 		stepList.setVisible(false);
 		walkingDistance.setVisible(false);
 		walkingTime.setVisible(false);
+		optionList.setVisible(false);
 		
 		//Reset Parameters
 		directionLocationList.removeAllItems();
 		resultList.removeAllItems();
+		stepList.removeAllItems();
+		mapView.clearPath();
 
 		//Initialize start and end Text Boxes
 		startText.setValue("");
 		startSelected=false;
 		
-		if (defaultLocationFound)
-		{
-			startText.setValue(defaultLocationValue);
-			startSelected = true;
-			
-			String[] s = defaultLocationValue.split(",");
-			System.out.println("Find Direction: "+s[0]);
-			startUnitDataSource=UnitContainer.getSimilarUnits(s[0]);
-			startSelectedUnit = startUnitDataSource.getIdByIndex(0);
-			displayedUnits.clear();
-			displayedUnits.add(startSelectedUnit);
-			mapView.setDisplayedUnits(displayedUnits);
-			setMainComponent(mapView);
-		}
-		else
 		if (startSelectedUnit !=null)
 		{
 			startText.setValue(startSelectedUnit.getUnitName()+", "+startSelectedUnit.getMapDescription());
@@ -394,6 +392,20 @@ public class MapsApplication extends Application implements Button.ClickListener
 			startUnitDataSource=UnitContainer.getSimilarUnits(startSelectedUnit.getUnitName());
 			displayedUnits.clear();
 			displayedUnits.add(startUnitDataSource.getIdByIndex(0));
+			mapView.setDisplayedUnits(displayedUnits);
+			setMainComponent(mapView);
+		}
+		else if (defaultLocationFound)
+		{
+			startText.setValue(defaultLocationValue);
+			startSelected = true;
+			
+			String[] s = startText.getValue().toString().split(",");
+			System.out.println("Find Direction: "+s[0]);
+			startUnitDataSource=UnitContainer.getSimilarUnits(s[0]);
+			startSelectedUnit = startUnitDataSource.getIdByIndex(0);
+			displayedUnits.clear();
+			displayedUnits.add(startSelectedUnit);
 			mapView.setDisplayedUnits(displayedUnits);
 			setMainComponent(mapView);
 		}
@@ -442,19 +454,22 @@ public class MapsApplication extends Application implements Button.ClickListener
 		HorizontalLayout startLocationLayout= new HorizontalLayout();
 		HorizontalLayout endLocationLayout= new HorizontalLayout();
 		
-		startLocationLayout.setSpacing(true);
+		startLocationLayout.setSizeFull();
 		startLocationLayout.addComponent(startLocationIcon);
-		startLocationLayout.setComponentAlignment(startLocationIcon, Alignment.BOTTOM_LEFT);
+		startLocationLayout.setComponentAlignment(startLocationIcon, Alignment.TOP_LEFT);
+		startLocationLayout.setExpandRatio(startLocationIcon, 1);
 		startLocationLayout.addComponent(startText);
-		startLocationLayout.setComponentAlignment(startText, Alignment.BOTTOM_LEFT);
+		startLocationLayout.setComponentAlignment(startText, Alignment.MIDDLE_LEFT);
+		startLocationLayout.setExpandRatio(startText, 8);
 
-		endLocationLayout.setSpacing(true);
+		endLocationLayout.setSizeFull();
 		endLocationLayout.addComponent(endLocationIcon);
-		endLocationLayout.setComponentAlignment(endLocationIcon, Alignment.BOTTOM_LEFT);
+		endLocationLayout.setComponentAlignment(endLocationIcon, Alignment.TOP_LEFT);
+		endLocationLayout.setExpandRatio(endLocationIcon, 1);
 		endLocationLayout.addComponent(endText);
-		endLocationLayout.setComponentAlignment(endText, Alignment.BOTTOM_LEFT);
+		endLocationLayout.setComponentAlignment(endText, Alignment.MIDDLE_LEFT);
+		endLocationLayout.setExpandRatio(endText, 8);
 		
-		verticalViewLayout.setSpacing(true);
 		verticalViewLayout.addComponent(startLocationLayout);
 		verticalViewLayout.addComponent(endLocationLayout);
 		verticalViewLayout.addComponent(directionSearchButton);
@@ -467,7 +482,7 @@ public class MapsApplication extends Application implements Button.ClickListener
 		verticalViewLayout.addComponent(walkingDistance);
     	verticalViewLayout.addComponent(stepList);
 		verticalViewLayout.addComponent(resetButton);
-		
+
 		directionSearchButton.setClickShortcut(KeyCode.ENTER);
 	
 		return verticalViewLayout;
@@ -477,10 +492,14 @@ public class MapsApplication extends Application implements Button.ClickListener
 	
 	private VerticalLayout buildFindLocation()
 	{
+		l1.addComponent(verticalViewLayout);
+		
 		locationLabel.setVisible(false);
 		optionList.setVisible(false);
-		resultList.setVisible(false);
-		locationSearchText.setValue("");
+		locationSearchText.setInputPrompt("Enter Location");
+		
+		mapView.clearPath();
+		optionList.removeAllItems();
 		
 		optionList.addListener(new Property.ValueChangeListener() 
 		{
@@ -489,22 +508,21 @@ public class MapsApplication extends Application implements Button.ClickListener
 			  Unit selectedUnit = (Unit) optionList.getValue();
 			  if (selectedUnit != null)
 			  {
-			  	locationSearchText.setValue(selectedUnit.getUnitName());
+			  	locationSearchText.setValue(selectedUnit.getUnitName()+", "+selectedUnit.getMapDescription());
 			  	System.out.println(selectedUnit.getUnitName());
 			  	System.out.println(selectedUnit.getmapImageUrl());
 			  	displayedUnits.clear();
 			  	displayedUnits.add(selectedUnit);
 				// Show Results
-				locationLabel.setValue("<h3>Matches to your chosen location:</h3>");
+				locationLabel.setValue("<h3>Matches Found to your chosen location:</h3>");
 				locationLabel.setVisible(true); 
 				mapView.setDisplayedUnits(displayedUnits);
 				setMainComponent(mapView);
 				
 	        	startSelectedUnit = selectedUnit;
+	        	
 				verticalViewLayout.addComponent(getDirectionFromHereButton);
-				
 				verticalViewLayout.addComponent(findAnotherLocationButton);
-				
 				verticalViewLayout.addComponent(addToMyPlacesButton);
 			  }
 		  }
@@ -514,7 +532,6 @@ public class MapsApplication extends Application implements Button.ClickListener
 		verticalViewLayout.addComponent(locationSearchText);
 		verticalViewLayout.addComponent(locationSearchButton);
 		verticalViewLayout.addComponent(locationLabel);
-		verticalViewLayout.addComponent(resultList);
 		verticalViewLayout.addComponent(optionList);
 //		verticalViewLayout.addComponent(resetButton);
 	
@@ -522,11 +539,13 @@ public class MapsApplication extends Application implements Button.ClickListener
 		
 		return verticalViewLayout;
 	}
+	
+/**********************************************************************************/
 
 	public void buildMyMaps()
 	{	
 		verticalViewLayout.removeAllComponents();
-    	tabSheet.setSelectedTab(l4);
+		l4.addComponent(verticalViewLayout);
     	
 		Label label = new Label("<h3>Please select a Map:</h3>",Label.CONTENT_XHTML);
 		verticalViewLayout.addComponent(label);
@@ -552,8 +571,8 @@ public class MapsApplication extends Application implements Button.ClickListener
 	
 	public void buildMyMaps(Place selectedPlace)
 	{
-		verticalViewLayout.removeAllComponents();
-    	tabSheet.setSelectedTab(l4);
+		verticalViewLayout.removeAllComponents();    	
+    	l4.addComponent(verticalViewLayout);
     	
 		mapDataSource = MapContainer.getMyMaps(selectedPlace.getPlaceName());
 		mapList.refreshDataSource(mapDataSource);
@@ -594,8 +613,9 @@ public class MapsApplication extends Application implements Button.ClickListener
 	public void buildMyPlaces()
 	{	
 		verticalViewLayout.removeAllComponents();
-    	tabSheet.setSelectedTab(l5);
-    	
+
+		l5.addComponent(verticalViewLayout);
+		
     	getDirectionFromHereButton.setVisible(false);
     	
 		//Get Cookies
@@ -644,7 +664,7 @@ public class MapsApplication extends Application implements Button.ClickListener
 	
 	public void buildHomeTab()
 	{
-    	tabSheet.setSelectedTab(l3);
+		l3.addComponent(verticalViewLayout);
 
 		Label homeLabel= new Label ("<h2>Welcome to BOSLLA.COM !!</h2></ br> You can find locations and directions to your favorite places here...",Label.CONTENT_XHTML);
 		verticalViewLayout.addComponent(homeLabel);
@@ -679,9 +699,11 @@ public class MapsApplication extends Application implements Button.ClickListener
 
 	public void getDirection()
 	{
-		String startTextValue=startText.getValue().toString().trim();
-        String endTextValue=endText.getValue().toString().trim();
-		System.out.println(startTextValue);
+		String [] s = startText.getValue().toString().trim().split(",");
+		String startTextValue = s[0];
+        String [] e = endText.getValue().toString().trim().split(",");
+        String endTextValue = e[0];
+        System.out.println(startTextValue);
 		System.out.println(endTextValue);
 
 		// Source Location Check
@@ -756,8 +778,9 @@ public class MapsApplication extends Application implements Button.ClickListener
 		 
 		  if ( startSelectedUnit.getUnitName().equals(endSelectedUnit.getUnitName()))
 		  {
-			  locationLabel.setValue("<h3>The Start and the End Locations are the same !</h3>");
+			  locationLabel.setValue("<h3>The End location is the same as the start location!</h3>");
 			  locationLabel.setVisible(true);
+			  endSelected = false;
 		  }
 		  else // Calculate Path
 		  {
@@ -777,9 +800,9 @@ public class MapsApplication extends Application implements Button.ClickListener
 			resultList.setSelectable(false);
 	    	
 	    	mapView.setDisplayedUnits(unitsArrayList);
-			setMainComponent(mapView);
 	    	locationLabel.setValue("<h3>A direction between "+startSelectedUnit.getUnitName()+" and "+endSelectedUnit.getUnitName()+" was found on the map.</h3>");
 	    	locationLabel.setVisible(true);
+			resetButton.setVisible(true);
 			//Show Steps Button
 			showStepsButton.setVisible(true);
 		  }
@@ -947,7 +970,8 @@ public class MapsApplication extends Application implements Button.ClickListener
 		{
 			// Reset all parameters for repeated search
 			String locationTextValue = null;
-			locationTextValue=locationSearchText.getValue().toString().trim();
+	        String [] e = locationSearchText.getValue().toString().trim().split(",");
+	        locationTextValue = e[0];
 			
 			if (!locationTextValue.isEmpty()) {
 				System.out.println("In Location Selection");
@@ -1003,9 +1027,8 @@ public class MapsApplication extends Application implements Button.ClickListener
 	
 /*******************************************************************/
 	
-private void buildSetDefaultLocation() {
-
-	
+private void buildSetDefaultLocation() 
+{
 		System.out.println("Inside Build Default Location");
         setDefaultLocationComboBox.setNewItemsAllowed(false);      
         setDefaultLocationComboBox.setImmediate(true);

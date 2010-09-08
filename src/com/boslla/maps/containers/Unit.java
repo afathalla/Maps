@@ -64,6 +64,13 @@ public void setMapImageUrl(String mapImageUrl) {
 public String getmapImageUrl() {
 		return mapImageUrl;
 	}
+
+public void setUnitType(String unitType) {
+	this.unitType = unitType;
+  }
+  public String getUnitType() {
+	return unitType;
+  }
   
   private int x;
   private int y;
@@ -74,5 +81,6 @@ public String getmapImageUrl() {
   private Embedded imageUrl;
   private String unitIconUrl;
   private Embedded unitIcon;
+  private String unitType;
   
 }

@@ -30,7 +30,7 @@ public class UnitContainer extends BeanItemContainer<Unit>
 		  conn=getConn();
 	    }
 		  Statement select = conn.createStatement();
-		  String selectStatement= "SELECT unit.Name, X, Y, unit.Description,unit.Image_Url, map.Image_Url, map.Description from unit, map where unit.Map_ID=map.Id and name LIKE " +
+		  String selectStatement= "SELECT unit.Name, X, Y, unit.Description,unit.Image_Url, map.Image_Url, map.Description, unit_type.Name from unit, map, unit_type where unit.Map_ID=map.Id and unit.Unit_type_id = unit_type.Id and unit.name LIKE " +
             "\"%"+ unitName + "%\";";
 		   System.out.println(selectStatement);
 		   ResultSet result = select.executeQuery(selectStatement);
@@ -48,6 +48,7 @@ public class UnitContainer extends BeanItemContainer<Unit>
 		     similarPlace.setImageUrl(new Embedded("",new ThemeResource(result.getString(5))));
 		     similarPlace.setMapImageUrl(result.getString(6));
 		     similarPlace.setMapDescription(result.getString(7));
+		     similarPlace.setUnitType(result.getString(8));
 		     similarPlace.setUnitIconUrl("numbers/location_"+resultCounter+".png");
 		     similarPlace.setUnitIcon(new Embedded("Unit Icon",new ThemeResource("numbers/location_"+resultCounter+".png")));
 		     resultCounter++;
@@ -77,7 +78,7 @@ public class UnitContainer extends BeanItemContainer<Unit>
 		  for (int i=0; i<unitsArray.length; i++) 
 			  
 		  {			  
-		   String selectStatement= "SELECT unit.Name, X, Y, unit.Description,unit.Image_Url, map.Image_Url, map.Description from unit, map where unit.Map_ID=map.Id and name = " + "\"" + unitsArray[i]+"\"";
+		   String selectStatement= "SELECT unit.Name, X, Y, unit.Description,unit.Image_Url, map.Image_Url, map.Description, unit_type.Name from unit, unit_type, map where unit.Unit_type_id = unit_type.Id and unit.Map_ID=map.Id and unit.name = " + "\"" + unitsArray[i]+"\"";
 		   System.out.println(selectStatement);
 		   ResultSet result = select.executeQuery(selectStatement);
 		   
@@ -93,6 +94,7 @@ public class UnitContainer extends BeanItemContainer<Unit>
 		     unit.setImageUrl(new Embedded("",new ThemeResource(result.getString(5))));
 		     unit.setMapImageUrl(result.getString(6));
 		     unit.setMapDescription(result.getString(7));
+		     unit.setUnitType(result.getString(8));
 		     unit.setUnitIconUrl("numbers/location_"+resultCounter+".png");
 		     unit.setUnitIcon(new Embedded("Unit Icon",new ThemeResource("numbers/location_"+resultCounter+".png")));
 		     resultCounter++;
@@ -119,7 +121,7 @@ public class UnitContainer extends BeanItemContainer<Unit>
 		  conn=getConn();
 	    }
 	    Statement select = conn.createStatement();
-	    String selectStatement= "SELECT unit.Name, X, Y, unit.Description,unit.Image_Url, map.Image_Url, map.Description from unit, map where unit.Map_ID=map.Id";
+	    String selectStatement= "SELECT unit.Name, X, Y, unit.Description,unit.Image_Url, map.Image_Url, map.Description, unit_type.Name from unit, unit_type, map where unit.Unit_type_id = unit_type.Id and unit.Map_ID=map.Id";
 		System.out.println(selectStatement);
 		ResultSet result = select.executeQuery(selectStatement);
 		   
@@ -135,6 +137,7 @@ public class UnitContainer extends BeanItemContainer<Unit>
 		     unit.setImageUrl(new Embedded("",new ThemeResource(result.getString(5))));
 		     unit.setMapImageUrl(result.getString(6));
 		     unit.setMapDescription(result.getString(7));
+		     unit.setUnitType(result.getString(8));
 		     unit.setUnitIconUrl("numbers/location_"+resultCounter+".png");
 		     unit.setUnitIcon(new Embedded("Unit Icon",new ThemeResource("numbers/location_"+resultCounter+".png")));
 		     resultCounter++;
