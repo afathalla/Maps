@@ -4,6 +4,7 @@
 	<inherits name="com.vaadin.terminal.gwt.DefaultWidgetSet" />
 	<inherits name='org.vaadin.gwtgraphics.GWTGraphics'/>
 	
+	
     <!--
      Uncomment the following to compile the widgetset for one browser only.
      This can reduce the GWT compilation time significantly when debugging.
@@ -20,6 +21,4 @@
     -->
     <set-property name="user.agent" value="gecko"/>
 
-
-    
 </module>

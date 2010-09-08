@@ -1,5 +1,6 @@
 package com.boslla.maps;
 
+import com.boslla.maps.*;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -138,8 +139,8 @@ public class MapsApplication extends Application implements Button.ClickListener
 		showStepsButton.addListener((ClickListener)this);
 		hideStepsButton.setStyleName(styleLink);
 		hideStepsButton.addListener((ClickListener)this);
-		myPlacesButton.setStyleName(styleLink);
-		myPlacesButton.addListener((ClickListener)this);
+	//	myPlacesButton.setStyleName(styleLink);
+	//	myPlacesButton.addListener((ClickListener)this);
 		findLocationOnMapButton.setStyleName(styleLink);
 		signOutButton.setStyleName(styleLink);
 		myMapsButton.setStyleName(Button.STYLE_LINK);
