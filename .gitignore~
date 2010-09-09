@@ -4,4 +4,4 @@
 *.js
 .classpath
 .project
-
+.settings/*

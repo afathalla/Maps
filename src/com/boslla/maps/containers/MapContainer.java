@@ -1,5 +1,6 @@
 package com.boslla.maps.containers;
 
+import com.boslla.maps.containers.*;
 import java.io.Serializable;
 import java.sql.Connection;
 import java.sql.DriverManager;
@@ -7,9 +8,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
-
 import javax.jdo.PersistenceManager;
-
 import com.vaadin.data.Container;
 import com.vaadin.data.util.BeanItemContainer;
 import com.vaadin.terminal.ThemeResource;
@@ -22,19 +21,14 @@ public class MapContainer extends BeanItemContainer<Map>
 
   public MapContainer() throws InstantiationException, 
     IllegalAccessException {
- 
-	super (Map.class);
+	super(Map.class);
   }
   
   public static MapContainer getMyMaps(String placeName)
   {
 	  MapContainer mapContainer = null;
 	  try
-	  {
-	    if (conn== null) {
-			  conn=getConn();
-		    }
-	    
+	  {    
 	    mapContainer = new MapContainer();
 	    
 		Statement select = conn.createStatement();
@@ -81,6 +75,7 @@ public class MapContainer extends BeanItemContainer<Map>
 		System.out.println(selectStatement);
 		ResultSet result = select.executeQuery(selectStatement);
 
+		
 		while (result.next()) {
 			
 		map.setImageUrl(result.getString(1));

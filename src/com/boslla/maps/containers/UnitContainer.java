@@ -85,19 +85,6 @@ public class UnitContainer extends BeanItemContainer<Unit>
 	  return unitContainer;
   }
 
-// private static void notifyListeners() {
-//      ArrayList<ItemSetChangeListener> cl = (ArrayList<ItemSetChangeListener>) listeners.clone();
-//      ItemSetChangeEvent event = new ItemSetChangeEvent() {
-//          public Container getContainer() {
-//              return UnitContainer.this;
-//          }
-//      };
-//
-//      for (ItemSetChangeListener listener : cl) {
-//          listener.containerItemSetChange(event);
-//      }
-//}
-
   
   private static Connection getConn() {
 	Connection conn = null;
