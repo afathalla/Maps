@@ -13,6 +13,12 @@ import com.vaadin.data.Property.ValueChangeEvent;
 public class AdminWindow extends Window implements Property.ValueChangeListener,Button.ClickListener{
 	private Label status = new Label("-");
 	private Button signOutButton;
+	private Button loginButton;
+	private Window loginWindow;
+	private Form loginForm;
+	private TextField userText;
+	private TextField passText;
+	private Label errorLabel;
 	
 	public AdminWindow(String name) {
 		super(name);
@@ -61,29 +67,58 @@ public class AdminWindow extends Window implements Property.ValueChangeListener,
 		
 		if (sourceButton == signOutButton) {
 			this.getApplication().close();
-		}		
+		}	
+		
+		if (sourceButton == loginButton) {
+		    validateLogin();    
+		}
+	}
+	private void validateLogin() {
+		if (loginForm.isValid()) {
+			if (userText.getValue().equals("admin") && passText.getValue().equals("password")) {
+				buildLayout();
+			    this.removeWindow(loginWindow);
+			}
+			else {
+				errorLabel.setCaption("Invalid Credentials, please retry");
+			}
+		}
+		else {
+			errorLabel.setCaption("Some field is missing, please retry");
+		}
 	}
 	public void login() {
-		Window loginWindow = new Window("Login to Maps Administration");
+		loginWindow = new Window("Maps Administration");
 		loginWindow.setModal(true);
-		loginWindow.setWidth("50%");
+		loginWindow.setWidth("25%");
 		loginWindow.setHeight("50%");
 		loginWindow.center();
-		LoginForm loginForm = new LoginForm();
+		loginForm = new Form();
 		loginForm.setCaption("Login");
-        loginForm.addListener(new LoginForm.LoginListener() {
-            public void onLogin(LoginEvent event) {
-                getWindow().showNotification(
-                        "New Login",
-                        "Username: " + event.getLoginParameter("username")
-                                + ", password: "
-                                + event.getLoginParameter("password"));
-            }
-        });
-
-		VerticalLayout loginLayout = new VerticalLayout();
-		loginLayout.addComponent(loginForm);
-		loginWindow.setContent(loginLayout);
+		userText = new TextField("Username");
+		passText = new TextField ("Password");
+		passText.setSecret(true);
+		loginButton= new Button("Login");
+		errorLabel = new Label();
+		loginButton.addListener((ClickListener)this);
+		loginForm.getLayout().addComponent(userText);
+		loginForm.getLayout().addComponent(passText);
+		loginForm.setFooter(new VerticalLayout());
+		loginForm.getFooter().addComponent(loginButton);
+		loginForm.getFooter().addComponent(errorLabel);
+		
+//		LoginForm loginForm = new LoginForm();
+//		loginForm.setCaption("Login");
+//        loginForm.addListener(new LoginForm.LoginListener() {
+//            public void onLogin(LoginEvent event) {
+//                getWindow().showNotification(
+//                        "New Login",
+//                        "Username: " + event.getLoginParameter("username")
+//                                + ", password: "
+//                                + event.getLoginParameter("password"));
+//            }
+//        });
+		loginWindow.addComponent(loginForm);
 		this.addWindow(loginWindow);
 	}
 

@@ -380,7 +380,6 @@ public class MapsApplication extends Application implements Button.ClickListener
 		verticalViewLayout.addComponent(optionList);
 		verticalViewLayout.addComponent(findAnotherLocationButton);
 		verticalViewLayout.addComponent(getDirectionButton);
-//		verticalViewLayout.addComponent(resetButton);
 	
 		return verticalViewLayout;
 	}
@@ -427,11 +426,7 @@ public class MapsApplication extends Application implements Button.ClickListener
 	{
 		verticalViewLayout.removeAllComponents();
 		verticalViewLayout.setSpacing(true);
-		
-	    //tabSheet.addTab(l3,"Home", new ThemeResource("icons/home.png"));
-	    //tabSheet.addTab(l4,"My Places", new ThemeResource("icons/search.gif"));
-	    //tabSheet.addTab(l1,"Find Location", new ThemeResource("icons/search.gif"));
-	    //tabSheet.addTab(l2,"Find Direction", new ThemeResource("icons/search.gif"));
+
 		tabSheet.addTab(l3,"Home", null);
 		tabSheet.addTab(l4,"My Places",null);
 	    tabSheet.addTab(l1,"Find Location",null);
@@ -913,7 +908,6 @@ public class MapsApplication extends Application implements Button.ClickListener
 	         if (name.equals("admin") && super.getWindow(name) == null) {
 	          AdminWindow adminWindow = new AdminWindow ("Maps Administration");
 	          adminWindow.setName("admin");
-	          //adminWindow.buildLayout();
 	          adminWindow.login();
 	          addWindow(adminWindow);
 	          return adminWindow;
