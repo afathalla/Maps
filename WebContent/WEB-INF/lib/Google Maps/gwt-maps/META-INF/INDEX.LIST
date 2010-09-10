@@ -1,0 +1,21 @@
+JarIndex-Version: 1.0
+
+gwt-maps.jar
+com
+com/google
+com/google/gwt
+com/google/gwt/ajaxloader
+com/google/gwt/ajaxloader/client
+com/google/gwt/maps
+com/google/gwt/maps/client
+com/google/gwt/maps/client/control
+com/google/gwt/maps/client/event
+com/google/gwt/maps/client/geocode
+com/google/gwt/maps/client/geom
+com/google/gwt/maps/client/impl
+com/google/gwt/maps/client/overlay
+com/google/gwt/maps/jsio
+com/google/gwt/maps/jsio/client
+com/google/gwt/maps/jsio/client/impl
+com/google/gwt/maps/jsio/rebind
+

@@ -1,8 +1,9 @@
 package com.boslla.maps;
 
-import java.io.File;
 import java.util.ArrayList;
 import java.util.Map;
+
+import org.vaadin.hezamu.googlemapwidget.GoogleMap;
 
 import com.boslla.maps.containers.Unit;
 import com.boslla.maps.containers.UnitContainer;
@@ -30,13 +31,11 @@ public class MapView extends AbstractComponent {
 //	private String message = "Click here.";
 //	private int clicks = 0;
 	
-	private int scale = 1; // This is the scale of the map (every pixel matches how many meters).
 	private String distanceUnit = "meters";
 	private float walkingSpeed = 80; //Average walking speed 80 meters/minute
 	private float walkingTime;
 	private float walkingDistance;
 	private String walkingTimeUnit = "minutes";
-	private MapGrid floorMap;
 	private AStarPathFinder pathFinder;
 	private Path path= null; //Path from the two user-clicked points
 	private ArrayList<Unit> displayedUnits;
@@ -49,8 +48,9 @@ public class MapView extends AbstractComponent {
 	//private Table stepsTable;
 	private int stepsCounter;
 	private StepContainer newDataSource;
-	private String[] stepsArray;
+	private String stepsList;
 	PaintTarget paintTarget;
+//	private String[] stepsArray;
 //	private ArrayList<Step> stepsArrayList = new ArrayList<Step>();
 //	private StepList stepsList = new StepList();
 	
@@ -65,7 +65,12 @@ public class MapView extends AbstractComponent {
 	private int endXPath;
 	private int endYPath;
 	private com.boslla.maps.containers.Map map = null;
+	private boolean calculatePath = false;
 	
+	private String [] placesX;
+	private String [] placesY;
+	private String [] placesImages;
+
 	@Override
 	public void paintContent(PaintTarget target) throws PaintException {
 		this.paintTarget=target;
@@ -74,97 +79,62 @@ public class MapView extends AbstractComponent {
 		System.out.println("Inside Paint content method");
 		
 		// Paint any component specific content by setting attributes
-		// These attributes can be read in updateFromUIDL in the widget.
+		// These attributes can be read in updateFromUIDL in the widget.	
 		
-		/*		if (displayedUnits != null)
-				{
-					mapImageUrl = displayedUnits.get(0).getmapImageUrl();
-					paintTarget.addAttribute("imageurl", mapImageUrl);
-					
-					placesX = new String[1];
-					placesY = new String[1];
-					
-					placesX[0]=Integer.toString(displayedUnit.getX()); 
-					placesY[0]=Integer.toString(displayedUnit.getY()); 
-					 
-					target.addAttribute("placesX",placesX);
-					target.addAttribute("placesY",placesY);
-				}
-		*/		
-
 		if (displayedUnits != null)
 		{
-			String[] placesX = new String[displayedUnits.size()];
-			String[] placesY = new String[displayedUnits.size()];
-			String[] placesImages = new String[displayedUnits.size()];
+		  	Unit currentUnit = (Unit) displayedUnits.get(0);
+			  
+		  	mapImageUrl = currentUnit.getmapImageUrl();
+		  	map = (com.boslla.maps.containers.Map) MapContainer.getMap(mapImageUrl);
+		  	mapWidth= map.getMapWidth();
+		  	mapHeight= map.getMapHeight();
+		  	mapDescription= map.getMapDescription();
 
-			System.out.println(displayedUnits.size());
-		
-			if (displayedUnits.size() == 1) // one item only
-			{
-				System.out.println("One Item");
-			  	Unit currentUnit = (Unit) displayedUnits.get(0);
-			  
-			  	mapImageUrl = currentUnit.getmapImageUrl();
-			  	map = (com.boslla.maps.containers.Map) MapContainer.getMap(mapImageUrl);
-			  	mapWidth= map.getMapWidth();
-			  	mapHeight= map.getMapHeight();
-			  	mapDescription= map.getMapDescription();
-			  
-			  	placesX[0]=Integer.toString(currentUnit.getX()); 
-			  	placesY[0]=Integer.toString(currentUnit.getY()); 
-			  	placesImages[0]= currentUnit.getUnitIconUrl();
-			  	System.out.println(currentUnit.getUnitName());
-			  	System.out.println(currentUnit.getUnitIconUrl());
-			}
-			else if (displayedUnits.size() == 2) // two items
-			{
-				System.out.println("Two Items");
-				Unit unit1 = (Unit) displayedUnits.get(0);
-				Unit unit2 = (Unit) displayedUnits.get(1);
-				
-				// If the two units are on the same map
-				if (unit1.getmapImageUrl().equals(unit2.getmapImageUrl()))
-				{
-					
-					System.out.println("On the same map");
-					mapImageUrl = unit1.getmapImageUrl();
-					map = (com.boslla.maps.containers.Map) MapContainer.getMap(mapImageUrl);
-					mapWidth= map.getMapWidth();
-					mapHeight= map.getMapHeight();
-					mapDescription= map.getMapDescription();
-					
-					//dynamically discover size of image or retrieve from db
-					floorMap = new MapGrid(mapWidth,mapHeight);
-					pathFinder = new AStarPathFinder(floorMap,500,true);
-					calculatePath(unit1,unit2);
-					calculateSteps();
-			    	System.out.println("calculated Path and Steps");
-					
-					for (int i=0; i<displayedUnits.size();i++)
-					{
-						Unit currentUnit = (Unit) displayedUnits.get(i);
-						placesX[i]=Integer.toString(currentUnit.getX()); 
-						placesY[i]=Integer.toString(currentUnit.getY()); 
-						placesImages[i]= currentUnit.getUnitIconUrl();
-						System.out.println(currentUnit.getUnitName());
-						System.out.println(currentUnit.getUnitIconUrl());
-					}
-				}	
-				// If the two units are NOT on the same map
-				else
-				{
-				}
-			}
-			  
 			paintTarget.addAttribute("mapImageUrl", mapImageUrl);
 			paintTarget.addAttribute("mapWidth", mapWidth);
 			paintTarget.addAttribute("mapHeight", mapHeight);
 			paintTarget.addAttribute("mapDescription", mapDescription);
 			
+	    	System.out.println("Drawn Map");
+			
+			if (calculatePath == true && displayedUnits.size() == 2)
+			{
+				System.out.println("Calculate Path");
+				
+				//dynamically discover size of image or retrieve from db.
+				MapGrid floorMap = new MapGrid(mapWidth,mapHeight);
+				pathFinder = new AStarPathFinder(floorMap,500,true);
+				calculatePath(displayedUnits.get(0),displayedUnits.get(1));
+				calculateSteps();
+		    	calculatePath = false;
+		    	
+				paintTarget.addAttribute("startXPath",startXPath);
+				paintTarget.addAttribute("startYPath",startYPath);
+				paintTarget.addAttribute("endXPath",endXPath);
+				paintTarget.addAttribute("endYPath",endYPath);
+				paintTarget.addAttribute("stepsX",stepsX);
+				paintTarget.addAttribute("stepsY",stepsY);	
+				
+		    	System.out.println("calculated Path and Steps");
+			}
+			
+			placesX = new String[displayedUnits.size()];
+			placesY = new String[displayedUnits.size()];
+			placesImages = new String[displayedUnits.size()];
+			
+		  	for (int i=0; i<displayedUnits.size();i++)
+		  	{
+				placesX[i]=Integer.toString(displayedUnits.get(i).getX()); 
+				placesY[i]=Integer.toString(displayedUnits.get(i).getY()); 
+				placesImages[i]= displayedUnits.get(i).getUnitIconUrl();
+		  	}
+			
 			target.addAttribute("placesX",placesX);
 			target.addAttribute("placesY",placesY);
 			target.addAttribute("placesImages",placesImages);
+			
+	    	System.out.println("Drawn units");
 		}
 		else if (map != null)//show maps only
 		{
@@ -181,25 +151,17 @@ public class MapView extends AbstractComponent {
 			paintTarget.addAttribute("mapHeight", mapHeight);
 			paintTarget.addAttribute("mapDescription", mapDescription);
 		}		
-				
-		if (path!=null){
-			paintTarget.addAttribute("startXPath",startXPath);
-			paintTarget.addAttribute("startYPath",startYPath);
-			paintTarget.addAttribute("endXPath",endXPath);
-			paintTarget.addAttribute("endYPath",endYPath);
-			paintTarget.addAttribute("stepsX",stepsX);
-			paintTarget.addAttribute("stepsY",stepsY);
-		}
 	}
 	
 public void calculateSteps()
 {
 		if (path!=null){
+			
 			stepsX = new String[path.getLength()];
 			stepsY = new String[path.getLength()];
 			
 			//Initialize Parameters		
-			stepsArray = new String[path.getLength()];
+			stepsList = "";
 			newDataSource = null;
 			stepsCounter=1;
 			
@@ -227,7 +189,7 @@ public void calculateSteps()
 			endYPath=path.getY(path.getLength()-1);
 			
 			//Show Results
-			newDataSource = StepContainer.getStepContainer(stepsCounter, stepsArray);
+//			newDataSource = StepContainer.getStepContainer(stepsCounter, stepsArray);
 		}
 		// We could also set variables in which values can be returned
 		// but declaring variables here is not required
@@ -318,9 +280,20 @@ public void calculateSteps()
 		requestRepaint();
 	}
 	
+	public void drawPathBetweenTwoUnits(Unit startUnit, Unit endUnit) {
+		System.out.println("Setting Displayed Units");
+		this.displayedUnits = null;
+		this.displayedUnits = new ArrayList<Unit> (2);
+		this.displayedUnits.add(startUnit);
+		this.displayedUnits.add(endUnit);
+		calculatePath = true;
+		requestRepaint();
+	}
+	
 	public void setDisplayedUnit(Unit displayedUnit) {
 		System.out.println("Setting Displayed Unit");
-		displayedUnits = new ArrayList<Unit> (1);
+		this.displayedUnits = null;
+		this.displayedUnits = new ArrayList<Unit> (1);
 		this.displayedUnits.add(displayedUnit);
 		requestRepaint();
 	}
@@ -332,10 +305,9 @@ public void calculateSteps()
 	}
 	
 	public void calculatePath(Unit startUnit, Unit endUnit) {
-		path=pathFinder.findPath(null, startUnit.getX(),startUnit.getY(),
-				                 endUnit.getX(),endUnit.getY());
+		path=pathFinder.findPath(null, startUnit.getX(),startUnit.getY(),endUnit.getX(),endUnit.getY());
 	}
-	
+
 	public void setMap(com.boslla.maps.containers.Map selectedMap)
 	{
 		System.out.println("Setting Map");
@@ -353,7 +325,7 @@ public void calculateSteps()
 		int distance=0;
 		float realDistance = 0;
 		float totalDistance =0;
-		float mapScale = map.getMapScale();
+		float mapScale = map.getMapScale(); // This is the scale of the map (every pixel matches how many meters).
 		int X;
 		int Y;
 		int previousX;
@@ -362,13 +334,13 @@ public void calculateSteps()
 		String currentMapDirection="";
 		
 		//Starting point
-		previousMapDirection="Give your back to the current Location.";
-		stepsArray[stepsCounter] = previousMapDirection;
+		previousMapDirection="Give your back to the starting Location.";
+		stepsList = stepsList + stepsCounter +". "+ previousMapDirection;
+		stepsList = stepsList + "<br>";
 		stepsCounter++;
 		
 		while (i<path.getLength())
 		{			
-
 			previousMapDirection=currentMapDirection;
 			
 			previousX= path.getX(i-1);
@@ -418,7 +390,8 @@ public void calculateSteps()
 			{	
 				realDistance = distance*mapScale;
 				totalDistance = totalDistance + realDistance;
-				stepsArray[stepsCounter] = previousMapDirection+realDistance+" "+distanceUnit+".";	
+				stepsList = stepsList +  stepsCounter +". " + previousMapDirection+realDistance+" "+distanceUnit+".";	
+				stepsList = stepsList + "<br>";
 				stepsCounter++;
 				distance=-1;
 			}
@@ -427,10 +400,12 @@ public void calculateSteps()
 			{
 				realDistance = distance*mapScale;
 				totalDistance = totalDistance + realDistance;
-				stepsArray[stepsCounter] = previousMapDirection+realDistance+" "+distanceUnit+".";	
+				stepsList = stepsList + stepsCounter +". "+ previousMapDirection+realDistance+" "+distanceUnit+".";	
+				stepsList = stepsList + "<br>";
 				stepsCounter++;
 				currentMapDirection = "You have reached your Destination.";
-				stepsArray[stepsCounter] = currentMapDirection;
+				stepsList = stepsList + stepsCounter +". "+ currentMapDirection;
+				stepsList = stepsList + "<br>";
 				stepsCounter++;
 				
 				walkingDistance = totalDistance;
@@ -449,9 +424,9 @@ public void calculateSteps()
 		return newDataSource;
 	}
 	
-	public String [] getStepsArray()
+	public String getStepsList()
 	{
-		return stepsArray;
+		return stepsList;
 	}
 	
 	public int getStepsCounter()
@@ -461,33 +436,27 @@ public void calculateSteps()
 	
 	public String getWalkingTime()
 	{
+		System.out.println("Walking Time: "+ walkingTime);
 		return Float.toString(walkingTime);
 	}
 	
 	public String getWalkingDistance()
 	{
+		System.out.println("Walking Distance: "+ walkingDistance);
 		return Float.toString(walkingDistance);
+	}
+	
+	public void clearDisplayedUnits()
+	{
+		this.displayedUnits=null;
+		requestRepaint();
 	}
 	
 	public void clearView()
 	{
 		this.map=null;
 		this.displayedUnits=null;
-	}
-	
-/*	  public void setMapImageUrl(String mapImageUrl) {
-			this.mapImageUrl = mapImageUrl;
-		}
-		 public String getMapImageUrl() {
-			return mapImageUrl;
-		}
-*/	
-//	public String[] getSteps()
-//	{
-//		for (int i=1; i<= steps.length; i++)
-//		{
-//			System.out.println(steps[i]);
-//		}
-//		return steps;
-//	}
+		path = null;
+		requestRepaint();
+	}	
 }

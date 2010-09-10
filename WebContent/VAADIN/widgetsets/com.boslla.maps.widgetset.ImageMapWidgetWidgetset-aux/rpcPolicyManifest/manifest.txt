@@ -1,0 +1,2 @@
+# Module com.boslla.maps.widgetset.ImageMapWidgetWidgetset
+# RPC service class, partial path of RPC policy file
