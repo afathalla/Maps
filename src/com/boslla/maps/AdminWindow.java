@@ -72,7 +72,7 @@ public class AdminWindow extends Window implements Property.ValueChangeListener,
 			adminForm = new Form();
 			adminForm.setCaption(event.getProperty().toString());
 			adminForm.setDescription("Enter the details of the new Map you want to add");
-			adminForm.setFormFieldFactory(new AdminFormFieldFactory());
+			adminForm.setFormFieldFactory(new AdminFormFieldFactory("Map"));
 			adminForm.setImmediate(true);
 			adminForm.setValidationVisibleOnCommit(true);
 			final Map newMap = new Map();
@@ -107,7 +107,7 @@ public class AdminWindow extends Window implements Property.ValueChangeListener,
 			adminForm = new Form();
 			adminForm.setCaption(event.getProperty().toString());
 			adminForm.setDescription("Enter the details of the new Place you want to add");
-			adminForm.setFormFieldFactory(new AdminFormFieldFactory());
+			adminForm.setFormFieldFactory(new AdminFormFieldFactory("Place"));
 			adminForm.setImmediate(true);
 			adminForm.setValidationVisibleOnCommit(true);
 			final Place newPlace = new Place();

@@ -11,8 +11,15 @@ import com.vaadin.ui.TextField;
 
 public class AdminFormFieldFactory implements com.vaadin.ui.FormFieldFactory {
 
+	private String className = null;
+	public AdminFormFieldFactory(String className) {
+		super();
+		this.className = className;
+	}
 	@Override
 	public Field createField(Item item, Object propertyId, Component uiContext) {
+		
+		if (className == "Map") {
 		String pid = (String) propertyId;
 		if (pid.equals("key")) {
 			return null;
@@ -67,6 +74,7 @@ public class AdminFormFieldFactory implements com.vaadin.ui.FormFieldFactory {
 			mapScaleText.addValidator(mapScaleValidator);
 			return mapScaleText;
 		}
-		return null;
 	}
+		return null;
+ }
 }
