@@ -1,11 +1,11 @@
 -- phpMyAdmin SQL Dump
--- version 3.2.0.1
+-- version 2.11.6
 -- http://www.phpmyadmin.net
 --
 -- Host: localhost
--- Generation Time: Jul 03, 2010 at 11:09 AM
--- Server version: 5.1.36
--- PHP Version: 5.3.0
+-- Generation Time: Sep 04, 2010 at 08:44 AM
+-- Server version: 5.0.51
+-- PHP Version: 5.2.6
 
 SET SQL_MODE="NO_AUTO_VALUE_ON_ZERO";
 
@@ -25,15 +25,15 @@ SET SQL_MODE="NO_AUTO_VALUE_ON_ZERO";
 -- Table structure for table `map`
 --
 
-CREATE TABLE IF NOT EXISTS `map` (
-  `Id` int(11) NOT NULL AUTO_INCREMENT,
+CREATE TABLE `map` (
+  `Id` int(11) NOT NULL auto_increment,
   `Image_Url` varchar(1000) NOT NULL,
   `Place_id` int(11) NOT NULL,
   `Description` varchar(1000) NOT NULL,
   `Width` int(11) NOT NULL,
   `Height` int(11) NOT NULL,
   `Scale` float NOT NULL,
-  PRIMARY KEY (`Id`),
+  PRIMARY KEY  (`Id`),
   KEY `FK_PLACE_ID` (`Place_id`)
 ) ENGINE=InnoDB  DEFAULT CHARSET=latin1 AUTO_INCREMENT=3 ;
 
@@ -42,8 +42,7 @@ CREATE TABLE IF NOT EXISTS `map` (
 --
 
 INSERT INTO `map` (`Id`, `Image_Url`, `Place_id`, `Description`, `Width`, `Height`, `Scale`) VALUES
-(1, 'images/floormap0-big.jpg', 1, 'City Stars First Floor', 1243, 931, 0.5),
-(2, 'images/floormap1-big.jpg', 1, 'City Stars Second Floor', 1243, 931, 0.5);
+(1, 'images/floormap0-big.jpg', 1, 'City Stars First Floor', 1243, 931, 0.5);
 
 -- --------------------------------------------------------
 
@@ -51,14 +50,14 @@ INSERT INTO `map` (`Id`, `Image_Url`, `Place_id`, `Description`, `Width`, `Heigh
 -- Table structure for table `place`
 --
 
-CREATE TABLE IF NOT EXISTS `place` (
-  `Id` int(11) NOT NULL AUTO_INCREMENT,
+CREATE TABLE `place` (
+  `Id` int(11) NOT NULL auto_increment,
   `Place_type_id` int(11) NOT NULL,
   `Name` varchar(1000) NOT NULL,
   `Location` varchar(1000) NOT NULL,
   `Description` varchar(1000) NOT NULL,
   `Image_Url` varchar(1000) NOT NULL,
-  PRIMARY KEY (`Id`),
+  PRIMARY KEY  (`Id`),
   KEY `FK_PLACE_TYPE_ID` (`Place_type_id`)
 ) ENGINE=InnoDB  DEFAULT CHARSET=latin1 AUTO_INCREMENT=3 ;
 
@@ -76,10 +75,10 @@ INSERT INTO `place` (`Id`, `Place_type_id`, `Name`, `Location`, `Description`, `
 -- Table structure for table `place_type`
 --
 
-CREATE TABLE IF NOT EXISTS `place_type` (
-  `Id` int(11) NOT NULL AUTO_INCREMENT,
+CREATE TABLE `place_type` (
+  `Id` int(11) NOT NULL auto_increment,
   `Type` varchar(1000) NOT NULL,
-  PRIMARY KEY (`Id`)
+  PRIMARY KEY  (`Id`)
 ) ENGINE=InnoDB  DEFAULT CHARSET=latin1 AUTO_INCREMENT=3 ;
 
 --
@@ -96,16 +95,16 @@ INSERT INTO `place_type` (`Id`, `Type`) VALUES
 -- Table structure for table `unit`
 --
 
-CREATE TABLE IF NOT EXISTS `unit` (
-  `Id` int(11) NOT NULL AUTO_INCREMENT,
+CREATE TABLE `unit` (
+  `Id` int(11) NOT NULL auto_increment,
   `Unit_type_id` int(11) NOT NULL,
   `Map_id` int(11) NOT NULL,
   `Name` varchar(100) NOT NULL,
   `Image_Url` varchar(1000) NOT NULL,
   `Description` mediumtext NOT NULL,
-  `X` int(11) DEFAULT NULL,
-  `Y` int(11) DEFAULT NULL,
-  PRIMARY KEY (`Id`),
+  `X` int(11) default NULL,
+  `Y` int(11) default NULL,
+  PRIMARY KEY  (`Id`),
   KEY `FK_MAP_ID` (`Map_id`),
   KEY `FK_UNIT_TYPE_ID` (`Unit_type_id`)
 ) ENGINE=InnoDB  DEFAULT CHARSET=latin1 AUTO_INCREMENT=4 ;
@@ -116,7 +115,7 @@ CREATE TABLE IF NOT EXISTS `unit` (
 
 INSERT INTO `unit` (`Id`, `Unit_type_id`, `Map_id`, `Name`, `Image_Url`, `Description`, `X`, `Y`) VALUES
 (1, 1, 1, 'Sfera', 'images/sfera.jpg', 'A very fashionable Department store for men, women and children', 500, 500),
-(2, 2, 2, 'Apple', 'images/apple.jpg', 'The famous Apple Store', 400, 400),
+(2, 2, 1, 'Apple', 'images/apple.jpg', 'Apple Store for selling iphones, ipods, ipads,...etc', 700, 600),
 (3, 1, 1, 'Zara', 'images/zara.jpg', 'The most popular Zara shop for men, women, kids and babies clothes.', 250, 450);
 
 -- --------------------------------------------------------
@@ -125,11 +124,11 @@ INSERT INTO `unit` (`Id`, `Unit_type_id`, `Map_id`, `Name`, `Image_Url`, `Descri
 -- Table structure for table `unit_type`
 --
 
-CREATE TABLE IF NOT EXISTS `unit_type` (
+CREATE TABLE `unit_type` (
   `Id` int(11) NOT NULL,
   `Name` varchar(1000) NOT NULL,
   `Description` varchar(1000) NOT NULL,
-  PRIMARY KEY (`Id`)
+  PRIMARY KEY  (`Id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 --
