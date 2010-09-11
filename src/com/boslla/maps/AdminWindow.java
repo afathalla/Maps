@@ -8,17 +8,23 @@ import com.vaadin.ui.Button.ClickListener;
 import com.vaadin.ui.LoginForm.LoginEvent;
 import com.vaadin.data.*;
 import com.vaadin.data.Property.ValueChangeEvent;
+import com.vaadin.data.util.BeanItem;
+import com.boslla.maps.containers.*;
 
 
 public class AdminWindow extends Window implements Property.ValueChangeListener,Button.ClickListener{
 	private Label status = new Label("-");
 	private Button signOutButton;
 	private Button loginButton;
+	private Button saveButton;
+	private Button resetButton;
 	private Window loginWindow;
 	private Form loginForm;
 	private TextField userText;
 	private TextField passText;
 	private Label errorLabel;
+	private Form adminForm;
+	private FormLayout adminLayout;
 	
 	public AdminWindow(String name) {
 		super(name);
@@ -36,30 +42,101 @@ public class AdminWindow extends Window implements Property.ValueChangeListener,
 	
 	public Component buildAdminPanel() {
 		 Panel adminPanel = new Panel("Administration Tasks");
-		 FormLayout adminForm = new FormLayout();
-		 adminForm.setMargin(true);
+		 adminLayout = new FormLayout();
+		 adminLayout.setMargin(true);
 		 signOutButton = new Button("Sign Out of Admin");
 		 signOutButton.setStyleName("link");
 		 signOutButton.addListener((ClickListener)this);
 		 Select select = new Select ("Select Task");
-		 String [] tasks = new String[]{"Add new place on map",
-		 "Change properties of existing place",
-		 "Change current map"};
+		 String [] tasks = new String[]{"Add new Place",
+		 "Change properties of Existing Place",
+		 "Add new Map",
+		 "Change properties of Existing Map"};
 		 for (int i=0; i<tasks.length;i++)
 		 select.addItem(tasks[i]);
 		 select.setImmediate(true);
 		 select.addListener(this);
 
-		 adminForm.addComponent(signOutButton);
-		 adminForm.addComponent(select);
-		 adminForm.addComponent(status);
-		 adminPanel.setContent(adminForm);
+		 adminLayout.addComponent(signOutButton);
+		 adminLayout.addComponent(select);
+		 adminLayout.addComponent(status);
+		 adminPanel.setContent(adminLayout);
 		 return adminPanel;
 	}
 
 	@Override
 	public void valueChange(ValueChangeEvent event) {
 		status.setValue("Changed " + event.getProperty());
+		
+		if (event.getProperty().toString().equals("Add new Map")) {
+			adminForm = new Form();
+			adminForm.setCaption(event.getProperty().toString());
+			adminForm.setDescription("Enter the details of the new Map you want to add");
+			adminForm.setFormFieldFactory(new AdminFormFieldFactory());
+			adminForm.setImmediate(true);
+			adminForm.setValidationVisibleOnCommit(true);
+			final Map newMap = new Map();
+			BeanItem item = new BeanItem(newMap);
+			adminForm.setItemDataSource(item);
+			
+			HorizontalLayout buttonLayout = new HorizontalLayout();
+			buttonLayout.setHeight("25px");
+			adminForm.getFooter().addComponent(buttonLayout);
+			saveButton = new Button("Save",new Button.ClickListener() {
+				public void buttonClick(ClickEvent event) {
+	                try {
+	                    adminForm.commit();
+	                    MapContainer.saveMap(newMap);
+	                } catch (Exception e) {
+	                    // Ignored, we'll let the Form handle the errors
+	                }
+	            }
+	        });
+
+			resetButton = new Button("Reset",new Button.ClickListener() {
+				public void buttonClick(ClickEvent event) {
+	                    adminForm.discard();    
+				}
+	        });
+			buttonLayout.addComponent(saveButton);
+			buttonLayout.addComponent(resetButton);
+			adminLayout.addComponent(adminForm);
+		}
+		
+		else if (event.getProperty().toString().equals("Add new Place")) {
+			adminForm = new Form();
+			adminForm.setCaption(event.getProperty().toString());
+			adminForm.setDescription("Enter the details of the new Place you want to add");
+			adminForm.setFormFieldFactory(new AdminFormFieldFactory());
+			adminForm.setImmediate(true);
+			adminForm.setValidationVisibleOnCommit(true);
+			final Place newPlace = new Place();
+			BeanItem item = new BeanItem(newPlace);
+			adminForm.setItemDataSource(item);
+			
+			HorizontalLayout buttonLayout = new HorizontalLayout();
+			buttonLayout.setHeight("25px");
+			adminForm.getFooter().addComponent(buttonLayout);
+			saveButton = new Button("Save",new Button.ClickListener() {
+				public void buttonClick(ClickEvent event) {
+	                try {
+	                    adminForm.commit();
+	                    PlaceContainer.savePlace(newPlace);
+	                } catch (Exception e) {
+	                    // Ignored, we'll let the Form handle the errors
+	                }
+	            }
+	        });
+
+			resetButton = new Button("Reset",new Button.ClickListener() {
+				public void buttonClick(ClickEvent event) {
+	                    adminForm.discard();    
+				}
+	        });
+			buttonLayout.addComponent(saveButton);
+			buttonLayout.addComponent(resetButton);
+			adminLayout.addComponent(adminForm);
+		}
 	}
 	@Override
 	public void buttonClick(ClickEvent event) {
@@ -75,7 +152,7 @@ public class AdminWindow extends Window implements Property.ValueChangeListener,
 	}
 	private void validateLogin() {
 		if (loginForm.isValid()) {
-			if (userText.getValue().equals("admin") && passText.getValue().equals("password")) {
+			if (userText.getValue().equals("a") && passText.getValue().equals("a")) {
 				buildLayout();
 			    this.removeWindow(loginWindow);
 			}

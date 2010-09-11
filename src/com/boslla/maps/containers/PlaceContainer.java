@@ -8,6 +8,10 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
 
+import javax.jdo.PersistenceManager;
+
+import com.google.appengine.api.datastore.Key;
+import com.google.appengine.api.datastore.KeyFactory;
 import com.vaadin.data.Container;
 import com.vaadin.data.util.BeanItemContainer;
 import com.vaadin.terminal.ThemeResource;
@@ -16,6 +20,8 @@ import com.vaadin.ui.Embedded;
 public class PlaceContainer extends BeanItemContainer<Place> 
   implements Serializable {
   private static Connection conn=null;
+  private static PersistenceManager pm = PMF.get().getPersistenceManager();
+  
   public PlaceContainer() throws InstantiationException, 
     IllegalAccessException {
  
@@ -55,6 +61,17 @@ public class PlaceContainer extends BeanItemContainer<Place>
 	   //notifyListeners();
 	   return placeContainer;
   }
+  public static Boolean savePlace(Place place) {
+		 Key k = KeyFactory.createKey(Place.class.getSimpleName(), place.getPlaceName());
+		 place.setKey(k);
+		 try {
+			 pm.makePersistent(place);
+		 } finally {
+			 pm.close();
+		 }
+		 return true;
+	 }
+	  
   
   private static Connection getConn() {
 	Connection conn = null;

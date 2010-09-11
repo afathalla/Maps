@@ -27,7 +27,7 @@ import com.vaadin.ui.TabSheet.Tab;
 import com.vaadin.ui.Window.Notification;
 
 
-public class MapsApplication extends Application implements Button.ClickListener,HttpServletRequestListener{
+public class MapsApplication extends Application implements Button.ClickListener{
 	  private SplitPanel horizontalSplit = new SplitPanel(
 	            SplitPanel.ORIENTATION_HORIZONTAL);
 	 
@@ -100,21 +100,21 @@ public class MapsApplication extends Application implements Button.ClickListener
 		buildLayout("mainView");
 	}
 	
-	public void onRequestStart(HttpServletRequest request,
-            HttpServletResponse response) {
-		this.response = response;
-		this.request = request;
-		System.out.println("[Start of request");
-		System.out.println(" Query string: " +
-			request.getQueryString());
-		System.out.println(" Path: " +
-			request.getPathInfo());
-			
-	}
-	public void onRequestEnd(HttpServletRequest request,
-          HttpServletResponse response) {
-		System.out.println(" End of request]");
-}	
+//	public void onRequestStart(HttpServletRequest request,
+//            HttpServletResponse response) {
+//		this.response = response;
+//		this.request = request;
+//		System.out.println("[Start of request");
+//		System.out.println(" Query string: " +
+//			request.getQueryString());
+//		System.out.println(" Path: " +
+//			request.getPathInfo());
+//			
+//	}
+//	public void onRequestEnd(HttpServletRequest request,
+//          HttpServletResponse response) {
+//		System.out.println(" End of request]");
+//}	
 	private void buildLayout(String type){
 				
 		//Initialize text boxes
