@@ -72,6 +72,14 @@ public void setUnitType(String unitType) {
 	return unitType;
   }
   
+  public void setPlaceName(String placeName) {
+	  	this.placeName = placeName;
+	}
+  public String getPlaceName() {
+		return placeName;
+	}
+	  
+  
   private int x;
   private int y;
   private String unitName;
@@ -82,5 +90,6 @@ public void setUnitType(String unitType) {
   private String unitIconUrl;
   private Embedded unitIcon;
   private String unitType;
-  
+  private String placeName;
+
 }

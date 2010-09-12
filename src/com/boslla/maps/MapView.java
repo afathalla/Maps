@@ -36,7 +36,7 @@ public class MapView extends AbstractComponent {
 	private float walkingTime;
 	private float walkingDistance;
 	private String walkingTimeUnit = "minutes";
-	private AStarPathFinder pathFinder;
+//	private AStarPathFinder pathFinder;
 	private Path path= null; //Path from the two user-clicked points
 	private ArrayList<Unit> displayedUnits;
 	
@@ -104,8 +104,8 @@ public class MapView extends AbstractComponent {
 				
 				//dynamically discover size of image or retrieve from db.
 				MapGrid floorMap = new MapGrid(mapWidth,mapHeight);
-				pathFinder = new AStarPathFinder(floorMap,500,true);
-				calculatePath(displayedUnits.get(0),displayedUnits.get(1));
+				AStarPathFinder pathFinder = new AStarPathFinder(floorMap,500,true);
+				calculatePath(displayedUnits.get(0),displayedUnits.get(1),pathFinder);
 				calculateSteps();
 		    	calculatePath = false;
 		    	
@@ -304,7 +304,7 @@ public void calculateSteps()
 		requestRepaint();
 	}
 	
-	public void calculatePath(Unit startUnit, Unit endUnit) {
+	public void calculatePath(Unit startUnit, Unit endUnit, AStarPathFinder pathFinder) {
 		path=pathFinder.findPath(null, startUnit.getX(),startUnit.getY(),endUnit.getX(),endUnit.getY());
 	}
 

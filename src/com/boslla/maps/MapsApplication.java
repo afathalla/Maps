@@ -31,8 +31,6 @@ import org.vaadin.hezamu.googlemapwidget.overlay.BasicMarker;
 import org.vaadin.hezamu.imagemapwidget.ImageMap;
 //import org.vaadin.sami.autocomplete.AutoCompleteTextField;
 
-
-
 import com.vaadin.ui.TabSheet;
 import com.vaadin.ui.TabSheet.SelectedTabChangeEvent;
 import com.vaadin.ui.TabSheet.SelectedTabChangeListener;
@@ -54,30 +52,23 @@ public class MapsApplication extends Application implements Button.ClickListener
 	  private Button resetButton = new Button("Clear Search");
 	  private Button clearMyPlacesButton = new Button("Clear My Places");
 	  private Button myMapsButton = new Button("Back to My Maps");
-	  private Button getDirectionFromHereButton = new Button("Get Direction From here");
 	  private Button findAnotherLocationButton = new Button("Spot Another Location");
 	  private Button addToMyPlacesButton = new Button("Add Location to My Places");
 	  private Button showStepsButton = new Button("Show Steps");
 	  private Button hideStepsButton = new Button("Hide Steps");
-	  private Button setDefaultLocationButton = new Button("Set Default Location");
-	  private Button saveDefaultLocationButton = new Button("Save");
-	  private Button removeDefaultLocationButton = new Button("Remove");
-	  private Button cancelDefaultLocationButton = new Button("Cancel");
 	  private Button hidePanelButton = new Button("<<");
 	  private Button showPanelButton = new Button(">>");
-      private ComboBox setDefaultLocationComboBox = new ComboBox();
 	  private TextField startText= new TextField();
 	  private TextField locationSearchText= new TextField();
-
 	  private TextField endText= new TextField();
 	  private Label locationLabel= new Label("<h3></h3>",Label.CONTENT_XHTML);
-	  private Label stepsTitleLabel = new Label ("<h2>Steps to Destination:</h2>",Label.CONTENT_XHTML);
-	  private Label walkingDistance = new Label ("Total Distance:",Label.CONTENT_XHTML);
-	  private Label walkingTime = new Label ("Total Walking Time:",Label.CONTENT_XHTML);
-	  private Label setDefaultLocationLabel = new Label("<b>Set default location</b>",Label.CONTENT_XHTML);
 	  private ProgressIndicator progressIndicator= new ProgressIndicator(new Float(0.0));
 	  private static MapView mapView= new MapView();
 	  private UnitContainer unitDataSource = null;
+/*	  private Label stepsTitleLabel = new Label ("<h2>Steps to Destination:</h2>",Label.CONTENT_XHTML);
+	  private Label walkingDistance = new Label ("Total Distance:",Label.CONTENT_XHTML);
+	  private Label walkingTime = new Label ("Total Walking Time:",Label.CONTENT_XHTML);
+	  private Label setDefaultLocationLabel = new Label("<b>Set default location</b>",Label.CONTENT_XHTML);
 	  private PlaceContainer placeDataSource = null;
 	  private MapContainer mapDataSource = null;
 	  private UnitContainer startUnitDataSource = null;
@@ -86,16 +77,12 @@ public class MapsApplication extends Application implements Button.ClickListener
 	  private PlaceList placeList = new PlaceList(this); //Table that will hold units matched by user query
 	  private UnitList unitList = new UnitList(this); //Table that will hold units matched by user query
 	  private UnitList directionLocationList = new UnitList(this);
-	  private UnitList optionList = new UnitList(this); //Table that will hold units matched by user query
 	  private UnitList resultList = new UnitList(this); //Table that will hold results matched by user query
 	  private StepList stepList = new StepList(this);
-	  private Boolean startSelected = false; //Indicates correctly identified start location
-	  private Boolean endSelected = false; //Indicates correctly identified end location
-	  private boolean defaultLocationFound = false;
+      private HorizontalLayout defaultLocationHorizontalLayout = new HorizontalLayout();
+*/	  private UnitList optionList = new UnitList(this); //Table that will hold units matched by user query
 	  private String defaultLocationValue = null;
 	  private  ArrayList<Unit> displayedUnits = new ArrayList<Unit>();
-	  private Unit startSelectedUnit;
-	  private Unit endSelectedUnit;
 	  private Window mainWindow= new Window("Maps Application");
 	  private TabSheet tabSheet = new TabSheet();
       private VerticalLayout l1 = new VerticalLayout();
@@ -104,14 +91,13 @@ public class MapsApplication extends Application implements Button.ClickListener
       private VerticalLayout l4 = new VerticalLayout();
       private VerticalLayout l5 = new VerticalLayout();
       private static VerticalLayout verticalViewLayout= new VerticalLayout();
-      private HorizontalLayout defaultLocationHorizontalLayout = new HorizontalLayout();
-      private Embedded startLocationIcon = new Embedded(null, new ThemeResource("numbers/location_1.png"));
-      private Embedded endLocationIcon = new Embedded(null, new ThemeResource("numbers/location_2.png"));
       private int horizontalSplitPosition = 25;
       private HttpServletResponse response;
       private HttpServletRequest request;
       private GoogleMap googleMap;
-
+      private PlaceContainer allPlacesContainer = PlaceContainer.getAllPlaces();
+      private VerticalLayout layout= new VerticalLayout();
+      private VerticalLayout findLocationLayout = new VerticalLayout();
 
 	@Override
 	public void init() {
@@ -155,8 +141,7 @@ public class MapsApplication extends Application implements Button.ClickListener
 		//Initialize Buttons
 		resetButton.setStyleName(Button.STYLE_LINK);
 		resetButton.addListener((ClickListener)this);
-		getDirectionFromHereButton.setStyleName(Button.STYLE_LINK);
-		getDirectionFromHereButton.addListener((ClickListener)this);
+
 		findAnotherLocationButton.setStyleName(Button.STYLE_LINK);
 		showStepsButton.setStyleName(Button.STYLE_LINK);
 		showStepsButton.addListener((ClickListener)this);
@@ -176,9 +161,6 @@ public class MapsApplication extends Application implements Button.ClickListener
 		addToMyPlacesButton.addListener((ClickListener)this);
 		clearMyPlacesButton.setStyleName(Button.STYLE_LINK);
 		clearMyPlacesButton.addListener((ClickListener)this);
-		saveDefaultLocationButton.addListener((ClickListener)this);
-		removeDefaultLocationButton.addListener((ClickListener)this);
-		cancelDefaultLocationButton.addListener((ClickListener)this);
 		
 		//Show & Hide Panel Buttons
 	    hidePanelButton.setDescription("Hide Panel");
@@ -192,26 +174,26 @@ public class MapsApplication extends Application implements Button.ClickListener
 		l1.setMargin(true);	
 		l2.setMargin(true);
 		l3.setMargin(true);
-		l4.setMargin(true);
-		l5.setMargin(true);
+		//l4.setMargin(true);
+		//l5.setMargin(true);
 		
-	    //l1.setWidth(20, TextField.UNITS_PERCENTAGE);
-	    //l2.setWidth(20, TextField.UNITS_PERCENTAGE);
-	    //l3.setWidth(20, TextField.UNITS_PERCENTAGE);
+	    l1.setWidth(33, TextField.UNITS_PERCENTAGE);
+	    l2.setWidth(33, TextField.UNITS_PERCENTAGE);
+	    l3.setWidth(33, TextField.UNITS_PERCENTAGE);
 	    //l4.setWidth(20, TextField.UNITS_PERCENTAGE);
 	    //l5.setWidth(20, TextField.UNITS_PERCENTAGE);
 	    l1.setSizeFull();
 	    l2.setSizeFull();
 	    l3.setSizeFull();
-	    l4.setSizeFull();
-	    l5.setSizeFull();
+	    //l4.setSizeFull();
+	    //l5.setSizeFull();
 	    
 	    tabSheet.setHeight(4, TextField.UNITS_PERCENTAGE);
 	    tabSheet.setWidth("100%");
 	    tabSheet.setImmediate(true);
 	    
         // First, a vertical SplitPanel
-		VerticalLayout layout= new VerticalLayout();
+		
 		layout.setSizeFull();
 		
 		// Second, aHorizontal Split
@@ -258,8 +240,7 @@ public class MapsApplication extends Application implements Button.ClickListener
 		
 		googleMap = new GoogleMap(this);
 		googleMap.setSizeFull();
-		PlaceContainer placeContainer = PlaceContainer.getPlace(defaultLocationValue);
-		setGoogleMap(placeContainer);
+		setGoogleMap(allPlacesContainer);
 		
 		googleMapLayout.addComponent(googleMap);
 		googleMapLayout.setVisible(true);
@@ -305,7 +286,7 @@ public class MapsApplication extends Application implements Button.ClickListener
 		
 		final TextField upperSearchText= new TextField();		
 		upperSearchText.setWidth(90, TextField.UNITS_PERCENTAGE);
-		upperSearchText.setHeight(40, TextField.UNITS_PERCENTAGE);
+		upperSearchText.setHeight(35, TextField.UNITS_PERCENTAGE);
 		
 		final Button upperSearchButton = new Button("Spot Location");
 		upperSearchButton.setClickShortcut(KeyCode.ENTER);
@@ -323,12 +304,14 @@ public class MapsApplication extends Application implements Button.ClickListener
         		{
 			  			final UnitContainer unitContainer = UnitContainer.getSimilarUnits(upperSearchText.getValue().toString());
 			  			viewLocationsLayout.removeAllComponents();
-			  			viewLocationsLayout.addComponent(getUnitsLayout(unitContainer));
-			  			
-        		}	
-        		tabSheet.setSelectedTab(l1);
-            	verticalViewLayout.removeAllComponents();
-        		verticalViewLayout.addComponent(viewLocationsLayout);
+			  			viewLocationsLayout.addComponent(getUnitsLayout(unitContainer,null));
+		        		
+			  			tabSheet.setSelectedTab(l1);
+		            	findLocationLayout.removeAllComponents();
+		        		findLocationLayout.addComponent(viewLocationsLayout);
+  					  	mapView.setDisplayedUnits(displayedUnits);
+  						setMainComponent(mapView);
+        		}
             }
 		});
 		
@@ -359,14 +342,14 @@ public class MapsApplication extends Application implements Button.ClickListener
 			verticalViewLayout.setSpacing(true);
 
 			tabSheet.addTab(l3,"Home", null);
-			tabSheet.addTab(l4,"My Places",null);
+//			tabSheet.addTab(l4,"My Places",null);
 //			tabSheet.addTab(l5,"My Places",null);
 		    tabSheet.addTab(l1,"Spot Location",null);
 		    tabSheet.addTab(l2,"Get Direction",null);
 
 		    tabSheet.setSelectedTab(l3);
 		    tabSheet.setSizeFull();
-
+		    
 		    VerticalLayout tabViewLayout =  new VerticalLayout();
 		    tabViewLayout.setSizeFull();
 			
@@ -385,160 +368,35 @@ public class MapsApplication extends Application implements Button.ClickListener
 			        if (tab.getCaption().equals("Spot Location"))
 			        {
 			        	verticalViewLayout.removeAllComponents();
-			        	buildFindLocation(null);
+			        	buildFindLocation(getDefaultLocationCookie());	
 			        }
 			        else if (tab.getCaption().equals("Get Direction"))
 			        {
 			        	verticalViewLayout.removeAllComponents();
-			        	buildFindDirection(null,null);
+			        	buildFindDirection(null,getDefaultLocationCookie());
 			        }
 			        else if (tab.getCaption().equals("Home"))
 			        {
 			        	verticalViewLayout.removeAllComponents();
 			        	buildHomeTab();
 			        }
-			        else if (tab.getCaption().equals("My Places"))
+/*			        else if (tab.getCaption().equals("My Places"))
 			        {
 			        	verticalViewLayout.removeAllComponents();;
-			        	buildMyMaps();
+			        	verticalViewLayout.addComponent(buildMyMaps());
 			        }
 			        else if (tab.getCaption().equals("My Places"))
 			        {
 			        	verticalViewLayout.removeAllComponents();
-//			        	buildMyPlaces();
+			        	buildMyPlaces();
 			        }
-			    }
+*/			    }
 			});
 
 			return tabViewLayout;	 
 		}
-/****************************************************************************
-	This method builds the Get Direction tab
-*****************************************************************************/
 	
-	private void buildFindDirection(String startingUnitName, String locationName)
-	{
-		l2.addComponent(verticalViewLayout);
-		verticalViewLayout.removeAllComponents();
-				
-		Label label = new Label("<h3>Please select starting point and destination point:</h3>",Label.CONTENT_XHTML);
-		Label locationLabel =  new Label("<h3>Selected Location: </h3>"+ locationName,Label.CONTENT_XHTML);
-		
-		final UnitContainer unitContainer = UnitContainer.getAllUnits(); 
-		
-		final ComboBox startingLocationComboBox = new ComboBox();
-		startingLocationComboBox.setWidth(80, TextField.UNITS_PERCENTAGE);
-		startingLocationComboBox.setNewItemsAllowed(false);      
-		startingLocationComboBox.setImmediate(true);
-		startingLocationComboBox.setNullSelectionAllowed(false);
-		startingLocationComboBox.setInputPrompt("Select Starting Point");
-        String item;
-        
-        for (int i = 0; i < unitContainer.size(); i++) {
-        	item =  unitContainer.getIdByIndex(i).getUnitName();
-        	startingLocationComboBox.addItem(item);
-        }
-        
-        // Set Starting Location Name if received
-        if (startingUnitName != null)
-        {
-        	startingLocationComboBox.setValue(startingUnitName);
-        	// show first Location on map
-        	UnitContainer startingUnitContainer = UnitContainer.getSimilarUnits(startingUnitName);
-        	displayUnitOnMap(startingUnitContainer);
-        }
-        
-		final ComboBox endingLocationComboBox = new ComboBox();
-		endingLocationComboBox.setWidth(80, TextField.UNITS_PERCENTAGE);
-		endingLocationComboBox.setNewItemsAllowed(false);      
-		endingLocationComboBox.setImmediate(true);
-		endingLocationComboBox.setNullSelectionAllowed(false);
-		endingLocationComboBox.setInputPrompt("Select Destination");
-        
-        for (int i = 0; i < unitContainer.size(); i++) {
-        	item =  unitContainer.getIdByIndex(i).getUnitName();
-        	endingLocationComboBox.addItem(item);
-        }
-        
-		HorizontalLayout startLocationLayout= new HorizontalLayout();
-		HorizontalLayout endLocationLayout= new HorizontalLayout();
-		
-	    Embedded startLocationIcon = new Embedded(null, new ThemeResource("numbers/location_1.png"));
-	    Embedded endLocationIcon = new Embedded(null, new ThemeResource("numbers/location_2.png"));
-		
-	    startLocationIcon.setWidth(80, TextField.UNITS_PERCENTAGE);
-	    startLocationIcon.setHeight(80, TextField.UNITS_PERCENTAGE);
-	    
-	    endLocationIcon.setWidth(80, TextField.UNITS_PERCENTAGE);
-	    endLocationIcon.setHeight(80, TextField.UNITS_PERCENTAGE);
-	    
-		startLocationLayout.setSizeFull();
-		startLocationLayout.addComponent(startLocationIcon);
-		startLocationLayout.setComponentAlignment(startLocationIcon, Alignment.TOP_LEFT);
-		startLocationLayout.setExpandRatio(startLocationIcon, 1);
-		startLocationLayout.addComponent(startingLocationComboBox);
-		startLocationLayout.setComponentAlignment(startingLocationComboBox, Alignment.MIDDLE_LEFT);
-		startLocationLayout.setExpandRatio(startingLocationComboBox, 8);
 
-		endLocationLayout.setSizeFull();
-		endLocationLayout.addComponent(endLocationIcon);
-		endLocationLayout.setComponentAlignment(endLocationIcon, Alignment.TOP_LEFT);
-		endLocationLayout.setExpandRatio(endLocationIcon, 1);
-		endLocationLayout.addComponent(endingLocationComboBox);
-		endLocationLayout.setComponentAlignment(endingLocationComboBox, Alignment.MIDDLE_LEFT);
-		endLocationLayout.setExpandRatio(endingLocationComboBox, 8);
-		
-        final VerticalLayout directionLayout = new VerticalLayout();
-        
-		Button findDirectionButton = new Button("Get Direction", new Button.ClickListener() {
-            public void buttonClick(ClickEvent event) {
-            	
-            		directionLayout.removeAllComponents();
-            		
-            		mapView.clearDisplayedUnits();
-            		mapView.clearPath();
-            		
-            		if (startingLocationComboBox.getValue() == null || endingLocationComboBox.getValue() == null)
-            		{
-            			Label label = new Label("<h3>Please select a valid starting point and destination:</h3>",Label.CONTENT_XHTML);
-            			directionLayout.addComponent(label);
-            		}
-            			else if (startingLocationComboBox.getValue() != null && endingLocationComboBox.getValue() != null)
-            		{
-
-  			  			final Unit startUnit = UnitContainer.getUnit(startingLocationComboBox.getValue().toString());
-  			  			final Unit endUnit = UnitContainer.getUnit(endingLocationComboBox.getValue().toString());
-  			  			
-  			  			endUnit.setUnitIconUrl("numbers/location_"+ 2 + ".png");
-  			  			endUnit.setUnitIcon(new Embedded(null,new ThemeResource("numbers/location_"+1+".png")));
-  			  				  			
-  			  			if (startUnit.getUnitName().equals(endUnit.getUnitName()))
-  			  			{
-  	            			Label label = new Label("<h3>Starting and ending Units are the same.</h3>",Label.CONTENT_XHTML);
-  			  				directionLayout.addComponent(label);
-  			  			}
-  			  			else
-  			  			{
-  			  				directionLayout.addComponent(getDirection(startUnit,endUnit));
-  			  			}
-  			  		}	
-
-				setMainComponent(mapView);
-            }
-        });
-
-		findDirectionButton.addListener((ClickListener)this);
-		findDirectionButton.setStyleName(Button.STYLE_LINK);
-		
-		verticalViewLayout.addComponent(locationLabel);
-//		verticalViewLayout.addComponent(label);
-		verticalViewLayout.addComponent(startLocationLayout);
-		verticalViewLayout.addComponent(endLocationLayout);
-		verticalViewLayout.addComponent(findDirectionButton);
-		verticalViewLayout.addComponent(directionLayout);
-		verticalViewLayout.addComponent(resetButton);
-	}
-	
 private void displayUnitOnMap(UnitContainer startingUnitContainer) {
 	
 	displayedUnits.clear();
@@ -581,8 +439,7 @@ private VerticalLayout getDirection(Unit startUnit, Unit endUnit)
 
         	walkingDistanceLabel.setValue("Total Distance: "+ mapView.getWalkingDistance()+" meters");
         	walkingTimeLabel.setValue("Total Walking Time: "+ mapView.getWalkingTime()+" minutes");
-        	String stepsList = mapView.getStepsList();
-        	stepsListLabel.setValue(stepsList);
+        	stepsListLabel.setValue("<h3>Steps to destination:</h3><br>"+mapView.getStepsList());
         	System.out.println("Inside showStepsButton");
 			stepsListLabel.setVisible(true);
 			walkingTimeLabel.setVisible(true);
@@ -621,6 +478,240 @@ private VerticalLayout getDirection(Unit startUnit, Unit endUnit)
 	
 	return directionLayout;
 }
+
+/*	private VerticalLayout buildFindLocation()
+	{
+		l1.addComponent(verticalViewLayout);
+		
+		locationLabel.setVisible(false);
+		optionList.setVisible(false);
+//		resetButton.setVisible(false);
+    	getDirectionFromHereButton.setVisible(false);
+    	findAnotherLocationButton.setVisible(false);
+    	addToMyPlacesButton.setVisible(false);
+		locationSearchText.setValue("");
+		locationSearchText.setInputPrompt("Enter Location");
+		
+		mapView.clearPath();
+		mapView.clearDisplayedUnits();
+		optionList.removeAllItems();
+		
+		optionList.addListener(new Property.ValueChangeListener() 
+		{
+		  public void valueChange(ValueChangeEvent event) {
+			  
+			  Unit selectedUnit = (Unit) optionList.getValue();
+			  if (selectedUnit != null)
+			  {
+			  	locationSearchText.setValue(selectedUnit.getUnitName()+", "+selectedUnit.getMapDescription());
+			  	System.out.println(selectedUnit.getUnitName());
+			  	System.out.println(selectedUnit.getmapImageUrl());
+			  	displayedUnits.clear();
+			  	displayedUnits.add(selectedUnit);
+			  	mapView.setDisplayedUnits(displayedUnits);
+				setMainComponent(mapView);
+				// Show Results
+				locationLabel.setValue("<h3>Matches Found to your chosen location:</h3>");
+				locationLabel.setVisible(true); 
+
+				
+	        	startSelectedUnit = selectedUnit;
+	        	
+	        	getDirectionFromHereButton.setVisible(true);
+	        	findAnotherLocationButton.setVisible(true);
+	        	addToMyPlacesButton.setVisible(true);
+//				resetButton.setVisible(true);
+			  }
+		  }
+		});
+		
+		verticalViewLayout.setSpacing(true);
+		verticalViewLayout.addComponent(locationSearchText);
+		verticalViewLayout.addComponent(locationSearchButton);
+		verticalViewLayout.addComponent(locationLabel);
+		verticalViewLayout.addComponent(optionList);
+//		verticalViewLayout.addComponent(resetButton);
+		verticalViewLayout.addComponent(getDirectionFromHereButton);
+		verticalViewLayout.addComponent(findAnotherLocationButton);
+		verticalViewLayout.addComponent(addToMyPlacesButton);
+	
+		locationSearchButton.setClickShortcut(KeyCode.ENTER);
+		
+		return verticalViewLayout;
+	}
+	*/
+/**********************************************************************************/
+
+	private VerticalLayout buildMyMaps()
+	{	
+
+	    VerticalLayout myMapsLayout = new VerticalLayout();
+	    
+		myMapsLayout.removeAllComponents();
+		
+		mapView.clearView();
+    	
+		System.out.println("Inside Build My Maps");
+		
+		Label label = new Label("<h3>Please select an Indoor Location:</h3>",Label.CONTENT_XHTML);
+		label.setVisible(true);
+
+		final ComboBox locationComboBox = new ComboBox();
+		locationComboBox.setWidth(80, TextField.UNITS_PERCENTAGE);
+		locationComboBox.setNewItemsAllowed(false);      
+		locationComboBox.setImmediate(true);
+		locationComboBox.setNullSelectionAllowed(true);
+		locationComboBox.setInputPrompt("Select a Place");
+		
+		final PlaceContainer placeContainer = PlaceContainer.getAllPlaces();
+        
+        String item;
+        for (int i = 0; i < placeContainer.size(); i++) {
+        	item =  placeContainer.getIdByIndex(i).getPlaceName();
+        	locationComboBox.addItem(item);
+        }
+        
+		// Check if default Location Cookie is found
+        String defaultLocationCookier = getDefaultLocationCookie();
+		if ( defaultLocationCookier != null)
+		{
+			System.out.println("default Location Cookie Found");
+			locationComboBox.setValue(defaultLocationCookier);
+			Place place = PlaceContainer.getPlace(getDefaultLocationCookie()).getIdByIndex(0);
+			setGoogleMap(placeContainer, place);
+		}
+		else
+		{
+			//Display all available Places
+			setGoogleMap(placeContainer);
+		}
+
+		Button findLocationOnMapButton = new Button("Find a Place inside this Location", new Button.ClickListener() {
+            public void buttonClick(ClickEvent event) {
+            	
+            	if (locationComboBox.getValue() != null)
+            	{
+	            	mapView.clearDisplayedUnits();
+	            	mapView.clearPath();
+	            	buildFindLocation(locationComboBox.getValue().toString());
+            	}
+            }
+		});
+		findLocationOnMapButton.setStyleName(Button.STYLE_LINK);
+		findLocationOnMapButton.addListener((ClickListener)this);
+
+		Button findDirectionOnMapButton = new Button("Get Direction inside this Location", new Button.ClickListener() {
+            public void buttonClick(ClickEvent event) {
+            	
+            	if (locationComboBox.getValue() != null)
+            	{
+	            	mapView.clearDisplayedUnits();
+	            	mapView.clearPath();
+	            	buildFindDirection(null,locationComboBox.getValue().toString());
+            	}
+            }
+		});
+		findDirectionOnMapButton.setStyleName(Button.STYLE_LINK);
+		findDirectionOnMapButton.addListener((ClickListener)this);
+		
+		final HorizontalLayout viewInfoLayout = new HorizontalLayout();
+		viewInfoLayout.setSizeFull();
+		viewInfoLayout.setVisible(false);
+		viewInfoLayout.setMargin(true);
+		
+		locationComboBox.addListener(new Property.ValueChangeListener()
+		{
+			  public void valueChange(ValueChangeEvent event) {
+				  
+				  if (locationComboBox.getValue() != null)
+				  {
+					  viewInfoLayout.removeAllComponents();
+					  final Place place = PlaceContainer.getPlace(locationComboBox.getValue().toString()).getIdByIndex(0);
+					  //Focus on a certain place
+					  setGoogleMap(placeContainer,place);
+				  }
+				  else
+				  {
+					  setGoogleMap(placeContainer);
+				  }
+			  }
+		});
+		
+		Button viewLocationInfoButton = new Button("View Info", new Button.ClickListener() {
+            public void buttonClick(ClickEvent event) {
+
+            		viewInfoLayout.removeAllComponents();
+            		
+            		if (locationComboBox.getValue() != null)
+            		{
+  			  			final Place place = PlaceContainer.getPlace(locationComboBox.getValue().toString()).getIdByIndex(0);
+	  			  		Embedded placeImage = place.getPlaceIcon();
+	  			  		String name = place.getPlaceName();
+	  			  		String category = place.getPlaceType();
+	  			  		String address = place.getPlaceLocation();
+	  			  		String Description= place.getPlaceDescription();
+	            	
+	  			  		Label placeDescription= new Label("<b>"+name+"</b>"+"<br>"+category+"<br>"+address+"<br>"+Description,Label.CONTENT_XHTML);
+	    			
+	  			  		placeImage.setWidth(100, TextField.UNITS_PERCENTAGE);
+	  			  		placeImage.setHeight(100, TextField.UNITS_PERCENTAGE);
+	    			
+	  			  		placeDescription.setWidth(100, TextField.UNITS_PERCENTAGE);
+	  			  		placeDescription.setHeight(100, TextField.UNITS_PERCENTAGE);
+	            	
+	  			  		viewInfoLayout.addComponent(placeImage);
+	  			  		viewInfoLayout.setComponentAlignment(placeImage, Alignment.MIDDLE_CENTER);
+	  			  		viewInfoLayout.setExpandRatio(placeImage,1);
+	  			  		viewInfoLayout.addComponent(placeDescription);
+	  			  		viewInfoLayout.setComponentAlignment(placeDescription, Alignment.MIDDLE_CENTER);
+	  			  		viewInfoLayout.setExpandRatio(placeDescription,2);
+	  			  		
+	  			  		viewInfoLayout.setVisible(true);
+            		}
+            }
+        });
+		viewLocationInfoButton.addListener((ClickListener)this);
+		viewLocationInfoButton.setStyleName(Button.STYLE_LINK);
+		
+		Button setDefaultLocationButton = new Button("Set as default Location", new Button.ClickListener() {
+            public void buttonClick(ClickEvent event) {
+            	
+            	if (locationComboBox.getValue() != null)
+            	{
+            		saveSetDefaultLocation(locationComboBox.getValue().toString());
+            	}
+            }
+		});
+		setDefaultLocationButton.addListener((ClickListener)this);
+		setDefaultLocationButton.setStyleName(Button.STYLE_LINK);
+		
+		Button cancelButton = new Button("Cancel", new Button.ClickListener() {
+            public void buttonClick(ClickEvent event) {
+            	
+            	cancelSetDefaultLocation();
+            }
+		});
+		cancelButton.addListener((ClickListener)this);
+		cancelButton.setStyleName(Button.STYLE_LINK);
+		
+		final HorizontalLayout h = new HorizontalLayout();
+		//h.setSizeFull();
+		
+		h.addComponent(viewLocationInfoButton);
+		h.setExpandRatio(viewLocationInfoButton, 1);
+		h.addComponent(setDefaultLocationButton);
+		h.setExpandRatio(setDefaultLocationButton, 1);
+		
+		myMapsLayout.addComponent(label);
+		myMapsLayout.addComponent(locationComboBox);
+		myMapsLayout.addComponent(h);
+		myMapsLayout.addComponent(viewInfoLayout);
+		myMapsLayout.addComponent(findLocationOnMapButton);
+		myMapsLayout.addComponent(findDirectionOnMapButton);
+		myMapsLayout.addComponent(cancelButton);
+		
+		return myMapsLayout;
+	}
 
 /*	private VerticalLayout buildFindDirection()
 	{
@@ -759,52 +850,54 @@ private VerticalLayout getDirection(Unit startUnit, Unit endUnit)
 		//verticalViewLayout.removeAllComponents();
 		l1.addComponent(verticalViewLayout);
 		
-		String path = GWT.getModuleBaseURL();
+		String path = "http://mapsof.net/uploads/static-maps/big_map_of_russia.jpg";
 		ImageMap imageMap = new ImageMap(new ExternalResource(path));
-		verticalViewLayout.addComponent(imageMap);
 		
 		googleMapLayout.removeComponent(googleMap);
 		googleMapLayout.addComponent(imageMap);
 	}
 */	
-	private void buildFindLocation(final String locationName)
+	private VerticalLayout buildFindLocation(final String placeName)
 	{
 		tabSheet.setSelectedTab(l1);
-		l1.addComponent(verticalViewLayout);
-    	googleMapLayout.removeComponent(googleMap);
-		verticalViewLayout.removeAllComponents();
-		mapView.clearDisplayedUnits();
-		mapView.clearPath();
+    	l1.removeAllComponents();
+    	findLocationLayout.removeAllComponents();
+    	l1.addComponent(findLocationLayout);
 
-		final UnitContainer unitContainer = UnitContainer.getAllUnits(); 
+    	Label locationLabel = new Label("",Label.CONTENT_XHTML);
+
+		final UnitContainer unitContainer;
+        
+        System.out.println(placeName);
+		if (placeName != null)
+		{
+	    	locationLabel.setValue("<h3>Current Location: </h3>"+placeName);
+	    	
+			unitContainer = UnitContainer.getUnitsPerPlace(placeName); 
+			MapContainer mapContainer = MapContainer.getMyMaps(placeName);
+			Map map = mapContainer.getIdByIndex(0);
+			mapView.setMap(map);
+			setMainComponent(mapView);	
+		}
+		else
+		{
+			unitContainer = UnitContainer.getAllUnits(); 
+		}
 		
 		final ComboBox locationComboBox = new ComboBox();
 		locationComboBox.setWidth(80, TextField.UNITS_PERCENTAGE);
 		locationComboBox.setNewItemsAllowed(true);      
 		locationComboBox.setImmediate(true);
 		locationComboBox.setNullSelectionAllowed(false);
-		locationComboBox.setInputPrompt("Select a Place");
+		locationComboBox.setInputPrompt("Select a Location");
         String item;
         
         for (int i = 0; i < unitContainer.size(); i++) {
         	item =  unitContainer.getIdByIndex(i).getUnitName();
         	locationComboBox.addItem(item);
         }
-        
-        System.out.println(locationName);
-		if (locationName != null)
-		{
-			final Place place = PlaceContainer.getPlace(locationName).getIdByIndex(0);
-		
-			MapContainer mapContainer = MapContainer.getMyMaps(locationName);
-			Map map = mapContainer.getIdByIndex(0);
-			mapView.setMap(map);
-			setMainComponent(mapView);		
-		}
 		
 		Label label = new Label("<h3>Please select a Place:</h3>",Label.CONTENT_XHTML);
-		Label locationLabel =  new Label("<h3>Selected Location: </h3>"+ locationName,Label.CONTENT_XHTML);
-		
 /*	
 		final AutoCompleteTextField locationAutoCompleteTextField = new AutoCompleteTextField();
         locationAutoCompleteTextField.setRows(10);
@@ -812,25 +905,9 @@ private VerticalLayout getDirection(Unit startUnit, Unit endUnit)
         locationAutoCompleteTextField.setSuggester(new UnitSuggester());
         locationAutoCompleteTextField.focus();
 */
-		
 		final HorizontalLayout h2 = new HorizontalLayout();
 		h2.setSizeFull();
 		h2.setVisible(true);
-		
-		Button findDirectionButton = new Button("Get direction from here", new Button.ClickListener() {
-            public void buttonClick(ClickEvent event) {
-            	verticalViewLayout.removeAllComponents();
-            	tabSheet.setSelectedTab(l2);
-            	locationSearchText.setValue("");
-            	mapView.clearDisplayedUnits();
-            	startSelectedUnit=null;
-            	mapView.clearPath();
-            	buildFindDirection(locationComboBox.getValue().toString(),locationName);
-            }
-		});
-		findDirectionButton.setStyleName(Button.STYLE_LINK);
-		findDirectionButton.addListener((ClickListener)this);
-		
 		
 		final VerticalLayout viewLocationsLayout = new VerticalLayout();
 		viewLocationsLayout.setSizeFull();
@@ -841,14 +918,18 @@ private VerticalLayout getDirection(Unit startUnit, Unit endUnit)
             		displayedUnits.clear();
             		if (locationComboBox.getValue() != null)
             		{
+            	    	googleMapLayout.removeComponent(googleMap);
+            			mapView.clearDisplayedUnits();
+            			mapView.clearPath();
+            			
   			  			final UnitContainer unitContainer = UnitContainer.getSimilarUnits(locationComboBox.getValue().toString());
   			  			viewLocationsLayout.removeAllComponents();
-  			  			viewLocationsLayout.addComponent(getUnitsLayout(unitContainer));
+  			  			viewLocationsLayout.addComponent(getUnitsLayout(unitContainer, placeName));
   			  			viewLocationsLayout.setVisible(true);
+  					  	mapView.setDisplayedUnits(displayedUnits);
+  						setMainComponent(mapView);
             		}	
 
-			  	mapView.setDisplayedUnits(displayedUnits);
-				setMainComponent(mapView);
             }
         });
 
@@ -858,17 +939,163 @@ private VerticalLayout getDirection(Unit startUnit, Unit endUnit)
 		
 		h2.addComponent(findLocationButton);
 		h2.setExpandRatio(findLocationButton, 1);
-		h2.addComponent(findDirectionButton);
-		h2.setExpandRatio(findDirectionButton, 6);
+//		h2.addComponent(findDirectionButton);
+//		h2.setExpandRatio(findDirectionButton, 6);
 		
-		verticalViewLayout.addComponent(locationLabel);
-//		verticalViewLayout.addComponent(label);
-		verticalViewLayout.addComponent(locationComboBox);
-		verticalViewLayout.addComponent(h2);
-		verticalViewLayout.addComponent(viewLocationsLayout);
+		findLocationLayout.addComponent(locationLabel);
+		findLocationLayout.addComponent(label);
+		findLocationLayout.addComponent(locationComboBox);
+		findLocationLayout.addComponent(h2);
+		findLocationLayout.addComponent(viewLocationsLayout);
+		
+		return findLocationLayout;
 	}
 	
-protected VerticalLayout getUnitsLayout(UnitContainer unitContainer) {
+/****************************************************************************
+	This method builds the Get Direction tab
+*****************************************************************************/
+	
+	private VerticalLayout buildFindDirection(String startingUnitName, String placeName)
+	{
+		VerticalLayout findDirectionLayout = new VerticalLayout();
+		tabSheet.setSelectedTab(l2);
+    	l2.removeAllComponents();
+    	l2.addComponent(findDirectionLayout);
+    	
+    	Label locationLabel = new Label("",Label.CONTENT_XHTML);
+    	
+    	UnitContainer unitContainer = null;
+    	
+    	if (placeName != null)
+    	{
+    		unitContainer = UnitContainer.getUnitsPerPlace(placeName); 
+        	locationLabel.setValue("<h3>Current Location: </h3>"+placeName);
+			MapContainer mapContainer = MapContainer.getMyMaps(placeName);
+			Map map = mapContainer.getIdByIndex(0);
+			mapView.setMap(map);
+			setMainComponent(mapView);	
+    	}
+		
+		Label label = new Label("<h3>Please select starting point and destination point:</h3>",Label.CONTENT_XHTML);
+//		Label locationLabel =  new Label("<h3>Selected Location: </h3>"+ locationName,Label.CONTENT_XHTML);
+		
+		final ComboBox startingLocationComboBox = new ComboBox();
+		startingLocationComboBox.setWidth(80, TextField.UNITS_PERCENTAGE);
+		startingLocationComboBox.setNewItemsAllowed(false);      
+		startingLocationComboBox.setImmediate(true);
+		startingLocationComboBox.setNullSelectionAllowed(false);
+		startingLocationComboBox.setInputPrompt("Select Starting Point");
+        String item;
+        
+        for (int i = 0; i < unitContainer.size(); i++) {
+        	item =  unitContainer.getIdByIndex(i).getUnitName();
+        	startingLocationComboBox.addItem(item);
+        }
+        
+        // Set Starting Location Name if received
+        if (startingUnitName != null)
+        {
+        	startingLocationComboBox.setValue(startingUnitName);
+        	// show first Location on map
+        	UnitContainer startingUnitContainer = UnitContainer.getSimilarUnits(startingUnitName);
+        	displayUnitOnMap(startingUnitContainer);
+        }
+        
+		final ComboBox endingLocationComboBox = new ComboBox();
+		endingLocationComboBox.setWidth(80, TextField.UNITS_PERCENTAGE);
+		endingLocationComboBox.setNewItemsAllowed(false);      
+		endingLocationComboBox.setImmediate(true);
+		endingLocationComboBox.setNullSelectionAllowed(false);
+		endingLocationComboBox.setInputPrompt("Select Destination");
+        
+        for (int i = 0; i < unitContainer.size(); i++) {
+        	item =  unitContainer.getIdByIndex(i).getUnitName();
+        	endingLocationComboBox.addItem(item);
+        }
+        
+		HorizontalLayout startLocationLayout= new HorizontalLayout();
+		HorizontalLayout endLocationLayout= new HorizontalLayout();
+		
+	    Embedded startLocationIcon = new Embedded(null, new ThemeResource("numbers/location_1.png"));
+	    Embedded endLocationIcon = new Embedded(null, new ThemeResource("numbers/location_2.png"));
+		
+	    startLocationIcon.setWidth(80, TextField.UNITS_PERCENTAGE);
+	    startLocationIcon.setHeight(80, TextField.UNITS_PERCENTAGE);
+	    
+	    endLocationIcon.setWidth(80, TextField.UNITS_PERCENTAGE);
+	    endLocationIcon.setHeight(80, TextField.UNITS_PERCENTAGE);
+	    
+		startLocationLayout.setSizeFull();
+		startLocationLayout.addComponent(startLocationIcon);
+		startLocationLayout.setComponentAlignment(startLocationIcon, Alignment.TOP_LEFT);
+		startLocationLayout.setExpandRatio(startLocationIcon, 1);
+		startLocationLayout.addComponent(startingLocationComboBox);
+		startLocationLayout.setComponentAlignment(startingLocationComboBox, Alignment.MIDDLE_LEFT);
+		startLocationLayout.setExpandRatio(startingLocationComboBox, 8);
+
+		endLocationLayout.setSizeFull();
+		endLocationLayout.addComponent(endLocationIcon);
+		endLocationLayout.setComponentAlignment(endLocationIcon, Alignment.TOP_LEFT);
+		endLocationLayout.setExpandRatio(endLocationIcon, 1);
+		endLocationLayout.addComponent(endingLocationComboBox);
+		endLocationLayout.setComponentAlignment(endingLocationComboBox, Alignment.MIDDLE_LEFT);
+		endLocationLayout.setExpandRatio(endingLocationComboBox, 8);
+		
+        final VerticalLayout directionLayout = new VerticalLayout();
+        
+		Button findDirectionButton = new Button("Get Direction", new Button.ClickListener() {
+            public void buttonClick(ClickEvent event) {
+            	
+            		directionLayout.removeAllComponents();
+            		
+            		mapView.clearDisplayedUnits();
+            		mapView.clearPath();
+            		
+            		if (startingLocationComboBox.getValue() == null || endingLocationComboBox.getValue() == null)
+            		{
+            			Label label = new Label("<h3>Please select a valid starting point and destination:</h3>",Label.CONTENT_XHTML);
+            			directionLayout.addComponent(label);
+            		}
+            			else if (startingLocationComboBox.getValue() != null && endingLocationComboBox.getValue() != null)
+            		{
+
+  			  			final Unit startUnit = UnitContainer.getUnit(startingLocationComboBox.getValue().toString());
+  			  			final Unit endUnit = UnitContainer.getUnit(endingLocationComboBox.getValue().toString());
+  			  			
+  			  			endUnit.setUnitIconUrl("numbers/location_"+ 2 + ".png");
+  			  			endUnit.setUnitIcon(new Embedded(null,new ThemeResource("numbers/location_"+1+".png")));
+  			  				  			
+  			  			if (startUnit.getUnitName().equals(endUnit.getUnitName()))
+  			  			{
+  	            			Label label = new Label("<h3>Starting and ending Units are the same.</h3>",Label.CONTENT_XHTML);
+  			  				directionLayout.addComponent(label);
+  			  			}
+  			  			else
+  			  			{
+  			  				directionLayout.addComponent(getDirection(startUnit,endUnit));
+  			  			}
+  			  		}	
+
+				setMainComponent(mapView);
+            }
+        });
+
+		findDirectionButton.addListener((ClickListener)this);
+		findDirectionButton.setStyleName(Button.STYLE_LINK);
+		
+		findDirectionLayout.addComponent(locationLabel);
+		findDirectionLayout.addComponent(locationLabel);
+		findDirectionLayout.addComponent(label);
+		findDirectionLayout.addComponent(startLocationLayout);
+		findDirectionLayout.addComponent(endLocationLayout);
+		findDirectionLayout.addComponent(findDirectionButton);
+		findDirectionLayout.addComponent(directionLayout);
+		findDirectionLayout.addComponent(resetButton);
+		
+		return findDirectionLayout;
+	}
+
+protected VerticalLayout getUnitsLayout(UnitContainer unitContainer, String placeName) {
 	
 	final VerticalLayout viewLocationsLayout = new VerticalLayout();
 	viewLocationsLayout.setSizeFull();
@@ -884,13 +1111,35 @@ protected VerticalLayout getUnitsLayout(UnitContainer unitContainer) {
 		Unit unit = unitContainer.getIdByIndex(i);
 		Embedded unitImage = unit.getImageUrl();
 		Embedded unitIcon = unit.getUnitIcon();
-		String name = unit.getUnitName();
+		final String name = unit.getUnitName();
 		String category = unit.getUnitType();
 		String location = unit.getMapDescription();
 		String Description= unit.getDescription();
+		final String place;
+		
+		if (placeName == null)
+			place = unit.getPlaceName();
+		else
+			place = placeName;
+			
 
 		Button unitName = new Button(name, new Button.ClickListener() {
-			public void buttonClick(ClickEvent event) {}});
+			public void buttonClick(ClickEvent event) {
+				//TO DO
+			}});
+		
+		Button getDirectionFromHereButton = new Button("Get Direction From here");
+		getDirectionFromHereButton.setStyleName(Button.STYLE_LINK);
+		getDirectionFromHereButton.addListener((ClickListener)this);
+		
+		getDirectionFromHereButton.addListener(new Button.ClickListener() {
+			public void buttonClick(ClickEvent event) {
+				
+				//verticalViewLayout.removeAllComponents();
+				System.out.println("Inside Get Directions from here");
+				buildFindDirection(name, place);
+
+			}});
 		
 				unitName.addListener((ClickListener)this);
 				unitName.setStyleName(Button.STYLE_LINK);
@@ -899,6 +1148,10 @@ protected VerticalLayout getUnitsLayout(UnitContainer unitContainer) {
 				Label unitDescription= new Label("<br>"+category+"<br>"+location+"<br>"+Description,Label.CONTENT_XHTML);
 			
 				VerticalLayout v = new VerticalLayout();
+				v.setSizeFull();
+				v.setVisible(true);
+				
+				VerticalLayout v1 = new VerticalLayout();
 				v.setSizeFull();
 				v.setVisible(true);
 				
@@ -915,16 +1168,21 @@ protected VerticalLayout getUnitsLayout(UnitContainer unitContainer) {
 				v.setComponentAlignment(unitName, Alignment.TOP_LEFT);
 				v.addComponent(unitImage);		
 				v.setComponentAlignment(unitImage, Alignment.MIDDLE_CENTER);
-		
+				
+				v1.addComponent(unitDescription);
+				v1.addComponent(getDirectionFromHereButton);
+				
 				viewLocationLayout.addComponent(unitIcon);
 				viewLocationLayout.setComponentAlignment(unitIcon, Alignment.TOP_LEFT);
 				viewLocationLayout.setExpandRatio(unitIcon,1);
+				
 				viewLocationLayout.addComponent(v);
 				viewLocationLayout.setComponentAlignment(v, Alignment.MIDDLE_CENTER);
 				viewLocationLayout.setExpandRatio(v,3);
-				viewLocationLayout.addComponent(unitDescription);
-				viewLocationLayout.setComponentAlignment(unitDescription, Alignment.MIDDLE_CENTER);
-				viewLocationLayout.setExpandRatio(unitDescription,6);
+				
+				viewLocationLayout.addComponent(v1);
+				viewLocationLayout.setComponentAlignment(v1, Alignment.MIDDLE_CENTER);
+				viewLocationLayout.setExpandRatio(v1,6);
 		
 				viewLocationsLayout.addComponent(viewLocationLayout);
 			  	displayedUnits.add(unit);
@@ -934,181 +1192,7 @@ protected VerticalLayout getUnitsLayout(UnitContainer unitContainer) {
 	
 }
 
-/*	private VerticalLayout buildFindLocation()
-	{
-		l1.addComponent(verticalViewLayout);
-		
-		locationLabel.setVisible(false);
-		optionList.setVisible(false);
-//		resetButton.setVisible(false);
-    	getDirectionFromHereButton.setVisible(false);
-    	findAnotherLocationButton.setVisible(false);
-    	addToMyPlacesButton.setVisible(false);
-		locationSearchText.setValue("");
-		locationSearchText.setInputPrompt("Enter Location");
-		
-		mapView.clearPath();
-		mapView.clearDisplayedUnits();
-		optionList.removeAllItems();
-		
-		optionList.addListener(new Property.ValueChangeListener() 
-		{
-		  public void valueChange(ValueChangeEvent event) {
-			  
-			  Unit selectedUnit = (Unit) optionList.getValue();
-			  if (selectedUnit != null)
-			  {
-			  	locationSearchText.setValue(selectedUnit.getUnitName()+", "+selectedUnit.getMapDescription());
-			  	System.out.println(selectedUnit.getUnitName());
-			  	System.out.println(selectedUnit.getmapImageUrl());
-			  	displayedUnits.clear();
-			  	displayedUnits.add(selectedUnit);
-			  	mapView.setDisplayedUnits(displayedUnits);
-				setMainComponent(mapView);
-				// Show Results
-				locationLabel.setValue("<h3>Matches Found to your chosen location:</h3>");
-				locationLabel.setVisible(true); 
-
-				
-	        	startSelectedUnit = selectedUnit;
-	        	
-	        	getDirectionFromHereButton.setVisible(true);
-	        	findAnotherLocationButton.setVisible(true);
-	        	addToMyPlacesButton.setVisible(true);
-//				resetButton.setVisible(true);
-			  }
-		  }
-		});
-		
-		verticalViewLayout.setSpacing(true);
-		verticalViewLayout.addComponent(locationSearchText);
-		verticalViewLayout.addComponent(locationSearchButton);
-		verticalViewLayout.addComponent(locationLabel);
-		verticalViewLayout.addComponent(optionList);
-//		verticalViewLayout.addComponent(resetButton);
-		verticalViewLayout.addComponent(getDirectionFromHereButton);
-		verticalViewLayout.addComponent(findAnotherLocationButton);
-		verticalViewLayout.addComponent(addToMyPlacesButton);
-	
-		locationSearchButton.setClickShortcut(KeyCode.ENTER);
-		
-		return verticalViewLayout;
-	}
-	*/
-/**********************************************************************************/
-
-	private void buildMyMaps()
-	{	
-		verticalViewLayout.removeAllComponents();
-		l4.addComponent(verticalViewLayout);
-		mapView.clearView();
-    	
-		Label label = new Label("<h3>Please select a Location:</h3>",Label.CONTENT_XHTML);
-		label.setVisible(true);
-
-		final ComboBox locationComboBox = new ComboBox();
-		locationComboBox.setWidth(80, TextField.UNITS_PERCENTAGE);
-		locationComboBox.setNewItemsAllowed(false);      
-		locationComboBox.setImmediate(true);
-		locationComboBox.setNullSelectionAllowed(false);
-		locationComboBox.setInputPrompt("Select a Place");
-		
-		final HorizontalLayout h2 = new HorizontalLayout();
-		h2.setSizeFull();
-		
-		final PlaceContainer placeContainer = PlaceContainer.getAllPlaces(); 
-		
-		Button findLocationOnMapButton = new Button("Find a Place inside this Location", new Button.ClickListener() {
-            public void buttonClick(ClickEvent event) {
-            	
-            	if (locationComboBox.getValue() != null)
-            	{
-            	verticalViewLayout.removeAllComponents();
-            	tabSheet.setSelectedTab(l1);
-            	locationSearchText.setValue("");
-            	mapView.clearDisplayedUnits();
-            	startSelectedUnit=null;
-            	mapView.clearPath();
-            	//buildFindLocation(locationComboBox.getValue().toString());
-            	buildFindLocation(locationComboBox.getValue().toString());
-            	}
-            }
-		});
-		findLocationOnMapButton.setStyleName(Button.STYLE_LINK);
-		findLocationOnMapButton.addListener((ClickListener)this);
-		
-		setGoogleMap(placeContainer);
-        
-        String item;
-        for (int i = 0; i < placeContainer.size(); i++) {
-        	item =  placeContainer.getIdByIndex(i).getPlaceName();
-        	locationComboBox.addItem(item);
-        }
-
-		final HorizontalLayout viewInfoLayout = new HorizontalLayout();
-		viewInfoLayout.setSizeFull();
-		viewInfoLayout.setVisible(false);
-		
-		locationComboBox.addListener(new Property.ValueChangeListener()
-		{
-			  public void valueChange(ValueChangeEvent event) {
-				  
-				  viewInfoLayout.removeAllComponents();
-				  final Place place = PlaceContainer.getPlace(locationComboBox.getValue().toString()).getIdByIndex(0);
-				  //Focus on a certain place
-				  setGoogleMaps(placeContainer,place);
-			  }
-		});
-		
-		Button viewLocationInfoButton = new Button("View Info", new Button.ClickListener() {
-            public void buttonClick(ClickEvent event) {
-
-            		viewInfoLayout.removeAllComponents();
-            		
-            		if (locationComboBox.getValue() != null)
-            		{
-  			  			final Place place = PlaceContainer.getPlace(locationComboBox.getValue().toString()).getIdByIndex(0);
-	  			  		Embedded placeImage = place.getPlaceIcon();
-	  			  		String name = place.getPlaceName();
-	  			  		String category = place.getPlaceType();
-	  			  		String address = place.getPlaceLocation();
-	  			  		String Description= place.getPlaceDescription();
-	            	
-	  			  		Label placeDescription= new Label("<b>"+name+"</b>"+"<br>"+category+"<br>"+address+"<br>"+Description,Label.CONTENT_XHTML);
-	    			
-	  			  		placeImage.setWidth(100, TextField.UNITS_PERCENTAGE);
-	  			  		placeImage.setHeight(100, TextField.UNITS_PERCENTAGE);
-	    			
-	  			  		placeDescription.setWidth(100, TextField.UNITS_PERCENTAGE);
-	  			  		placeDescription.setHeight(100, TextField.UNITS_PERCENTAGE);
-	            	
-	  			  		viewInfoLayout.addComponent(placeImage);
-	  			  		viewInfoLayout.setComponentAlignment(placeImage, Alignment.TOP_LEFT);
-	  			  		viewInfoLayout.setExpandRatio(placeImage,1);
-	  			  		viewInfoLayout.addComponent(placeDescription);
-	  			  		viewInfoLayout.setComponentAlignment(placeDescription, Alignment.MIDDLE_LEFT);
-	  			  		viewInfoLayout.setExpandRatio(placeDescription,2);
-	  			  		
-	  			  		viewInfoLayout.setVisible(true);
-            		}
-            }
-        });
-
-		viewLocationInfoButton.addListener((ClickListener)this);
-		viewLocationInfoButton.setStyleName(Button.STYLE_LINK);
-		
-		h2.addComponent(viewLocationInfoButton);
-		h2.setExpandRatio(viewLocationInfoButton, 1);
-		h2.addComponent(findLocationOnMapButton);
-		h2.setExpandRatio(findLocationOnMapButton, 6);
-		
-//		verticalViewLayout.addComponent(label);
-		verticalViewLayout.addComponent(locationComboBox);
-		verticalViewLayout.addComponent(h2);
-		verticalViewLayout.addComponent(viewInfoLayout);;
-	}
-	
-	private void buildMySelectedMap(Place selectedPlace)
+/*	private void buildMySelectedMap(Place selectedPlace)
 	{
 		verticalViewLayout.removeAllComponents();    	
     	l4.addComponent(verticalViewLayout);
@@ -1148,7 +1232,7 @@ protected VerticalLayout getUnitsLayout(UnitContainer unitContainer) {
 		
 		verticalViewLayout.addComponent(myMapsButton);
 	}
-	
+*/	
 /*	private void buildMyPlaces()
 	{	
 		verticalViewLayout.removeAllComponents();
@@ -1203,36 +1287,137 @@ protected VerticalLayout getUnitsLayout(UnitContainer unitContainer) {
 */	
 	private void buildHomeTab()
 	{			
-		l3.addComponent(verticalViewLayout);
+		final VerticalLayout homeTabLayout = new VerticalLayout();
+		l3.removeAllComponents();
+		l3.addComponent(homeTabLayout);
 		Label homeLabel= new Label ("<h2>Welcome to BOSLLA.COM !!</h2></ br> You can Spot Locations and directions to your favorite indoor places here...",Label.CONTENT_XHTML);
-		verticalViewLayout.addComponent(homeLabel);
-
+	
+		final Button setDefaultLocationButton = new Button("Set Current Location");
+		
+		final Label defaultLocationLabel = new Label();
+				
 		if (getDefaultLocationCookie() != null)
 		{
-			Label defaultLocationLabel = new Label ("Default Location: "+defaultLocationValue);
-			verticalViewLayout.addComponent(defaultLocationLabel);
-			setDefaultLocationButton.setCaption("Change Default Location");
-			PlaceContainer placeContainer = PlaceContainer.getPlace(defaultLocationValue);
-			mapView.clearView();
-			setGoogleMap(placeContainer);
+			defaultLocationLabel.setValue("Current Location: "+defaultLocationValue);
+			setDefaultLocationButton.setCaption("Change Current Location");
 		}
 		else 
 		{
 			setDefaultLocationButton.setCaption("Set Default Location");
-				mapView.setDisplayedUnits(null);
-			mapView.clearView();
-			setMainComponent(mapView);
+			setDefaultLocationButton.setVisible(true);
 		}
 		
 		setDefaultLocationButton.setClickShortcut(KeyCode.ENTER);
 		setDefaultLocationButton.addListener((ClickListener)this);
 		setDefaultLocationButton.setStyleName(Button.STYLE_LINK);
 		
-		setDefaultLocationButton.setVisible(true);
-		verticalViewLayout.addComponent(setDefaultLocationButton);
+		setDefaultLocationButton.addListener(new Button.ClickListener() {
+            public void buttonClick(ClickEvent event) {
+            	
+            	defaultLocationLabel.setVisible(false);
+            	setDefaultLocationButton.setVisible(false);
+    			homeTabLayout.addComponent(buildMyMaps());
+            }
+		});
+			
+		mapView.clearView();
+		if (googleMap != null)
+		{
+			setGoogleMap(allPlacesContainer);
+		}
+		
+		homeTabLayout.addComponent(homeLabel);
+		homeTabLayout.addComponent(defaultLocationLabel);
+		homeTabLayout.addComponent(setDefaultLocationButton);
 	}
 	
-/*	private void showDirectionResults()
+/*******************************************************************/
+		
+/*	private void buildSetDefaultLocation() 
+	{
+			System.out.println("Inside Build Default Location");
+			
+		    final ComboBox setDefaultLocationComboBox = new ComboBox();
+	        setDefaultLocationComboBox.setNewItemsAllowed(false);      
+	        setDefaultLocationComboBox.setImmediate(true);
+	        setDefaultLocationComboBox.setNullSelectionAllowed(false);
+	 
+	        placeDataSource = PlaceContainer.getAllPlaces();       
+	        String item;
+	        for (int i = 0; i < placeDataSource.size(); i++) {
+	        	item =  placeDataSource.getIdByIndex(i).getPlaceName();
+	        	setDefaultLocationComboBox.addItem(item);
+	        }
+
+			System.out.println("Build Default Location:" + defaultLocationValue);
+			
+			if (defaultLocationFound == false)
+			    setDefaultLocationComboBox.setInputPrompt("Enter Default Location");
+			else
+				setDefaultLocationComboBox.setValue(defaultLocationValue);
+	
+			final Button saveDefaultLocationButton = new Button("Save", new Button.ClickListener() {
+	            public void buttonClick(ClickEvent event) {
+	            	if (setDefaultLocationComboBox.getValue() != null)
+	            	{
+	            		saveSetDefaultLocation(setDefaultLocationComboBox.getValue().toString());
+	            	}
+	            }
+			});
+			
+			final Button removeDefaultLocationButton = new Button("Remove", new Button.ClickListener() {
+	            public void buttonClick(ClickEvent event) {
+	
+	            	removeSetDefaultLocation();
+	            }
+			});
+		
+			final Button cancelDefaultLocationButton = new Button("Cancel", new Button.ClickListener() {
+	            public void buttonClick(ClickEvent event) {
+	
+	            	cancelSetDefaultLocation();
+	            }
+			});
+			
+			
+			
+			setDefaultLocationComboBox.addListener(new Property.ValueChangeListener()
+			{
+				  public void valueChange(ValueChangeEvent event) {
+					  
+					  if (setDefaultLocationComboBox.getValue() != null)
+					  {
+						  final Place place = PlaceContainer.getPlace(setDefaultLocationComboBox.getValue().toString()).getIdByIndex(0);
+						  //Focus on a certain place
+						  setGoogleMap(allPlacesContainer,place);
+					  }
+					  else
+					  {
+						  setGoogleMap(allPlacesContainer);
+					  }
+				  }
+			});
+			
+			saveDefaultLocationButton.addListener((ClickListener)this);
+			removeDefaultLocationButton.addListener((ClickListener)this);
+			cancelDefaultLocationButton.addListener((ClickListener)this);
+			
+			defaultLocationHorizontalLayout.setSpacing(true);
+			
+			verticalViewLayout.addComponent(setDefaultLocationLabel);
+			defaultLocationHorizontalLayout.addComponent(setDefaultLocationComboBox);
+			defaultLocationHorizontalLayout.setComponentAlignment(setDefaultLocationComboBox, Alignment.BOTTOM_LEFT);
+			defaultLocationHorizontalLayout.addComponent(saveDefaultLocationButton);
+			defaultLocationHorizontalLayout.setComponentAlignment(saveDefaultLocationButton, Alignment.BOTTOM_LEFT);
+			defaultLocationHorizontalLayout.addComponent(removeDefaultLocationButton);
+			defaultLocationHorizontalLayout.setComponentAlignment(removeDefaultLocationButton, Alignment.BOTTOM_LEFT);			
+			defaultLocationHorizontalLayout.addComponent(cancelDefaultLocationButton);
+			defaultLocationHorizontalLayout.setComponentAlignment(cancelDefaultLocationButton, Alignment.BOTTOM_LEFT);
+			
+			verticalViewLayout.addComponent(defaultLocationHorizontalLayout);
+		}
+*/
+	/*	private void showDirectionResults()
 	{
     	System.out.println("Inside Show Direction Results");
     	System.out.println(mapView.getWalkingDistance());
@@ -1351,13 +1536,133 @@ protected VerticalLayout getUnitsLayout(UnitContainer unitContainer) {
 	  }
 	}
 */
-	private void showNotification(String caption, String description, int type)
-	{
-		Notification n = new Notification(caption,description, type);
-        n.setDelayMsec(1000); // sec->msec
-        verticalViewLayout.getWindow().showNotification(n);
-	}
+	/*	private void showDirectionResults()
+		{
+	    	System.out.println("Inside Show Direction Results");
+	    	System.out.println(mapView.getWalkingDistance());
+	    	System.out.println(mapView.getWalkingTime());
+		}
+	*/
+	/*	private void getDirection()
+		{
+			String [] s = startText.getValue().toString().trim().split(",");
+			String startTextValue = s[0];
+	        String [] e = endText.getValue().toString().trim().split(",");
+	        String endTextValue = e[0];
+	        System.out.println(startTextValue);
+			System.out.println(endTextValue);
 	
+			// Source Location Check
+			if (!startTextValue.isEmpty() && !startSelected) 
+			{
+				System.out.println("In Start Selection");
+				startUnitDataSource=UnitContainer.getSimilarUnits(startTextValue);
+	    	
+				if (startUnitDataSource.size() == 0) { // Search returns no items
+					locationLabel.setVisible(true); 
+					locationLabel.setValue("<h3>No items match your chosen starting location.</h3>");
+					startSelected = false;
+				} 
+			else if (startUnitDataSource.size()== 1 && 
+		    		startUnitDataSource.getIdByIndex(0).getUnitName().toLowerCase().trim().equals(startText.getValue().toString().toLowerCase().trim())) 
+		    { // Only one result returned
+		        Unit foundUnit = startUnitDataSource.getIdByIndex(0);
+		        startSelectedUnits.add(foundUnit);
+		    	startText.setValue(foundUnit.getUnitName()); //Set the value 
+		    	startSelected = true;
+		      }
+			    
+		    else { // More than one item match search 
+		    	  for (int i=0;i<startUnitDataSource.size();i++)
+		    	    displayedUnits.add(startUnitDataSource.getIdByIndex(i));
+		    	    
+		          locationLabel.setValue("<h3> Start Location could be:</h3>");
+		          locationLabel.setVisible(true);
+		          directionLocationList.refreshOptionsDataSource(this,startUnitDataSource);
+		          directionLocationList.setVisible(true);
+		        }	
+	        }
+			else if (startTextValue.isEmpty())
+			{
+					startText.focus();
+			    	locationLabel.setValue("<h3>Please enter a Start Point.</h3>");
+			    	locationLabel.setVisible(true);
+			}
+	      
+	      // Destination Check
+			if (!endTextValue.isEmpty() && !endSelected && startSelected)
+			{
+	    	System.out.println("In End Selection");
+			    endUnitDataSource=UnitContainer.getSimilarUnits(endText.getValue().toString());
+			    
+			    if (endUnitDataSource.size() == 0) { // Search returns no items
+			    	locationLabel.setVisible(true); 
+			    	locationLabel.setValue("<h3>No items match your chosen Ending Point</h3>");
+			    	endSelected = false;
+			    }
+			    else { // More than one item match search 
+		    	  for (int i=0;i<endUnitDataSource.size();i++) {
+			    	    displayedUnits.add(endUnitDataSource.getIdByIndex(i));
+			    	  }
+		          locationLabel.setValue("<h3> End Location could be:</h3>");
+			          locationLabel.setVisible(true);
+			          directionLocationList.refreshDataSource(this, endUnitDataSource);
+			          directionLocationList.refreshOptionsDataSource(this, endUnitDataSource);
+			          directionLocationList.setVisible(true);
+			          //endPresented = true;
+			        }
+	        }
+			else if (endTextValue.isEmpty() && startSelected)
+			{
+					endText.focus();
+			    	locationLabel.setValue("<h3>Please enter an End Point.</h3>");
+			    	locationLabel.setVisible(true);
+			}
+	      
+		  // Calculating Path
+		  if (endSelected == true && startSelected == true ) {
+			 
+			  if ( startSelectedUnit.getUnitName().equals(endSelectedUnit.getUnitName()))
+			  {
+				  locationLabel.setValue("<h3>The End location is the same as the start location!</h3>");
+				  locationLabel.setVisible(true);
+				  endSelected = false;
+			  }
+			  else // Calculate Path
+			  {
+		    	System.out.println("Calculating path between: " + startSelectedUnit.getUnitName() +
+		    			       " and " + endSelectedUnit.getUnitName());
+		    	//mapView.calculatePath(startSelectedUnit, endSelectedUnit);
+		    	//mapView.calculateSteps();
+	
+				ArrayList<Unit> unitsArrayList = new ArrayList<Unit>();
+				unitsArrayList.add(startSelectedUnit);
+				unitsArrayList.add(endSelectedUnit);
+				
+				unitDataSource = null;
+				unitDataSource= UnitContainer.addUnits(startSelectedUnit, endSelectedUnit);
+				resultList.refreshDataSource(this,unitDataSource);
+				resultList.setVisible(true);
+				resultList.setSelectable(false);
+		    	
+		    	mapView.setDisplayedUnits(unitsArrayList);
+		    	locationLabel.setValue("<h3>A direction between "+startSelectedUnit.getUnitName()+" and "+endSelectedUnit.getUnitName()+" was found on the map.</h3>");
+		    	locationLabel.setVisible(true);
+				resetButton.setVisible(true);
+				//Show Steps Button
+				showStepsButton.setVisible(true);
+			  }
+		  }
+		}
+	*/
+		private void showNotification(String caption, String description, int type)
+		{
+			Notification n = new Notification(caption,description, type);
+	        n.setDelayMsec(1000); // sec->msec
+	        
+	        layout.getWindow().showNotification(n);
+		}
+
 	public void buttonClick(ClickEvent event) {
 		
 		Button sourceButton= event.getButton();
@@ -1377,7 +1682,6 @@ protected VerticalLayout getUnitsLayout(UnitContainer unitContainer) {
 	        {
 	        	verticalViewLayout.removeAllComponents();
 	        	mapView.clearDisplayedUnits();
-	        	startSelectedUnit=null;
 	        	buildFindLocation(null);
 	        }
 	        else if (tab.getCaption().equals("Get Direction"))
@@ -1385,10 +1689,9 @@ protected VerticalLayout getUnitsLayout(UnitContainer unitContainer) {
 	        	verticalViewLayout.removeAllComponents();
 	        	mapView.clearDisplayedUnits();
 	        	mapView.clearPath();
-	        	startSelectedUnit=null;
-	        	buildFindDirection(null,null);
+	        	buildFindDirection(null,getDefaultLocationCookie());
 	        }
-	        else if (tab.getCaption().equals("My Places"))
+/*	        else if (tab.getCaption().equals("My Places"))
 	        {
 	        	verticalViewLayout.removeAllComponents();
 	        	buildMyMaps();
@@ -1396,9 +1699,9 @@ protected VerticalLayout getUnitsLayout(UnitContainer unitContainer) {
 	        else if (tab.getCaption().equals("My Places"))
 	        {
 	        	verticalViewLayout.removeAllComponents();
-//	        	buildMyPlaces();
+	        	buildMyPlaces();
 	        }
-		}
+*/		}
 		else if (sourceButton == hidePanelButton)
 		{
 			horizontalSplit.setSplitPosition(0, SplitPanel.UNITS_PERCENTAGE);
@@ -1412,7 +1715,7 @@ protected VerticalLayout getUnitsLayout(UnitContainer unitContainer) {
 			horizontalSplit.setSplitPosition(horizontalSplitPosition, SplitPanel.UNITS_PERCENTAGE);
 		}
 		
-		else if (sourceButton == setDefaultLocationButton)
+/*		else if (sourceButton == setDefaultLocationButton)
 		{   	
 			buildSetDefaultLocation();			
 		}
@@ -1428,7 +1731,7 @@ protected VerticalLayout getUnitsLayout(UnitContainer unitContainer) {
 		{  
 			cancelSetDefaultLocation();
 		}
-		else if (sourceButton == getDirectionFromHereButton)
+/*		else if (sourceButton == getDirectionFromHereButton)
 		{   	
         	verticalViewLayout.removeAllComponents();
         	tabSheet.setSelectedTab(l2);
@@ -1547,10 +1850,10 @@ protected VerticalLayout getUnitsLayout(UnitContainer unitContainer) {
 //			getDirection();
 		}
 		
-		else if (sourceButton == showStepsButton)
+/*		else if (sourceButton == showStepsButton)
 		{
 			System.out.println("Inside showStepsButton");
-//			showDirectionResults();
+			showDirectionResults();
 			stepList.setVisible(true);
 			walkingTime.setVisible(true);
 			walkingDistance.setVisible(true);
@@ -1566,80 +1869,35 @@ protected VerticalLayout getUnitsLayout(UnitContainer unitContainer) {
 	    	hideStepsButton.setVisible(false);
 	    	showStepsButton.setVisible(true);
 		}
-	}
+*/	}
 	
-/*******************************************************************/
+private void cancelSetDefaultLocation() {
 	
-private void buildSetDefaultLocation() 
-{
-		System.out.println("Inside Build Default Location");
-        setDefaultLocationComboBox.setNewItemsAllowed(false);      
-        setDefaultLocationComboBox.setImmediate(true);
-        setDefaultLocationComboBox.setNullSelectionAllowed(false);
- 
-        placeDataSource = PlaceContainer.getAllPlaces();       
-        String item;
-        for (int i = 0; i < placeDataSource.size(); i++) {
-        	item =  placeDataSource.getIdByIndex(i).getPlaceName();
-        	setDefaultLocationComboBox.addItem(item);
-        }
-
-		System.out.println("Build Default Location:" + defaultLocationValue);
-		
-		if (defaultLocationFound == false)
-		    setDefaultLocationComboBox.setInputPrompt("Enter Default Location");
-		else
-			setDefaultLocationComboBox.setInputPrompt(defaultLocationValue);
-		
-		setDefaultLocationButton.setVisible(false);
-
-		defaultLocationHorizontalLayout.setSpacing(true);
-		
-		verticalViewLayout.addComponent(setDefaultLocationLabel);
-		defaultLocationHorizontalLayout.addComponent(setDefaultLocationComboBox);
-		defaultLocationHorizontalLayout.setComponentAlignment(setDefaultLocationComboBox, Alignment.BOTTOM_LEFT);
-		defaultLocationHorizontalLayout.addComponent(saveDefaultLocationButton);
-		defaultLocationHorizontalLayout.setComponentAlignment(saveDefaultLocationButton, Alignment.BOTTOM_LEFT);
-		defaultLocationHorizontalLayout.addComponent(removeDefaultLocationButton);
-		defaultLocationHorizontalLayout.setComponentAlignment(removeDefaultLocationButton, Alignment.BOTTOM_LEFT);			
-		defaultLocationHorizontalLayout.addComponent(cancelDefaultLocationButton);
-		defaultLocationHorizontalLayout.setComponentAlignment(cancelDefaultLocationButton, Alignment.BOTTOM_LEFT);
-		
-		verticalViewLayout.addComponent(defaultLocationHorizontalLayout);
-	}
-	
-	private void cancelSetDefaultLocation() {
-	
-    	verticalViewLayout.removeAllComponents();
     	buildHomeTab();
 	}
 	
-	private void removeSetDefaultLocation() {
+/*	private void removeSetDefaultLocation() {
 		
 		if (removeDefaultLocationCookie())
 			{
 				showNotification("Default Location is removed successfully","",Notification.TYPE_HUMANIZED_MESSAGE);
 				defaultLocationFound = false;
 				defaultLocationValue = null;
-				cancelSetDefaultLocation();
 			}
 		else 
 			showNotification("Unable to remove default location. Please check if you have cookies enabled on your browser.","",Notification.TYPE_ERROR_MESSAGE);
 		
 	}
-	
-	private void saveSetDefaultLocation() {
+*/	
+	private void saveSetDefaultLocation(String defaultLocation) {
 		
-		if (setDefaultLocationComboBox.getValue() != null)
-		{
-			defaultLocationValue = setDefaultLocationComboBox.getValue().toString();
-			
-			if (setDefaultLocationCookie(defaultLocationValue))
+		if (defaultLocation != null)
+		{	
+			if (setDefaultLocationCookie(defaultLocation))
 			{
-				setDefaultLocationCookie(defaultLocationValue);
-				showNotification("Selected default location: ",defaultLocationValue, Notification.TYPE_HUMANIZED_MESSAGE);
-				defaultLocationFound = true;
-				cancelSetDefaultLocation();
+				setDefaultLocationCookie(defaultLocation);
+				showNotification("Selected default location: ",defaultLocation, Notification.TYPE_HUMANIZED_MESSAGE);
+				//cancelSetDefaultLocation();
 			}
 			else				
 				showNotification("Unable to set Default Location. Please make sure that cookies are enabled on your browser.","", Notification.TYPE_ERROR_MESSAGE);
@@ -1735,7 +1993,6 @@ private void buildSetDefaultLocation()
 				if (cookies[i].getName().equals("defaultlocation"))
 				{
 					defaultLocationValue = cookies[i].getValue();
-					defaultLocationFound = true;
 					System.out.println("Cookie Found: "+ defaultLocationValue);
 					return defaultLocationValue;
 				}
@@ -1809,7 +2066,7 @@ private void buildSetDefaultLocation()
 		setMainComponent(googleMapLayout);
 	}
 	
-	protected void setGoogleMaps(PlaceContainer placeContainer, Place place) {
+	protected void setGoogleMap(PlaceContainer placeContainer, Place place) {
 		
 		googleMap.setCenter(new Point2D.Double(place.getPlaceLongitude(),place.getPlaceLatitude()));
 		googleMap.setZoom(15);
@@ -1842,28 +2099,31 @@ private void buildSetDefaultLocation()
 		final String Description= place.getPlaceDescription();
 	  	final Label placeDescription= new Label("<b>"+name+"</b>"+"<br>"+category+"<br>"+address+"<br>"+Description+"<br>",Label.CONTENT_XHTML);
 	  	
-/*	  	final HorizontalLayout viewInfoLayout = new HorizontalLayout();
-  		
-	  	viewInfoLayout.setMargin(true,true,true,true);
-  		viewInfoLayout.addComponent(placeImage);
-	  	viewInfoLayout.setComponentAlignment(placeImage, Alignment.TOP_LEFT);
-	  	viewInfoLayout.setExpandRatio(placeImage,1);
-	  	viewInfoLayout.addComponent(placeDescription);
-	  	viewInfoLayout.setComponentAlignment(placeDescription, Alignment.MIDDLE_LEFT);
-	  	viewInfoLayout.setExpandRatio(placeDescription,2);
-*/	  	
-		Button goInsideButton = new Button("Go Inside", new Button.ClickListener() {
+		Button findPlaceInsideButton = new Button("Find a place inside", new Button.ClickListener() {
             public void buttonClick(ClickEvent event) {
             	buildFindLocation(name);
             }
 		});
-		goInsideButton.setWidth(10, TextField.UNITS_PERCENTAGE);
-		goInsideButton.setStyleName(Button.STYLE_LINK);
-		goInsideButton.addListener((ClickListener)this);
+		
+		Button getDirectionsInsideButton = new Button("Get Directions inside", new Button.ClickListener() {
+            public void buttonClick(ClickEvent event) {
+            	buildFindDirection(null, name);
+            }
+		});
+		
+		findPlaceInsideButton.setWidth(10, TextField.UNITS_PERCENTAGE);
+		findPlaceInsideButton.setStyleName(Button.STYLE_LINK);
+		findPlaceInsideButton.addListener((ClickListener)this);
+		
+		getDirectionsInsideButton.setWidth(10, TextField.UNITS_PERCENTAGE);
+		getDirectionsInsideButton.setStyleName(Button.STYLE_LINK);
+		getDirectionsInsideButton.addListener((ClickListener)this);
 		
 		VerticalLayout verticalLayout = new VerticalLayout();
+		verticalLayout.setMargin(true);
 		verticalLayout.addComponent(placeDescription);
-		verticalLayout.addComponent(goInsideButton);
+		verticalLayout.addComponent(findPlaceInsideButton);
+		verticalLayout.addComponent(getDirectionsInsideButton);
 
 	  	final HorizontalLayout horizontalLayout = new HorizontalLayout();
 	  	horizontalLayout.addComponent(placeImage);
