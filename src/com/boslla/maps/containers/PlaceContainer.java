@@ -96,6 +96,43 @@ public class PlaceContainer extends BeanItemContainer<Place>
 	   return placeContainer;
 	}
   
+ public static PlaceContainer getSimilarPlaces(String placeName) {
+	  
+	  PlaceContainer placeContainer = null;
+	  try{
+		placeContainer = new PlaceContainer();  
+	    if (conn== null) {
+		  conn=getConn();
+	    }
+		  Statement select = conn.createStatement();
+		  String selectStatement= "SELECT Name, Type, Location, Description, place.Image_Url, place.Longitude, place.Latitude from place, place_type where place_type_id = place_type.Id and place.Name LIKE " + "\"%"+ placeName + "%\";";;
+		  
+		   System.out.println(selectStatement);
+		   ResultSet result = select.executeQuery(selectStatement);
+		   
+		   while (result.next()) {
+		     Place place= new Place();
+		     place.setPlaceName(result.getString(1));
+		     place.setPlaceType(result.getString(2));
+		     place.setPlaceLocation(result.getString(3));
+		     place.setPlaceDescription(result.getString(4));
+		     place.setPlaceIcon(new Embedded(null, new ThemeResource(result.getString(5))));
+		     place.setPlaceLongitude(result.getDouble(6));
+		     place.setPlaceLatitude(result.getDouble(7));
+
+		     placeContainer.addBean(place);
+		   }
+	  } catch (SQLException e){
+	      e.printStackTrace();
+	    } catch (InstantiationException e) {
+		    e.printStackTrace(); 
+	       } catch (IllegalAccessException e) {
+		       e.printStackTrace();    
+	         }
+	   //notifyListeners();
+	   return placeContainer;
+	}
+  
   private static Connection getConn() {
 	Connection conn = null;
     String url = "jdbc:mysql://localhost:3306/";

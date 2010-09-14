@@ -11,6 +11,14 @@ public class Unit {
   public void setUnitName(String unitName) {
 	this.unitName = unitName;
   }
+  
+  public int getUnitId() {
+		return unitId;
+	  }
+	  public void setUnitId(int unitId) {
+		this.unitId = unitId;
+	  }
+  
   public int getX() {
 	return x;
   }
@@ -91,5 +99,6 @@ public void setUnitType(String unitType) {
   private Embedded unitIcon;
   private String unitType;
   private String placeName;
+  private int unitId;
 
 }

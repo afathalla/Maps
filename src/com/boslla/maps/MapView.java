@@ -226,7 +226,7 @@ public void calculateSteps()
 			Unit selectedUnit = displayedUnits.get(i);
 			
 			Window subWindow = new Window (selectedUnit.getUnitName());
-			subWindow.setModal(true);
+			subWindow.setModal(false);
 	        subWindow.setWidth("40%");
 	        subWindow.setHeight("40%");
 	        subWindow.center();

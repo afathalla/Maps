@@ -6,8 +6,6 @@ import javax.servlet.http.HttpServletResponse;
 import com.vaadin.Application;
 import com.vaadin.data.Property;
 import com.vaadin.data.Property.ValueChangeEvent;
-import com.vaadin.data.Property.ValueChangeListener;
-import com.vaadin.terminal.ExternalResource;
 import com.vaadin.terminal.ThemeResource;
 import com.vaadin.terminal.gwt.server.HttpServletRequestListener;
 import com.vaadin.ui.*;
@@ -15,8 +13,6 @@ import com.vaadin.ui.Button.ClickEvent;
 import com.vaadin.ui.Button.ClickListener;
 import com.vaadin.event.ShortcutAction.*;
 import com.boslla.maps.containers.*;
-import com.boslla.maps.util.UnitSuggester;
-import com.google.gwt.core.client.GWT;
 
 import java.awt.geom.Point2D;
 import java.sql.Connection;
@@ -48,7 +44,6 @@ public class MapsApplication extends Application implements Button.ClickListener
 	  private VerticalLayout googleMapLayout= new VerticalLayout();
 	  private Button directionSearchButton = new Button("Get Direction");
 	  private Button locationSearchButton = new Button("Spot Location");
-	  private Button signOutButton = new Button("Sign Out");
 	  private Button resetButton = new Button("Clear Search");
 	  private Button clearMyPlacesButton = new Button("Clear My Places");
 	  private Button myMapsButton = new Button("Back to My Maps");
@@ -88,15 +83,15 @@ public class MapsApplication extends Application implements Button.ClickListener
       private VerticalLayout l1 = new VerticalLayout();
       private VerticalLayout l2 = new VerticalLayout();
       private VerticalLayout l3 = new VerticalLayout();
-      private VerticalLayout l4 = new VerticalLayout();
-      private VerticalLayout l5 = new VerticalLayout();
+//      private VerticalLayout l4 = new VerticalLayout();
+//      private VerticalLayout l5 = new VerticalLayout();
       private static VerticalLayout verticalViewLayout= new VerticalLayout();
-      private int horizontalSplitPosition = 25;
+      private int horizontalSplitPosition = 30;
       private HttpServletResponse response;
       private HttpServletRequest request;
       private GoogleMap googleMap;
       private PlaceContainer allPlacesContainer = PlaceContainer.getAllPlaces();
-      private VerticalLayout layout= new VerticalLayout();
+      protected static VerticalLayout layout= new VerticalLayout();
       private VerticalLayout findLocationLayout = new VerticalLayout();
 
 	@Override
@@ -149,8 +144,6 @@ public class MapsApplication extends Application implements Button.ClickListener
 		hideStepsButton.addListener((ClickListener)this);
 		myMapsButton.setStyleName(Button.STYLE_LINK);
 		myMapsButton.addListener((ClickListener)this);
-		signOutButton.setStyleName(Button.STYLE_LINK);
-		signOutButton.addListener((ClickListener)this);
 		directionSearchButton.addListener((ClickListener)this);
 //		directionSearchButton.setIcon(new ThemeResource("icons/search.gif"));
 //		locationSearchButton.setIcon(new ThemeResource("icons/search.gif"));
@@ -176,20 +169,9 @@ public class MapsApplication extends Application implements Button.ClickListener
 		l3.setMargin(true);
 		//l4.setMargin(true);
 		//l5.setMargin(true);
-		
-	    l1.setWidth(33, TextField.UNITS_PERCENTAGE);
-	    l2.setWidth(33, TextField.UNITS_PERCENTAGE);
-	    l3.setWidth(33, TextField.UNITS_PERCENTAGE);
-	    //l4.setWidth(20, TextField.UNITS_PERCENTAGE);
-	    //l5.setWidth(20, TextField.UNITS_PERCENTAGE);
-	    l1.setSizeFull();
-	    l2.setSizeFull();
-	    l3.setSizeFull();
-	    //l4.setSizeFull();
-	    //l5.setSizeFull();
 	    
 	    tabSheet.setHeight(4, TextField.UNITS_PERCENTAGE);
-	    tabSheet.setWidth("100%");
+	    tabSheet.setWidth(100,TextField.UNITS_PERCENTAGE);
 	    tabSheet.setImmediate(true);
 	    
         // First, a vertical SplitPanel
@@ -260,6 +242,47 @@ public class MapsApplication extends Application implements Button.ClickListener
 	{
 		VerticalLayout upperViewLayout= new VerticalLayout();
 		
+		Button signOutButton = new Button("Sign Out");
+		signOutButton.setStyleName(Button.STYLE_LINK);
+		signOutButton.addListener((ClickListener)this);
+		signOutButton.addListener(new Button.ClickListener() {
+            public void buttonClick(ClickEvent event) {
+            	
+    			getMainWindow().getApplication().close();
+            }
+           	});
+		
+		Button contactButton = new Button("Reach Us");
+		contactButton.setStyleName(Button.STYLE_LINK);
+		contactButton.addListener((ClickListener)this);
+		contactButton.addListener(new Button.ClickListener() {
+            public void buttonClick(ClickEvent event) {
+            	
+    			
+            }
+           	});
+
+		Button feedbackButton = new Button("What do you think?");
+		feedbackButton.setStyleName(Button.STYLE_LINK);
+		feedbackButton.addListener((ClickListener)this);
+		feedbackButton.addListener(new Button.ClickListener() {
+            public void buttonClick(ClickEvent event) {
+            	
+            	FeedbackView feedbackView = new FeedbackView();
+            	feedbackView.addFeedbackWindow();
+            }
+           	});
+		
+		Button aboutButton = new Button("Our Crew");
+		aboutButton.setStyleName(Button.STYLE_LINK);
+		aboutButton.addListener((ClickListener)this);
+		aboutButton.addListener(new Button.ClickListener() {
+            public void buttonClick(ClickEvent event) {
+            	
+    			
+            }
+           	});
+		
 		upperViewLayout.setHeight(100, SplitPanel.UNITS_PERCENTAGE);
 		upperViewLayout.setWidth(100, SplitPanel.UNITS_PERCENTAGE);
 		
@@ -267,8 +290,24 @@ public class MapsApplication extends Application implements Button.ClickListener
 //		upperButtonBar.addComponent(signOutButton, "right: 1%; top: 1%;");
 		upperButtonBar.setWidth(100, SplitPanel.UNITS_PERCENTAGE);
 		upperButtonBar.setHeight(100, SplitPanel.UNITS_PERCENTAGE);
+
+		Embedded newIcon = new Embedded(null, new ThemeResource("images/new.png"));
+		
+		upperButtonBar.addComponent(newIcon);
+		upperButtonBar.setComponentAlignment(newIcon, Alignment.TOP_RIGHT);
+		upperButtonBar.setExpandRatio(newIcon, 50);
+		upperButtonBar.addComponent(feedbackButton);
+		upperButtonBar.setComponentAlignment(feedbackButton, Alignment.TOP_RIGHT);
+		//upperButtonBar.setExpandRatio(feedbackButton, 1);
+		upperButtonBar.addComponent(contactButton);
+		upperButtonBar.setComponentAlignment(contactButton, Alignment.TOP_RIGHT);
+		upperButtonBar.setExpandRatio(contactButton, 1);
+		upperButtonBar.addComponent(aboutButton);
+		upperButtonBar.setComponentAlignment(aboutButton, Alignment.TOP_RIGHT);
+		upperButtonBar.setExpandRatio(aboutButton, 1);
 		upperButtonBar.addComponent(signOutButton);
 		upperButtonBar.setComponentAlignment(signOutButton, Alignment.TOP_RIGHT);
+		upperButtonBar.setExpandRatio(signOutButton, 1);
 		
 		SplitPanel upperVerticalSplit = new SplitPanel(SplitPanel.ORIENTATION_VERTICAL);
 		upperVerticalSplit.setSplitPosition(25, SplitPanel.UNITS_PERCENTAGE);
@@ -294,23 +333,36 @@ public class MapsApplication extends Application implements Button.ClickListener
 		
 		final VerticalLayout viewLocationsLayout = new VerticalLayout();
 		viewLocationsLayout.setSizeFull();
-		viewLocationsLayout.setVisible(true);
+		//viewLocationsLayout.setVisible(true);
 		
 		upperSearchButton.addListener(new Button.ClickListener() {
             public void buttonClick(ClickEvent event) {
-            	
-            	displayedUnits.clear();
+            		
         		if (upperSearchText.getValue() != null)
         		{
 			  			final UnitContainer unitContainer = UnitContainer.getSimilarUnits(upperSearchText.getValue().toString());
-			  			viewLocationsLayout.removeAllComponents();
-			  			viewLocationsLayout.addComponent(getUnitsLayout(unitContainer,null));
-		        		
-			  			tabSheet.setSelectedTab(l1);
-		            	findLocationLayout.removeAllComponents();
-		        		findLocationLayout.addComponent(viewLocationsLayout);
-  					  	mapView.setDisplayedUnits(displayedUnits);
-  						setMainComponent(mapView);
+			  			final PlaceContainer placeContainer = PlaceContainer.getSimilarPlaces(upperSearchText.getValue().toString());
+			  			
+			  			if (unitContainer.size()!=0 || placeContainer.size() != 0)
+			  			{
+			  				viewLocationsLayout.removeAllComponents();
+			  				if (placeContainer.size()!=0)
+			        		{
+				  				viewLocationsLayout.addComponent(new Label("<h2>Places: </h2>", Label.CONTENT_XHTML));
+			        			viewLocationsLayout.addComponent(getPlacesLayout(placeContainer));
+			        		}
+			  				if (unitContainer.size()!=0)
+			  				{
+			  					viewLocationsLayout.addComponent(new Label("<h2>Units: </h2>", Label.CONTENT_XHTML));
+			  					viewLocationsLayout.addComponent(getUnitsLayout(unitContainer,null));
+			  				}
+
+			  				mapView.clearView();
+				  			tabSheet.setSelectedTab(l1);
+				  			l1.removeAllComponents();
+				  			l1.addComponent(viewLocationsLayout);
+			  			}
+			  			else showNotification("Location can not be found.","", Notification.TYPE_WARNING_MESSAGE);
         		}
             }
 		});
@@ -637,36 +689,12 @@ private VerticalLayout getDirection(Unit startUnit, Unit endUnit)
 			  }
 		});
 		
-		Button viewLocationInfoButton = new Button("View Info", new Button.ClickListener() {
+		Button viewLocationInfoButton = new Button("View More Info", new Button.ClickListener() {
             public void buttonClick(ClickEvent event) {
-
-            		viewInfoLayout.removeAllComponents();
             		
             		if (locationComboBox.getValue() != null)
             		{
-  			  			final Place place = PlaceContainer.getPlace(locationComboBox.getValue().toString()).getIdByIndex(0);
-	  			  		Embedded placeImage = place.getPlaceIcon();
-	  			  		String name = place.getPlaceName();
-	  			  		String category = place.getPlaceType();
-	  			  		String address = place.getPlaceLocation();
-	  			  		String Description= place.getPlaceDescription();
-	            	
-	  			  		Label placeDescription= new Label("<b>"+name+"</b>"+"<br>"+category+"<br>"+address+"<br>"+Description,Label.CONTENT_XHTML);
-	    			
-	  			  		placeImage.setWidth(100, TextField.UNITS_PERCENTAGE);
-	  			  		placeImage.setHeight(100, TextField.UNITS_PERCENTAGE);
-	    			
-	  			  		placeDescription.setWidth(100, TextField.UNITS_PERCENTAGE);
-	  			  		placeDescription.setHeight(100, TextField.UNITS_PERCENTAGE);
-	            	
-	  			  		viewInfoLayout.addComponent(placeImage);
-	  			  		viewInfoLayout.setComponentAlignment(placeImage, Alignment.MIDDLE_CENTER);
-	  			  		viewInfoLayout.setExpandRatio(placeImage,1);
-	  			  		viewInfoLayout.addComponent(placeDescription);
-	  			  		viewInfoLayout.setComponentAlignment(placeDescription, Alignment.MIDDLE_CENTER);
-	  			  		viewInfoLayout.setExpandRatio(placeDescription,2);
-	  			  		
-	  			  		viewInfoLayout.setVisible(true);
+            			viewMoreInfo(PlaceContainer.getPlace(locationComboBox.getValue().toString()).getIdByIndex(0));
             		}
             }
         });
@@ -872,12 +900,11 @@ private VerticalLayout getDirection(Unit startUnit, Unit endUnit)
 		if (placeName != null)
 		{
 	    	locationLabel.setValue("<h3>Current Location: </h3>"+placeName);
-	    	
 			unitContainer = UnitContainer.getUnitsPerPlace(placeName); 
-			MapContainer mapContainer = MapContainer.getMyMaps(placeName);
-			Map map = mapContainer.getIdByIndex(0);
-			mapView.setMap(map);
-			setMainComponent(mapView);	
+			//MapContainer mapContainer = MapContainer.getMyMaps(placeName);
+			//Map map = mapContainer.getIdByIndex(0);
+			//mapView.setMap(map);
+			//setMainComponent(mapView);	
 		}
 		else
 		{
@@ -915,7 +942,6 @@ private VerticalLayout getDirection(Unit startUnit, Unit endUnit)
 		
 		Button findLocationButton = new Button("Spot Location", new Button.ClickListener() {
             public void buttonClick(ClickEvent event) {
-            		displayedUnits.clear();
             		if (locationComboBox.getValue() != null)
             		{
             	    	googleMapLayout.removeComponent(googleMap);
@@ -926,8 +952,9 @@ private VerticalLayout getDirection(Unit startUnit, Unit endUnit)
   			  			viewLocationsLayout.removeAllComponents();
   			  			viewLocationsLayout.addComponent(getUnitsLayout(unitContainer, placeName));
   			  			viewLocationsLayout.setVisible(true);
-  					  	mapView.setDisplayedUnits(displayedUnits);
-  						setMainComponent(mapView);
+  			  			//displayedUnits.clear();
+  			  			//mapView.setDisplayedUnits(displayedUnits);
+  						//setMainComponent(mapView);
             		}	
 
             }
@@ -1095,37 +1122,133 @@ private VerticalLayout getDirection(Unit startUnit, Unit endUnit)
 		return findDirectionLayout;
 	}
 
+protected VerticalLayout getPlacesLayout(final PlaceContainer placeContainer) 
+{
+	final VerticalLayout viewPlacesLayout = new VerticalLayout();
+	viewPlacesLayout.setSizeFull();
+	
+	for (int i=0; i<placeContainer.size();i++)
+	{
+			final Place place = placeContainer.getIdByIndex(i);
+	  		final String name = place.getPlaceName();
+	  		final Embedded placeImage = place.getPlaceIcon();
+	  		String category = place.getPlaceType();
+	  		String address = place.getPlaceLocation();
+	  		String description= place.getPlaceDescription();
+
+			if (description.length()>100)
+				description = description.substring(0,100)+"...";
+
+	  		final Button viewMoreInfoButton = new Button("View More Info");
+	  		viewMoreInfoButton.setStyleName(Button.STYLE_LINK);
+	  		viewMoreInfoButton.addListener((ClickListener)this);
+  			viewMoreInfoButton.addListener(new Button.ClickListener() {
+				public void buttonClick(ClickEvent event) {		
+					viewMoreInfo(place);
+				}});
+	  		
+			Button placeNameButton = new Button(name, new Button.ClickListener() {
+				public void buttonClick(ClickEvent event) {
+					setGoogleMap(placeContainer, place);
+				}});
+			placeNameButton.setStyleName(Button.STYLE_LINK);
+			placeNameButton.addListener((ClickListener)this);
+	  		
+			Button findPlaceInsideButton = new Button("Find a place inside", new Button.ClickListener() {
+	            public void buttonClick(ClickEvent event) {
+	            	buildFindLocation(name);
+	            }
+			});
+			
+			Button getDirectionsInsideButton = new Button("Get Directions inside", new Button.ClickListener() {
+	            public void buttonClick(ClickEvent event) {
+	            	buildFindDirection(null, name);
+	            }
+			});
+			getDirectionsInsideButton.setStyleName(Button.STYLE_LINK);
+			getDirectionsInsideButton.addListener((ClickListener)this);
+			findPlaceInsideButton.setStyleName(Button.STYLE_LINK);
+			findPlaceInsideButton.addListener((ClickListener)this);
+			
+	  		String placeDescription = "<br>"+category+"<br>"+address+"<br>"+description;
+	  		final Label placeDescriptionLabel = new Label(placeDescription,Label.CONTENT_XHTML);
+	  		
+			HorizontalLayout h = new HorizontalLayout();
+			h.setSizeFull();
+			
+			VerticalLayout v = new VerticalLayout();
+			v.setSizeFull();
+			
+			v.addComponent(placeNameButton);
+			v.setComponentAlignment(placeNameButton, Alignment.TOP_LEFT);
+			v.addComponent(placeImage);
+	  		v.setComponentAlignment(placeImage, Alignment.MIDDLE_LEFT);
+	  		
+	  		VerticalLayout v1 = new VerticalLayout();
+	  		v1.setSizeFull();
+	  		//v1.setMargin(true);	
+	  		
+	  		v1.addComponent(placeDescriptionLabel);
+	  		v1.setComponentAlignment(placeDescriptionLabel, Alignment.MIDDLE_LEFT);	
+	  		v1.addComponent(viewMoreInfoButton);
+	  		v1.setComponentAlignment(viewMoreInfoButton, Alignment.MIDDLE_LEFT);
+	  		v1.addComponent(findPlaceInsideButton);	
+	  		v1.setComponentAlignment(findPlaceInsideButton, Alignment.MIDDLE_LEFT);
+	  		v1.addComponent(getDirectionsInsideButton);
+	  		v1.setComponentAlignment(getDirectionsInsideButton, Alignment.MIDDLE_LEFT);
+	  		
+	  		h.addComponent(v);
+	  		h.setComponentAlignment(v, Alignment.TOP_LEFT);
+	  		h.addComponent(v1);
+	  		h.setComponentAlignment(v1, Alignment.MIDDLE_LEFT);
+	  		
+	  		viewPlacesLayout.addComponent(h);
+	}
+	
+	return viewPlacesLayout;
+	  		
+}
+
 protected VerticalLayout getUnitsLayout(UnitContainer unitContainer, String placeName) {
 	
-	final VerticalLayout viewLocationsLayout = new VerticalLayout();
-	viewLocationsLayout.setSizeFull();
-	viewLocationsLayout.setVisible(true);
+	final VerticalLayout viewUnitsLayout = new VerticalLayout();
+	viewUnitsLayout.setSizeFull();
 	
 	for (int i=0; i<unitContainer.size();i++)
 		{
-		final HorizontalLayout viewLocationLayout = new HorizontalLayout();
-		viewLocationLayout.removeAllComponents();
-		viewLocationLayout.setSizeFull();
-		viewLocationLayout.setMargin(true, true, true, false);
 			
-		Unit unit = unitContainer.getIdByIndex(i);
+		final Unit unit = unitContainer.getIdByIndex(i);
 		Embedded unitImage = unit.getImageUrl();
 		Embedded unitIcon = unit.getUnitIcon();
 		final String name = unit.getUnitName();
 		String category = unit.getUnitType();
 		String location = unit.getMapDescription();
-		String Description= unit.getDescription();
+		String description= unit.getDescription();
+		
+		if (description.length()>100)
+			description = description.substring(0,100)+"...";
+		
 		final String place;
 		
 		if (placeName == null)
 			place = unit.getPlaceName();
 		else
 			place = placeName;
-			
 
-		Button unitName = new Button(name, new Button.ClickListener() {
+  		final Button viewMoreInfoButton = new Button("View More Info");
+  		viewMoreInfoButton.setStyleName(Button.STYLE_LINK);
+  		viewMoreInfoButton.addListener((ClickListener)this);
+			viewMoreInfoButton.addListener(new Button.ClickListener() {
+			public void buttonClick(ClickEvent event) {		
+				viewMoreInfo(unit);
+			}});
+		
+		Button unitNameButton = new Button(name, new Button.ClickListener() {
 			public void buttonClick(ClickEvent event) {
-				//TO DO
+				displayedUnits.clear();
+				displayedUnits.add(unit);
+				mapView.setDisplayedUnits(displayedUnits);
+				setMainComponent(mapView);
 			}});
 		
 		Button getDirectionFromHereButton = new Button("Get Direction From here");
@@ -1141,58 +1264,172 @@ protected VerticalLayout getUnitsLayout(UnitContainer unitContainer, String plac
 
 			}});
 		
-				unitName.addListener((ClickListener)this);
-				unitName.setStyleName(Button.STYLE_LINK);
-				unitName.setSizeFull();
+		Button addReviewButton = new Button("Add Review");
+		addReviewButton.setStyleName(Button.STYLE_LINK);
+		addReviewButton.addListener((ClickListener)this);
 		
-				Label unitDescription= new Label("<br>"+category+"<br>"+location+"<br>"+Description,Label.CONTENT_XHTML);
+		addReviewButton.addListener(new Button.ClickListener() {
+			public void buttonClick(ClickEvent event) {
+				
+            	ReviewView reviewView = new ReviewView();
+            	reviewView.addReviewWindow(unit);
+				
+			}});
+		
+		int reviewsCount = ReviewContainer.getReviewsCount(unit.getUnitName());
+		
+		Button viewReviewsButton = new Button("View Reviews "+"("+reviewsCount+")");
+		viewReviewsButton.setStyleName(Button.STYLE_LINK);
+		viewReviewsButton.addListener((ClickListener)this);
+		
+		viewReviewsButton.addListener(new Button.ClickListener() {
+			public void buttonClick(ClickEvent event) {
+				
+            	ReviewView reviewView = new ReviewView();
+            	reviewView.getReviewsWindow(unit);
+			}});
+		
+		unitNameButton.addListener((ClickListener)this);
+		unitNameButton.setStyleName(Button.STYLE_LINK);
+		unitNameButton.setSizeFull();
+		
+		Label unitDescription= new Label("<br>"+category+"<br>"+location+"<br>"+description,Label.CONTENT_XHTML);
 			
-				VerticalLayout v = new VerticalLayout();
-				v.setSizeFull();
-				v.setVisible(true);
+		VerticalLayout v = new VerticalLayout();
+		v.setSizeFull();
+		v.setMargin(true);
 				
-				VerticalLayout v1 = new VerticalLayout();
-				v.setSizeFull();
-				v.setVisible(true);
-				
-				unitIcon.setWidth(80, TextField.UNITS_PERCENTAGE);
-				unitIcon.setHeight(80, TextField.UNITS_PERCENTAGE);
-				unitImage.setWidth(95, TextField.UNITS_PERCENTAGE);
-				unitImage.setHeight(95, TextField.UNITS_PERCENTAGE);
-				unitName.setWidth(95, TextField.UNITS_PERCENTAGE);
-				unitName.setHeight(95, TextField.UNITS_PERCENTAGE);
-				unitDescription.setWidth(95, TextField.UNITS_PERCENTAGE);
-				unitDescription.setHeight(95, TextField.UNITS_PERCENTAGE);
-				
-				v.addComponent(unitName);
-				v.setComponentAlignment(unitName, Alignment.TOP_LEFT);
-				v.addComponent(unitImage);		
-				v.setComponentAlignment(unitImage, Alignment.MIDDLE_CENTER);
-				
-				v1.addComponent(unitDescription);
-				v1.addComponent(getDirectionFromHereButton);
-				
-				viewLocationLayout.addComponent(unitIcon);
-				viewLocationLayout.setComponentAlignment(unitIcon, Alignment.TOP_LEFT);
-				viewLocationLayout.setExpandRatio(unitIcon,1);
-				
-				viewLocationLayout.addComponent(v);
-				viewLocationLayout.setComponentAlignment(v, Alignment.MIDDLE_CENTER);
-				viewLocationLayout.setExpandRatio(v,3);
-				
-				viewLocationLayout.addComponent(v1);
-				viewLocationLayout.setComponentAlignment(v1, Alignment.MIDDLE_CENTER);
-				viewLocationLayout.setExpandRatio(v1,6);
+		VerticalLayout v1 = new VerticalLayout();
+		v1.setSizeFull();
 		
-				viewLocationsLayout.addComponent(viewLocationLayout);
-			  	displayedUnits.add(unit);
+		HorizontalLayout h = new HorizontalLayout();
+		h.setSizeFull();
+		
+		HorizontalLayout h2 = new HorizontalLayout();
+		h.setSizeFull();
+		
+		HorizontalLayout h1 = new HorizontalLayout();
+		Embedded newIcon = new Embedded(null, new ThemeResource("images/new.png"));
+		h1.addComponent(newIcon);
+		h1.addComponent(viewReviewsButton);	
+
+		h2.addComponent(unitIcon);
+		h2.setComponentAlignment(unitIcon, Alignment.TOP_LEFT);
+		h2.addComponent(unitNameButton);
+		h2.setComponentAlignment(unitNameButton, Alignment.TOP_CENTER);
+		
+		v.addComponent(h2);
+		v.setComponentAlignment(h2, Alignment.TOP_LEFT);
+		v.addComponent(unitImage);		
+		v.setComponentAlignment(unitImage, Alignment.MIDDLE_LEFT);
+	
+		v1.addComponent(unitDescription);
+		v1.setComponentAlignment(unitDescription, Alignment.MIDDLE_LEFT);
+		v1.addComponent(viewMoreInfoButton);
+		v1.setComponentAlignment(viewMoreInfoButton, Alignment.MIDDLE_LEFT);
+		v1.addComponent(getDirectionFromHereButton);
+		v1.setComponentAlignment(getDirectionFromHereButton, Alignment.MIDDLE_LEFT);
+		v1.addComponent(h1);
+		v1.setComponentAlignment(h1, Alignment.MIDDLE_LEFT);
+		v1.addComponent(addReviewButton);
+		v1.setComponentAlignment(addReviewButton, Alignment.MIDDLE_LEFT);
+		
+		h.addComponent(v);
+		h.setComponentAlignment(v, Alignment.TOP_LEFT);
+		h.addComponent(v1);
+		h.setComponentAlignment(v1, Alignment.MIDDLE_LEFT);
+		
+		viewUnitsLayout.addComponent(h);
+		//displayedUnits.add(unit);
 	}
 	
-	return viewLocationsLayout;
+	return viewUnitsLayout;
 	
 }
 
-/*	private void buildMySelectedMap(Place selectedPlace)
+protected void viewMoreInfo(Place place) {
+
+	final Label placeName = new Label("<h3>"+place.getPlaceName()+"</h3)",Label.CONTENT_XHTML);
+	final Embedded placeImage = place.getPlaceIcon();
+	final Label category = new Label(place.getPlaceType());
+	final Label address = new Label(place.getPlaceLocation());
+	final Label Description= new Label(place.getPlaceDescription());
+	
+	VerticalLayout viewInfoLayout = new VerticalLayout();
+	viewInfoLayout.setSizeFull();
+	viewInfoLayout.setMargin(true);
+
+	HorizontalLayout h = new HorizontalLayout();
+	h.setSizeFull();
+	h.setMargin(true);
+	
+	VerticalLayout v = new VerticalLayout();
+	v.setMargin(true);
+	
+	v.addComponent(placeName);
+	v.addComponent(category);
+	v.addComponent(address);
+
+	h.addComponent(placeImage);
+	h.addComponent(v);;
+	
+	viewInfoLayout.addComponent(h);
+	viewInfoLayout.addComponent(Description);
+	
+	Window subWindow = new Window(place.getPlaceName());
+	subWindow.setModal(false);
+    subWindow.setWidth("40%");
+    subWindow.setHeight("40%");
+    subWindow.center();
+    subWindow.setScrollable(true);
+    subWindow.setResizable(true);
+    
+	subWindow.setContent(viewInfoLayout);						
+	layout.getWindow().addWindow(subWindow);	
+}
+
+protected void viewMoreInfo(Unit unit) {
+	
+	final Label unitName = new Label("<h3>"+unit.getPlaceName()+"</h3)",Label.CONTENT_XHTML);
+	final Embedded unitImage = unit.getImageUrl();
+	final Label category = new Label(unit.getUnitType());
+	final Label address = new Label(unit.getMapDescription());
+	final Label Description= new Label(unit.getDescription());
+	
+	VerticalLayout viewInfoLayout = new VerticalLayout();
+	viewInfoLayout.setSizeFull();
+	viewInfoLayout.setMargin(true);
+
+	HorizontalLayout h = new HorizontalLayout();
+	h.setSizeFull();
+	h.setMargin(true);
+	
+	VerticalLayout v = new VerticalLayout();
+	v.setMargin(true);	
+	
+	v.addComponent(unitName);
+	v.addComponent(category);
+	v.addComponent(address);
+
+	h.addComponent(unitImage);
+	h.addComponent(v);;
+	
+	viewInfoLayout.addComponent(h);
+	viewInfoLayout.addComponent(Description);
+	
+	Window subWindow = new Window(unit.getUnitName());
+	subWindow.setModal(false);
+    subWindow.setWidth("40%");
+    subWindow.setHeight("40%");
+    subWindow.center();
+    subWindow.setScrollable(true);
+    subWindow.setResizable(true);
+    
+	subWindow.setContent(viewInfoLayout);						
+	layout.getWindow().addWindow(subWindow);	
+}
+
+	/*	private void buildMySelectedMap(Place selectedPlace)
 	{
 		verticalViewLayout.removeAllComponents();    	
     	l4.addComponent(verticalViewLayout);
@@ -1673,9 +1910,9 @@ protected VerticalLayout getUnitsLayout(UnitContainer unitContainer, String plac
 //		mapView.clearView();
 //		mapView.clearPath();
 				
-		if (sourceButton == signOutButton)
-			getMainWindow().getApplication().close();
-		else if (sourceButton == resetButton)
+//		if (sourceButton == signOutButton)
+//			getMainWindow().getApplication().close();
+		if (sourceButton == resetButton)
 		{
 			Tab tab = tabSheet.getTab(tabSheet.getSelectedTab());
 	        if (tab.getCaption().equals("Spot Location"))
@@ -2096,7 +2333,7 @@ private void cancelSetDefaultLocation() {
 		final String name = place.getPlaceName();
 		final String category = place.getPlaceType();
 		final String address = place.getPlaceLocation();
-		final String Description= place.getPlaceDescription();
+		final String Description= place.getPlaceDescription().substring(0, 50)+"...";
 	  	final Label placeDescription= new Label("<b>"+name+"</b>"+"<br>"+category+"<br>"+address+"<br>"+Description+"<br>",Label.CONTENT_XHTML);
 	  	
 		Button findPlaceInsideButton = new Button("Find a place inside", new Button.ClickListener() {
