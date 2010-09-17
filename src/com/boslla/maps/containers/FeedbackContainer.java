@@ -107,7 +107,7 @@ private static Connection conn=null;
 	    String db = "makany_test";
 	    String driver = "com.mysql.jdbc.Driver";
 	    String user = "root";
-	    String pass = "";
+	    String pass = "root";
 	    try {
 	      Class.forName(driver).newInstance();
 	    } catch (InstantiationException e) {

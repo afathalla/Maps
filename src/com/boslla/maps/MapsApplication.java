@@ -1,6 +1,5 @@
 package com.boslla.maps;
 
-import com.boslla.maps.*;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;	
 
@@ -20,12 +19,14 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.util.ArrayList;
+
 import javax.servlet.http.Cookie;
 
 import org.vaadin.hezamu.googlemapwidget.GoogleMap;
 import org.vaadin.hezamu.googlemapwidget.overlay.BasicMarker;
 import org.vaadin.hezamu.imagemapwidget.ImageMap;
 //import org.vaadin.sami.autocomplete.AutoCompleteTextField;
+
 import com.vaadin.ui.TabSheet;
 import com.vaadin.ui.TabSheet.SelectedTabChangeEvent;
 import com.vaadin.ui.TabSheet.SelectedTabChangeListener;
@@ -95,7 +96,11 @@ public class MapsApplication extends Application implements Button.ClickListener
 
 	@Override
 	public void init() {
+		//setTheme("runo");
 		setTheme("chameleon");
+		//setTheme("reindeermods-2");
+		//setTheme("default");
+		
 		buildLayout("mainView");
 	}
 	
@@ -137,8 +142,6 @@ public class MapsApplication extends Application implements Button.ClickListener
 		showStepsButton.addListener((ClickListener)this);
 		hideStepsButton.setStyleName(Button.STYLE_LINK);
 		hideStepsButton.addListener((ClickListener)this);
-	//	myPlacesButton.setStyleName(styleLink);
-	//	myPlacesButton.addListener((ClickListener)this);
 		myMapsButton.setStyleName(Button.STYLE_LINK);
 		myMapsButton.addListener((ClickListener)this);
 		directionSearchButton.addListener((ClickListener)this);
@@ -998,6 +1001,10 @@ private VerticalLayout getDirection(Unit startUnit, Unit endUnit)
 			Map map = mapContainer.getIdByIndex(0);
 			mapView.setMap(map);
 			setMainComponent(mapView);	
+    	}
+    	
+    	else {
+    		unitContainer = UnitContainer.getAllUnits();
     	}
 		
 		Label label = new Label("<h3>Please select starting point and destination point:</h3>",Label.CONTENT_XHTML);
@@ -1907,6 +1914,8 @@ protected void viewMoreInfo(Unit unit) {
 //		mapView.clearView();
 //		mapView.clearPath();
 				
+//		if (sourceButton == signOutButton)
+//			getMainWindow().getApplication().close();
 		if (sourceButton == resetButton)
 		{
 			Tab tab = tabSheet.getTab(tabSheet.getSelectedTab());
@@ -2367,47 +2376,16 @@ private void cancelSetDefaultLocation() {
 	private void setMainComponent(Component c){
 		verticalSplit2.setSecondComponent(c);
 	}
-	
-	public UnitContainer getUnitDataSource() {
-      return unitDataSource;
-	}
-	
-	 @Override
-	 public Window getWindow(String name) {
-	         if (name.equals("admin") && super.getWindow(name) == null) {
-	          AdminWindow adminWindow = new AdminWindow ("Maps Administration");
-	          adminWindow.setName("admin");
-	          //adminWindow.buildLayout();
-	          adminWindow.login();
-	          addWindow(adminWindow);
-	          return adminWindow;
-	         }
-	         return super.getWindow(name);
+	@Override
+	public Window getWindow(String name) {
+	        if (name.equals("admin") && super.getWindow(name) == null) {
+	         AdminWindow adminWindow = new AdminWindow ("Maps Administration");
+	         adminWindow.setName("admin");
+	         //adminWindow.buildLayout();
+	         adminWindow.login();
+	         addWindow(adminWindow);
+	         return adminWindow;
+	        }
+	        return super.getWindow(name);
 	 }
-	
-	private Connection getConn() {
-		Connection conn = null;
-        String url          = "jdbc:mysql://localhost:3306/";
-        String db           = "makany_test";
-        String driver       = "com.mysql.jdbc.Driver";
-        String user         = "root";
-        String pass         = "root";
-            
-	    try {
-	            Class.forName(driver).newInstance();
-	    } catch (InstantiationException e) {
-	            e.printStackTrace();
-	    } catch (IllegalAccessException e) {
-	            e.printStackTrace();
-	    } catch (ClassNotFoundException e) {
-	            e.printStackTrace();
-	    }
-	    try {       
-	                    conn = DriverManager.getConnection(url+db, user, pass);
-	    } catch (SQLException e) {
-	                    System.err.println("Mysql Connection Error: ");
-	            e.printStackTrace();
-	    }
-	            return conn;
-  }
- }
+}
