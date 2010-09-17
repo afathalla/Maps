@@ -85,6 +85,6 @@ private int mapWidth;
 private int mapHeight;
 @Persistent
 private float mapScale;
-@Persistent
-private Place mapPlace;
+//@Persistent
+//private Place mapPlace;
 }

@@ -3,13 +3,15 @@ package com.boslla.maps.containers;
 import java.util.List;
 
 import javax.jdo.annotations.IdGeneratorStrategy;
+import javax.jdo.annotations.PersistenceCapable;
 import javax.jdo.annotations.Persistent;
 import javax.jdo.annotations.PrimaryKey;
 
 import com.google.appengine.api.datastore.Key;
 import com.vaadin.ui.Embedded;
 
-public class Place {
+@PersistenceCapable
+public class Place implements java.io.Serializable {
 	
   public String getPlaceName() {
 	return placeName;
@@ -40,14 +42,14 @@ public String getPlaceLocation() {
 		return placeLocation;
 	  }
 
-public void setPlaceIcon(Embedded placeIcon) {
-	this.placeIcon = placeIcon;
-	this.placeIcon.setWidth("100");
-	this.placeIcon.setHeight("100");
-}
-public Embedded getPlaceIcon() {
-	return placeIcon;
-}
+//public void setPlaceIcon(Embedded placeIcon) {
+//	this.placeIcon = placeIcon;
+//	this.placeIcon.setWidth("100");
+//	this.placeIcon.setHeight("100");
+//}
+//public Embedded getPlaceIcon() {
+//	return placeIcon;
+//}
 public Key getKey() {
 	return key;
 }
@@ -65,8 +67,8 @@ private String placeDescription;
 private String placeLocation;
 @Persistent
 private String placeType;
-@Persistent
-private Embedded placeIcon;
-@Persistent(mappedBy = "mapPlace")
-private List<Map> placeMaps;
+//@Persistent
+//private Embedded placeIcon;
+//@Persistent(mappedBy = "mapPlace")
+//private List<Map> placeMaps;
 }

@@ -198,5 +198,4 @@ public class AdminWindow extends Window implements Property.ValueChangeListener,
 		loginWindow.addComponent(loginForm);
 		this.addWindow(loginWindow);
 	}
-
 }

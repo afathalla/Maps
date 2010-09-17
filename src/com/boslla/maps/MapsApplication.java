@@ -80,11 +80,11 @@ public class MapsApplication extends Application implements Button.ClickListener
 	  private Unit endSelectedUnit;
 	  private Window mainWindow= new Window("Maps Application");
 	  private TabSheet tabSheet = new TabSheet();
-      private VerticalLayout l1 = new VerticalLayout();
-      private VerticalLayout l2 = new VerticalLayout();
-      private VerticalLayout l3 = new VerticalLayout();
-      private VerticalLayout l4 = new VerticalLayout();
-      private VerticalLayout l5 = new VerticalLayout();
+      private VerticalLayout findLocationTab = new VerticalLayout();
+      private VerticalLayout findDirectionTab = new VerticalLayout();
+      private VerticalLayout homeTab = new VerticalLayout();
+      private VerticalLayout myMapsTab = new VerticalLayout();
+      private VerticalLayout myPlacesTab = new VerticalLayout();
       private static VerticalLayout verticalViewLayout= new VerticalLayout();
       
       private Embedded startLocationIcon = new Embedded("", new ThemeResource("numbers/location_1.png"));
@@ -169,17 +169,17 @@ public class MapsApplication extends Application implements Button.ClickListener
 //	    showPanelButton.addListener((ClickListener)this);
 		
 		//Initialize tabSheet
-		l1.setMargin(true);	
-		l2.setMargin(true);
-		l3.setMargin(true);
-		l4.setMargin(true);
-		l5.setMargin(true);
+		findLocationTab.setMargin(true);	
+		findDirectionTab.setMargin(true);
+		homeTab.setMargin(true);
+		myMapsTab.setMargin(true);
+		myPlacesTab.setMargin(true);
 		
-	    l1.setWidth(20, TextField.UNITS_PERCENTAGE);
-	    l2.setWidth(20, TextField.UNITS_PERCENTAGE);
-	    l3.setWidth(20, TextField.UNITS_PERCENTAGE);
-	    l4.setWidth(20, TextField.UNITS_PERCENTAGE);
-	    l5.setWidth(20, TextField.UNITS_PERCENTAGE);
+	    findLocationTab.setWidth(20, TextField.UNITS_PERCENTAGE);
+	    findDirectionTab.setWidth(20, TextField.UNITS_PERCENTAGE);
+	    homeTab.setWidth(20, TextField.UNITS_PERCENTAGE);
+	    myMapsTab.setWidth(20, TextField.UNITS_PERCENTAGE);
+	    myPlacesTab.setWidth(20, TextField.UNITS_PERCENTAGE);
 	    
 	    tabSheet.setHeight("34px");
 	    tabSheet.setWidth("100%");
@@ -401,16 +401,16 @@ public class MapsApplication extends Application implements Button.ClickListener
 		verticalViewLayout.removeAllComponents();
 		verticalViewLayout.setSpacing(true);
 
-		tabSheet.addTab(l3,"Home", null);
-		tabSheet.addTab(l4,"My Maps",null);
-		tabSheet.addTab(l5,"My Places",null);
-	    tabSheet.addTab(l1,"Find Location",null);
-	    tabSheet.addTab(l2,"Find Direction",null);
+		tabSheet.addTab(homeTab,"Home", null);
+		tabSheet.addTab(myMapsTab,"My Maps",null);
+		tabSheet.addTab(myPlacesTab,"My Places",null);
+	    tabSheet.addTab(findLocationTab,"Find Location",null);
+	    tabSheet.addTab(findDirectionTab,"Find Direction",null);
 
-		tabSheet.setSelectedTab(null);
-	    
+//		tabSheet.setSelectedTab(null);
+		tabSheet.setSelectedTab(homeTab);
 	    verticalViewLayout.addComponent(tabSheet);
-	    buildHomeTab();
+	//    buildHomeTab();
 
 	  	tabSheet.addListener(new SelectedTabChangeListener() 
 		{
@@ -421,32 +421,35 @@ public class MapsApplication extends Application implements Button.ClickListener
 		        
 		        if (tab.getCaption().equals("Find Location"))
 		        {
-		        	verticalViewLayout.removeAllComponents();
-		        	verticalViewLayout.addComponent(tabSheet);
+		       // 	verticalViewLayout.removeAllComponents();
+		       // 	verticalViewLayout.addComponent(tabSheet);
+		        	tabSheet.setSelectedTab(findLocationTab);
 		        	buildFindLocation();
 		        }
 		        else if (tab.getCaption().equals("Find Direction"))
 		        {
-		        	verticalViewLayout.removeAllComponents();
-		        	verticalViewLayout.addComponent(tabSheet);
+//		        	verticalViewLayout.removeAllComponents();
+	//	        	verticalViewLayout.addComponent(tabSheet);
 		        	buildFindDirection();
 		        }
 		        else if (tab.getCaption().equals("Home"))
 		        {
-		        	verticalViewLayout.removeAllComponents();
-		        	verticalViewLayout.addComponent(tabSheet);
+		        	//verticalViewLayout.removeAllComponents();
+		        	//verticalViewLayout.addComponent(tabSheet);
+		        	tabSheet.setSelectedTab(homeTab);
 		        	buildHomeTab();
 		        }
 		        else if (tab.getCaption().equals("My Maps"))
 		        {
-		        	verticalViewLayout.removeAllComponents();
-		        	verticalViewLayout.addComponent(tabSheet);
-		        	buildMyMaps();
+		        	//verticalViewLayout.removeAllComponents();
+		        	//verticalViewLayout.addComponent(tabSheet);
+		        	tabSheet.setSelectedTab(myMapsTab);
+		        	buildMyMapsTab();
 		        }
 		        else if (tab.getCaption().equals("My Places"))
 		        {
-		        	verticalViewLayout.removeAllComponents();
-		        	verticalViewLayout.addComponent(tabSheet);
+		//        	verticalViewLayout.removeAllComponents();
+		  //      	verticalViewLayout.addComponent(tabSheet);
 		        	buildMyPlaces();
 		        }
 		    }
@@ -455,20 +458,20 @@ public class MapsApplication extends Application implements Button.ClickListener
 		return verticalViewLayout;	 
 	}
 	
-	public void buildMyMaps()
+	public void buildMyMapsTab()
 	{	
-		verticalViewLayout.removeAllComponents();
-    	verticalViewLayout.addComponent(tabSheet);
-    	tabSheet.setSelectedTab(l4);
+	//	verticalViewLayout.removeAllComponents();
+    //	verticalViewLayout.addComponent(tabSheet);
     	
 		Label label = new Label("<h3>Please select a Map:</h3>",Label.CONTENT_XHTML);
 		verticalViewLayout.addComponent(label);
 		label.setVisible(true);
 		
-		placeDataSource = PlaceContainer.getAllPlaces();
-		placeList.refreshDataSource(this, placeDataSource);
-		verticalViewLayout.addComponent(placeList);
-		placeList.setVisible(true);
+//		placeDataSource = PlaceContainer.getAllPlaces();
+	//	System.out.println(placeDataSource.size());
+	//	placeList.refreshDataSource(this, placeDataSource);
+	//	verticalViewLayout.addComponent(placeList);
+	//	placeList.setVisible(true);
 		
 		placeList.addListener(new Property.ValueChangeListener() 
 		{
@@ -487,7 +490,7 @@ public class MapsApplication extends Application implements Button.ClickListener
 	{
 		verticalViewLayout.removeAllComponents();
     	verticalViewLayout.addComponent(tabSheet);
-    	tabSheet.setSelectedTab(l4);
+    	tabSheet.setSelectedTab(myMapsTab);
     	
 		mapDataSource = MapContainer.getMyMaps(selectedPlace.getPlaceName());
 		mapList.refreshDataSource(mapDataSource);
@@ -529,7 +532,7 @@ public class MapsApplication extends Application implements Button.ClickListener
 	{	
 		verticalViewLayout.removeAllComponents();
     	verticalViewLayout.addComponent(tabSheet);
-    	tabSheet.setSelectedTab(l5);
+    	tabSheet.setSelectedTab(myPlacesTab);
     	
     	getDirectionFromHereButton.setVisible(false);
     	
@@ -603,7 +606,10 @@ public class MapsApplication extends Application implements Button.ClickListener
 
 	public void buildHomeTab()
 	{
-		verticalViewLayout.addComponent(homeLabel);
+	//	verticalViewLayout.addComponent(homeLabel);
+		System.out.println("Inside buildHomeTab()");
+		homeTab.addComponent(new Label("Welcome to Boslla Indoor Maps!"));
+		homeTab.setVisible(true);
 	}
 	
 	public void showDirectionResults()
@@ -771,7 +777,7 @@ public class MapsApplication extends Application implements Button.ClickListener
 	        {
 	        	verticalViewLayout.removeAllComponents();
 	        	verticalViewLayout.addComponent(tabSheet);
-	        	buildMyMaps();
+	        	buildMyMapsTab();
 	        }
 	        else if (tab.getCaption().equals("My Places"))
 	        {
@@ -796,7 +802,7 @@ public class MapsApplication extends Application implements Button.ClickListener
 		{   	
         	verticalViewLayout.removeAllComponents();
         	verticalViewLayout.addComponent(tabSheet);
-        	tabSheet.setSelectedTab(l2);
+        	tabSheet.setSelectedTab(findDirectionTab);
         	mapView.setDisplayedUnits(null);
         	mapView.clearPath();
         	buildFindDirection();
@@ -813,7 +819,7 @@ public class MapsApplication extends Application implements Button.ClickListener
 			{
 				verticalViewLayout.removeAllComponents();
 		    	verticalViewLayout.addComponent(tabSheet);
-		    	tabSheet.setSelectedTab(l5);
+		    	tabSheet.setSelectedTab(myPlacesTab);
 				Label label = new Label("<h3>There are no saved Locations in My Places</h3>",Label.CONTENT_XHTML);	
 				verticalViewLayout.addComponent(label);
 				label.setVisible(true);
@@ -825,7 +831,7 @@ public class MapsApplication extends Application implements Button.ClickListener
 		{
         	verticalViewLayout.removeAllComponents();
         	verticalViewLayout.addComponent(tabSheet);
-        	tabSheet.setSelectedTab(l1);
+        	tabSheet.setSelectedTab(findLocationTab);
         	locationSearchText.setValue("");
         	mapView.setDisplayedUnits(null);
         	mapView.clearPath();
@@ -835,14 +841,14 @@ public class MapsApplication extends Application implements Button.ClickListener
 		{
         	verticalViewLayout.removeAllComponents();
         	verticalViewLayout.addComponent(tabSheet);
-        	tabSheet.setSelectedTab(l4);
-        	buildMyMaps();
+        	tabSheet.setSelectedTab(myMapsTab);
+        	buildMyMapsTab();
 		}
 		else if (sourceButton == upperSearchButton)
 		{
         	verticalViewLayout.removeAllComponents();
         	verticalViewLayout.addComponent(tabSheet);
-        	tabSheet.setSelectedTab(l1);
+        	tabSheet.setSelectedTab(findLocationTab);
         	
         	buildFindLocation();
         	

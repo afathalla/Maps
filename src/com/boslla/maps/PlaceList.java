@@ -7,16 +7,18 @@ import com.vaadin.ui.Table;
 import com.vaadin.ui.TextField;
 
 public class PlaceList extends Table {
-  public static final Object[] COLUMN_ORDER = new Object[]{"placeIcon","placeType","placeLocation","placeDescription"};
-  private  String[] Alignment = new String[]{ALIGN_LEFT,ALIGN_LEFT,ALIGN_LEFT,ALIGN_LEFT};
+  public static final Object[] COLUMN_ORDER = new Object[]{/*"placeIcon",*/"placeType","placeLocation","placeDescription"};
+  private  String[] Alignment = new String[]{/*ALIGN_LEFT,*/ALIGN_LEFT,ALIGN_LEFT,ALIGN_LEFT};
   
   public PlaceList (MapsApplication app) {
   }
-  public void refreshDataSource(MapsApplication app, PlaceContainer DataSource) {
-    setContainerDataSource(DataSource);
+  public void refreshDataSource(MapsApplication app, PlaceContainer dataSource) {
+    Place firstPlace = dataSource.getIdByIndex(0);
+    System.out.println(firstPlace.getPlaceName());
+	setContainerDataSource(dataSource);
     setVisibleColumns(COLUMN_ORDER);
     //setColumnHeaderMode(COLUMN_HEADER_MODE_HIDDEN);
-    setColumnHeader("placeIcon","Place");
+  //  setColumnHeader("placeIcon","Place");
     setColumnHeader("placeType","Category");
     setColumnHeader("placeDescription","Description");
     setColumnHeader("placeLocation","Location");

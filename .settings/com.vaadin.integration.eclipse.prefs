@@ -1,6 +1,6 @@
-#Sat Sep 11 13:27:33 EEST 2010
+#Fri Sep 17 17:08:21 EEST 2010
 com.vaadin.integration.eclipse.widgetsetBuildsSuspended=true
 com.vaadin.integration.eclipse.widgetsetCompilationEta=63915
-com.vaadin.integration.eclipse.widgetsetDirty=false
+com.vaadin.integration.eclipse.widgetsetDirty=true
 com.vaadin.integration.eclipse.widgetsetVerbose=true
 eclipse.preferences.version=1

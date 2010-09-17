@@ -1,5 +1,10 @@
 package com.boslla.maps;
 
+import javax.jdo.annotations.IdGeneratorStrategy;
+import javax.jdo.annotations.Persistent;
+import javax.jdo.annotations.PrimaryKey;
+
+import com.google.appengine.api.datastore.Key;
 import com.vaadin.data.Item;
 import com.vaadin.data.Validator;
 import com.vaadin.data.validator.IntegerValidator;
@@ -35,7 +40,7 @@ public class AdminFormFieldFactory implements com.vaadin.ui.FormFieldFactory {
 			mapNameText.addValidator(mapNameValidator);
 			return mapNameText;
 		}
-		else if (pid.equals("mapDescription")) {
+		if (pid.equals("mapDescription")) {
 			TextField mapDescriptionText = new TextField(pid);
 			mapDescriptionText.setCaption("Map Description");
 			mapDescriptionText.setMaxLength(200);
@@ -47,7 +52,7 @@ public class AdminFormFieldFactory implements com.vaadin.ui.FormFieldFactory {
 			return mapDescriptionText;
 		}
 		
-		else if (pid.equals("mapWidth") || pid.equals("mapHeight")) {
+		if (pid.equals("mapWidth") || pid.equals("mapHeight")) {
 			TextField mapDimsText = new TextField(pid);
 			if (pid.equals("mapWidth")) {
 				mapDimsText.setCaption("Map Width");
@@ -63,7 +68,7 @@ public class AdminFormFieldFactory implements com.vaadin.ui.FormFieldFactory {
 			return mapDimsText;
 		}
 		
-		else if (pid.equals("mapScale")) {
+		if (pid.equals("mapScale")) {
 			TextField mapScaleText = new TextField(pid);
 		    mapScaleText.setCaption("Map Scale");
 			
@@ -75,6 +80,60 @@ public class AdminFormFieldFactory implements com.vaadin.ui.FormFieldFactory {
 			return mapScaleText;
 		}
 	}
+	
+		 if (className == "Place") {
+//			@PrimaryKey
+//			@Persistent(valueStrategy = IdGeneratorStrategy.IDENTITY)
+//			private Key key;
+//			@Persistent
+//			private String placeName;
+//			@Persistent
+//			private String placeDescription;
+//			@Persistent
+//			private String placeLocation;
+//			@Persistent
+//			private String placeType;
+			String pid = (String) propertyId;
+			if (pid.equals("key")) {
+				return null;
+			}
+			if (pid.equals("placeName")) {
+				TextField placeNameText = new TextField(pid);
+				placeNameText.setDescription("Place Name");
+				placeNameText.setMaxLength(20);
+				StringLengthValidator placeNameValidator = new StringLengthValidator("Place Name" +
+											"must be between 1 and 20 charachters");
+				placeNameValidator.setMinLength(1);
+				placeNameValidator.setMaxLength(20);
+				placeNameText.addValidator(placeNameValidator);
+				return placeNameText;
+			}
+			if (pid.equals("placeDescription")) {
+				TextField placeDescriptionText = new TextField(pid);
+				placeDescriptionText.setCaption("Place Description");
+				placeDescriptionText.setMaxLength(200);
+				StringLengthValidator placeDescritpionValidator = new StringLengthValidator("Map Name" +
+											" must be between 10 and 200 charachters");
+				placeDescritpionValidator.setMinLength(10);
+				placeDescritpionValidator.setMaxLength(200);
+				placeDescriptionText.addValidator(placeDescritpionValidator);
+				return placeDescriptionText;
+			}
+			if (pid.equals("placeLocation")) {
+				TextField locationDescriptionText = new TextField(pid);
+				locationDescriptionText.setCaption("Location Description");
+				locationDescriptionText.setMaxLength(200);
+				StringLengthValidator locationDescritpionValidator = new StringLengthValidator("Location Name" +
+											" must be between 10 and 200 charachters");
+				locationDescritpionValidator.setMinLength(10);
+				locationDescritpionValidator.setMaxLength(200);
+				locationDescriptionText.addValidator(locationDescritpionValidator);
+				return locationDescriptionText;
+			}
+			if (pid.equals("placeType")) {
+				return null;
+			}
+		}
 		return null;
  }
 }
