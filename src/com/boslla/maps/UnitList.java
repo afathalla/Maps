@@ -21,6 +21,7 @@ public class UnitList extends Table {
     setColumnHeader("unitName","Name");
     setColumnHeader("mapDescription","Location");
     setPageLength(0);
+    setSizeFull();
     
 	setWidth(100, TextField.UNITS_PERCENTAGE);
     //setHeight(300, TextField.UNITS_PIXELS);

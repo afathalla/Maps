@@ -62,4 +62,5 @@ public Embedded getMapIcon() {
   private int mapWidth;
   private int mapHeight;
   private float mapScale;
+
 }

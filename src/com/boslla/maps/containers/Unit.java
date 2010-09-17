@@ -11,6 +11,14 @@ public class Unit {
   public void setUnitName(String unitName) {
 	this.unitName = unitName;
   }
+  
+  public int getUnitId() {
+		return unitId;
+	  }
+	  public void setUnitId(int unitId) {
+		this.unitId = unitId;
+	  }
+  
   public int getX() {
 	return x;
   }
@@ -64,6 +72,21 @@ public void setMapImageUrl(String mapImageUrl) {
 public String getmapImageUrl() {
 		return mapImageUrl;
 	}
+
+public void setUnitType(String unitType) {
+	this.unitType = unitType;
+  }
+  public String getUnitType() {
+	return unitType;
+  }
+  
+  public void setPlaceName(String placeName) {
+	  	this.placeName = placeName;
+	}
+  public String getPlaceName() {
+		return placeName;
+	}
+	  
   
   private int x;
   private int y;
@@ -74,5 +97,8 @@ public String getmapImageUrl() {
   private Embedded imageUrl;
   private String unitIconUrl;
   private Embedded unitIcon;
-  
+  private String unitType;
+  private String placeName;
+  private int unitId;
+
 }
