@@ -1,12 +1,9 @@
 package com.boslla.maps.containers;
 
-import javax.jdo.annotations.IdGeneratorStrategy;
-import javax.jdo.annotations.Persistent;
-import javax.jdo.annotations.PrimaryKey;
-
-import com.google.appengine.api.datastore.Key;
-
 public class Step {
+	
+	private int step;
+	private String direction;
 	
 	public void setStep(int step)
 	{
@@ -27,17 +24,4 @@ public class Step {
 	{
 		return direction;
 	}
-	
-	public Key getKey() {
-		return key;
-	}
-
-	@PrimaryKey
-	@Persistent(valueStrategy = IdGeneratorStrategy.IDENTITY)
-	private Key key;
-	@Persistent
-	private int step;
-	@Persistent
-	private String direction;
-	
 }

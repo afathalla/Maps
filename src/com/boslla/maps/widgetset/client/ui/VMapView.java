@@ -2,6 +2,8 @@ package com.boslla.maps.widgetset.client.ui;
 
 import java.util.ArrayList;
 
+import org.vaadin.hezamu.imagemapwidget.ImageMap;
+
 import org.vaadin.gwtgraphics.client.DrawingArea;
 import org.vaadin.gwtgraphics.client.Line;
 import org.vaadin.gwtgraphics.client.animation.Animate;
@@ -9,11 +11,11 @@ import org.vaadin.gwtgraphics.client.shape.Circle;
 import org.vaadin.gwtgraphics.client.shape.Path;
 import org.vaadin.gwtgraphics.client.shape.path.LineTo;
 import org.vaadin.gwtgraphics.client.shape.path.PathStep;
+import com.google.gwt.dom.client.Document;
 import com.vaadin.terminal.gwt.client.ApplicationConnection;
 import com.vaadin.terminal.gwt.client.Paintable;
 import com.vaadin.terminal.gwt.client.UIDL;
 import com.google.gwt.core.client.GWT;
-import com.google.gwt.dom.client.Document;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.dom.client.MouseDownEvent;
@@ -89,10 +91,10 @@ MouseDownHandler, MouseUpHandler, MouseMoveHandler {
 	private String mapDescription;
 	private String mapImageUrl;
 	private String[] placesImages = null;
-//	private Image placeImage;
 	private Label mapDescriptionLabel;
 	private Image mapImage;
 	private Image placeImage = null;
+//	private ImageMap imageMap;
 	
 	private ArrayList<Circle> circleArray;
 	
@@ -116,7 +118,7 @@ MouseDownHandler, MouseUpHandler, MouseMoveHandler {
 //		canvas.addMouseDownHandler(this);
 	//	canvas.addMouseUpHandler(this);
 		mapDescriptionLabel = new Label();
-		mapImage= new Image();
+//		mapImage= new Image();
 		textBox= new TextBox();
 		circleArray = new ArrayList<Circle>();
 		pathExists=false;
@@ -179,12 +181,13 @@ MouseDownHandler, MouseUpHandler, MouseMoveHandler {
 		// Set values after getting them from server
 	//	panel.setSize((50 + 1 + width) + "px", (25 + height) + "px");
 		panel.setSize(mapWidth + "px",mapHeight + "px");
+		panel.setTitle(mapDescriptionLabel.getText());
 		
 		canvas.setWidth(mapWidth);		
 		canvas.setHeight(mapHeight);
 		canvas.getElement().getStyle().setPropertyPx("width", mapWidth);
 		canvas.getElement().getStyle().setPropertyPx("height", mapHeight);
-		
+
 		mapImage.setUrl(GWT.getModuleBaseURL()+mapImageUrl);
 		
 		if (uidl.getStringArrayAttribute("placesX") != null) {
@@ -195,9 +198,9 @@ MouseDownHandler, MouseUpHandler, MouseMoveHandler {
 		  for (int i = 0; i< placesX.length; i++){
 			int placeX = Integer.parseInt(placesX[i]);
 			int placeY = Integer.parseInt(placesY[i]);
-	        Circle circle= new Circle (placeX,placeY,13);
-	        circle.setFillColor("red");
-	        canvas.add(circle);
+	        //Circle circle= new Circle (placeX,placeY,13);
+	        //circle.setFillColor("red");
+	        //canvas.add(circle);
 	        placeImage = new Image();
 	        placeImage.setUrl(GWT.getModuleBaseURL()+placesImages[i]);
 	        placeImage.addClickHandler(this);

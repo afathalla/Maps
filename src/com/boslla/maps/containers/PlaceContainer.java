@@ -50,37 +50,33 @@ public class PlaceContainer extends BeanItemContainer<Place>
 		  query.closeAll();
 	  }
 	  return placeContainer;
-//	  try{
-//		placeContainer = new PlaceContainer();  
-//	    if (conn== null) {
-//		  conn=getConn();
-//	    }
-//		  Statement select = conn.createStatement();
-//		  String selectStatement= "SELECT Name, Type, Location, Description, place.Image_Url from place, place_type where place_type_id = place_type.Id";
-//		  
-//		   System.out.println(selectStatement);
-//		   ResultSet result = select.executeQuery(selectStatement);
-//		   
-//		   while (result.next()) {
-//		     Place place= new Place();
-//		     place.setPlaceName(result.getString(1));
-//		     place.setPlaceType(result.getString(2));
-//		     place.setPlaceLocation(result.getString(3));
-//		     place.setPlaceDescription(result.getString(4));
-//		//     place.setPlaceIcon(new Embedded("Place", new ThemeResource(result.getString(5))));
-//
-//		     placeContainer.addBean(place);
-//		   }
-//	  } catch (SQLException e){
-//	      e.printStackTrace();
-//	    } catch (InstantiationException e) {
-//		    e.printStackTrace(); 
-//	       } catch (IllegalAccessException e) {
-//		       e.printStackTrace();    
-//	         }
-//	   //notifyListeners();
-	  // return placeContainer;
   }
+  public static PlaceContainer getPlace(String placeName) { 
+	  PlaceContainer placeContainer = null;
+	  Query query = pm.newQuery(Place.class);
+	  query.setFilter("placeName == placeNameParam");
+	  query.declareParameters("String placeNameParam");
+	  try {
+		  placeContainer = new PlaceContainer();
+		  List<Place> results = (List<Place>) query.execute(placeName);
+		  
+		  System.out.println("getPlace(" + placeName + " ) Result set contains " + results.size()+" elements");
+		  if (results.iterator().hasNext()) {
+			  for (Place p : results) {
+				  placeContainer.addBean(p);
+			  }
+		  }
+	  } catch (IllegalAccessException e) {
+		  e.printStackTrace();
+	  } catch (InstantiationException e) {
+		  e.printStackTrace();
+	  }
+	  finally {
+		  query.closeAll();
+	  }
+	  return placeContainer;
+  }
+
   public static Boolean savePlace(Place place) {
 		 Key k = KeyFactory.createKey(Place.class.getSimpleName(), place.getPlaceName());
 		 place.setKey(k);
@@ -92,14 +88,138 @@ public class PlaceContainer extends BeanItemContainer<Place>
 		 }
 		 return true;
 	 }
+	   
+}
+
+
+/*
+public class PlaceContainer extends BeanItemContainer<Place> 
+  implements Serializable {
+  private static Connection conn=null;
+  public PlaceContainer() throws InstantiationException, 
+    IllegalAccessException {
+ 
+	super (Place.class);
+  }
+  
+  public static PlaceContainer getAllPlaces() { 
 	  
+	  PlaceContainer placeContainer = null;
+	  try{
+		placeContainer = new PlaceContainer();  
+	    if (conn== null) {
+		  conn=getConn();
+	    }
+		  Statement select = conn.createStatement();
+		  String selectStatement= "SELECT Name, Type, Location, Description, place.Image_Url, place.Longitude, place.Latitude from place, place_type where place_type_id = place_type.Id";
+		  
+		   System.out.println(selectStatement);
+		   ResultSet result = select.executeQuery(selectStatement);
+		   
+		   while (result.next()) {
+		     Place place= new Place();
+		     place.setPlaceName(result.getString(1));
+		     place.setPlaceType(result.getString(2));
+		     place.setPlaceLocation(result.getString(3));
+		     place.setPlaceDescription(result.getString(4));
+		     place.setPlaceIcon(new Embedded(null, new ThemeResource(result.getString(5))));
+		     place.setPlaceLongitude(result.getDouble(6));
+		     place.setPlaceLatitude(result.getDouble(7));
+
+		     placeContainer.addBean(place);
+		   }
+	  } catch (SQLException e){
+	      e.printStackTrace();
+	    } catch (InstantiationException e) {
+		    e.printStackTrace(); 
+	       } catch (IllegalAccessException e) {
+		       e.printStackTrace();    
+	         }
+	   //notifyListeners();
+	   return placeContainer;
+  }
+
+  public static PlaceContainer getPlace(String placeName) {
+	  
+	  PlaceContainer placeContainer = null;
+	  try{
+		placeContainer = new PlaceContainer();  
+	    if (conn== null) {
+		  conn=getConn();
+	    }
+		  Statement select = conn.createStatement();
+		  String selectStatement= "SELECT Name, Type, Location, Description, place.Image_Url, place.Longitude, place.Latitude from place, place_type where place_type_id = place_type.Id and place.Name = " + "\""+placeName+"\"";
+		  
+		   System.out.println(selectStatement);
+		   ResultSet result = select.executeQuery(selectStatement);
+		   
+		   while (result.next()) {
+		     Place place= new Place();
+		     place.setPlaceName(result.getString(1));
+		     place.setPlaceType(result.getString(2));
+		     place.setPlaceLocation(result.getString(3));
+		     place.setPlaceDescription(result.getString(4));
+		     place.setPlaceIcon(new Embedded(null, new ThemeResource(result.getString(5))));
+		     place.setPlaceLongitude(result.getDouble(6));
+		     place.setPlaceLatitude(result.getDouble(7));
+
+		     placeContainer.addBean(place);
+		   }
+	  } catch (SQLException e){
+	      e.printStackTrace();
+	    } catch (InstantiationException e) {
+		    e.printStackTrace(); 
+	       } catch (IllegalAccessException e) {
+		       e.printStackTrace();    
+	         }
+	   //notifyListeners();
+	   return placeContainer;
+	}
+  
+ public static PlaceContainer getSimilarPlaces(String placeName) {
+	  
+	  PlaceContainer placeContainer = null;
+	  try{
+		placeContainer = new PlaceContainer();  
+	    if (conn== null) {
+		  conn=getConn();
+	    }
+		  Statement select = conn.createStatement();
+		  String selectStatement= "SELECT Name, Type, Location, Description, place.Image_Url, place.Longitude, place.Latitude from place, place_type where place_type_id = place_type.Id and place.Name LIKE " + "\"%"+ placeName + "%\";";;
+		  
+		   System.out.println(selectStatement);
+		   ResultSet result = select.executeQuery(selectStatement);
+		   
+		   while (result.next()) {
+		     Place place= new Place();
+		     place.setPlaceName(result.getString(1));
+		     place.setPlaceType(result.getString(2));
+		     place.setPlaceLocation(result.getString(3));
+		     place.setPlaceDescription(result.getString(4));
+		     place.setPlaceIcon(new Embedded(null, new ThemeResource(result.getString(5))));
+		     place.setPlaceLongitude(result.getDouble(6));
+		     place.setPlaceLatitude(result.getDouble(7));
+
+		     placeContainer.addBean(place);
+		   }
+	  } catch (SQLException e){
+	      e.printStackTrace();
+	    } catch (InstantiationException e) {
+		    e.printStackTrace(); 
+	       } catch (IllegalAccessException e) {
+		       e.printStackTrace();    
+	         }
+	   //notifyListeners();
+	   return placeContainer;
+	}
+  
   private static Connection getConn() {
 	Connection conn = null;
     String url = "jdbc:mysql://localhost:3306/";
-    String db = "makany_test";
+    String db = "makany_dev";
     String driver = "com.mysql.jdbc.Driver";
     String user = "root";
-    String pass = "root";
+    String pass = "";
     try {
       Class.forName(driver).newInstance();
     } catch (InstantiationException e) {
@@ -118,3 +238,4 @@ public class PlaceContainer extends BeanItemContainer<Place>
 	 return conn;
   }
 }
+*/

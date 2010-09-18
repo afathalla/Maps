@@ -50,6 +50,18 @@ public String getPlaceLocation() {
 //public Embedded getPlaceIcon() {
 //	return placeIcon;
 //}
+public void setPlaceLongitude(double placeLongitude) {	
+	  this.placeLongitude = placeLongitude ;
+}
+public double getPlaceLongitude() {
+	return placeLongitude;
+}
+public void setPlaceLatitude(double placeLatitude) {	
+	  this.placeLatitude = placeLatitude ;
+}
+public double getPlaceLatitude() {
+	return placeLatitude;
+}
 public Key getKey() {
 	return key;
 }
@@ -67,8 +79,14 @@ private String placeDescription;
 private String placeLocation;
 @Persistent
 private String placeType;
+@Persistent
+private double placeLongitude;
+@Persistent
+private double placeLatitude;
+
 //@Persistent
 //private Embedded placeIcon;
 //@Persistent(mappedBy = "mapPlace")
 //private List<Map> placeMaps;
+
 }

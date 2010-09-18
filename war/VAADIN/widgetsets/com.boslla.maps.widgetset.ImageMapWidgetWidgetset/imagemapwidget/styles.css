@@ -1,0 +1,6 @@
+/* IE fix (thanks Jonatan!) */
+.v-imagemap-area {
+	cursor: pointer;
+	background-image: url("images/transparent1x1.gif");
+	background-repeat: repeat;
+}

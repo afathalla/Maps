@@ -86,7 +86,7 @@ public class AdminWindow extends Window implements Property.ValueChangeListener,
 				public void buttonClick(ClickEvent event) {
 	                try {
 	                    adminForm.commit();
-	                    MapContainer.saveMap(newMap);
+	             //       MapContainer.saveMap(newMap);
 	                } catch (Exception e) {
 	                    // Ignored, we'll let the Form handle the errors
 	                }

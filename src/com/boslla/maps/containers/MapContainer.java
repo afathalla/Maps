@@ -23,7 +23,6 @@ import com.vaadin.ui.Embedded;
 
 public class MapContainer extends BeanItemContainer<Map> 
   implements Serializable {
-  private static Connection conn=null;
   private static PersistenceManager pm = PMF.get().getPersistenceManager();
 
   public MapContainer() throws InstantiationException, 
@@ -145,29 +144,5 @@ public class MapContainer extends BeanItemContainer<Map>
 	 }
 	 return true;
  }
-  
- private static Connection getConn() {
-	Connection conn = null;
-    String url = "jdbc:mysql://localhost:3306/";
-    String db = "makany_test";
-    String driver = "com.mysql.jdbc.Driver";
-    String user = "root";
-    String pass = "root";
-    try {
-      Class.forName(driver).newInstance();
-    } catch (InstantiationException e) {
-        e.printStackTrace();
-    } catch (IllegalAccessException e) {
-        e.printStackTrace();
-    } catch (ClassNotFoundException e) {
-        e.printStackTrace();
-    }
-    try {       
-         conn = DriverManager.getConnection(url+db, user, pass);
-    } catch (SQLException e) {
-        System.err.println("Mysql Connection Error: ");
-	    e.printStackTrace();
-	    }
-	 return conn;
-  }
+
 }

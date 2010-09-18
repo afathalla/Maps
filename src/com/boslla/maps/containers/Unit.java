@@ -1,10 +1,5 @@
 package com.boslla.maps.containers;
 
-import javax.jdo.annotations.IdGeneratorStrategy;
-import javax.jdo.annotations.Persistent;
-import javax.jdo.annotations.PrimaryKey;
-
-import com.google.appengine.api.datastore.Key;
 import com.vaadin.ui.Embedded;
 
 public class Unit {
@@ -16,6 +11,14 @@ public class Unit {
   public void setUnitName(String unitName) {
 	this.unitName = unitName;
   }
+  
+  public int getUnitId() {
+		return unitId;
+	  }
+	  public void setUnitId(int unitId) {
+		this.unitId = unitId;
+	  }
+  
   public int getX() {
 	return x;
   }
@@ -65,35 +68,37 @@ public String getMapDescription() {
 
 public void setMapImageUrl(String mapImageUrl) {
 		this.mapImageUrl = mapImageUrl;
-}
+	}
 public String getmapImageUrl() {
 		return mapImageUrl;
-}
-  
-public Key getKey() {
-	return key;
-}
+	}
 
-@PrimaryKey
-@Persistent(valueStrategy = IdGeneratorStrategy.IDENTITY)
-private Key key;
-@Persistent
-private int x;
-@Persistent
-private int y;
-@Persistent
-private String unitName;
-@Persistent
-private String description;
-@Persistent
-private String mapImageUrl;
-@Persistent
-private String mapDescription;
-@Persistent
-private Embedded imageUrl;
-@Persistent
-private String unitIconUrl;
-@Persistent
-private Embedded unitIcon;
+public void setUnitType(String unitType) {
+	this.unitType = unitType;
+  }
+  public String getUnitType() {
+	return unitType;
+  }
   
+  public void setPlaceName(String placeName) {
+	  	this.placeName = placeName;
+	}
+  public String getPlaceName() {
+		return placeName;
+	}
+	  
+  
+  private int x;
+  private int y;
+  private String unitName;
+  private String description;
+  private String mapImageUrl;
+  private String mapDescription;
+  private Embedded imageUrl;
+  private String unitIconUrl;
+  private Embedded unitIcon;
+  private String unitType;
+  private String placeName;
+  private int unitId;
+
 }

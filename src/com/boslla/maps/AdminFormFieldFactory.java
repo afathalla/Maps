@@ -7,6 +7,7 @@ import javax.jdo.annotations.PrimaryKey;
 import com.google.appengine.api.datastore.Key;
 import com.vaadin.data.Item;
 import com.vaadin.data.Validator;
+import com.vaadin.data.validator.DoubleValidator;
 import com.vaadin.data.validator.IntegerValidator;
 import com.vaadin.data.validator.RegexpValidator;
 import com.vaadin.data.validator.StringLengthValidator;
@@ -129,6 +130,26 @@ public class AdminFormFieldFactory implements com.vaadin.ui.FormFieldFactory {
 				locationDescritpionValidator.setMaxLength(200);
 				locationDescriptionText.addValidator(locationDescritpionValidator);
 				return locationDescriptionText;
+			}
+			if (pid.equals("placeLongitude")) {
+				TextField longitudeText = new TextField(pid);
+				longitudeText.setCaption("Place Longitude");
+				longitudeText.setMaxLength(10);
+				DoubleValidator longitudeValidator = new DoubleValidator("Place Longitude" +
+											" must be a Double Value");
+			
+				longitudeText.addValidator(longitudeValidator);
+				return longitudeText;
+			}
+			if (pid.equals("placeLatitude")) {
+				TextField latitudeText = new TextField(pid);
+				latitudeText.setCaption("Place Latitude");
+				latitudeText.setMaxLength(10);
+				DoubleValidator latitudeValidator = new DoubleValidator("Place Longitude" +
+											" must be a Double Value");
+			
+				latitudeText.addValidator(latitudeValidator);
+				return latitudeText;
 			}
 			if (pid.equals("placeType")) {
 				return null;

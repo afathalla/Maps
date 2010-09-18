@@ -23,6 +23,18 @@
   		<param-name>widgetset</param-name>
   		<param-value>com.boslla.maps.widgetset.MapsWidgetset</param-value>
   	</init-param>
+  	  	<init-param>
+    	<param-name>widgetset</param-name>
+    	<param-value>com.boslla.maps.widgetset.GoogleMaps</param-value>
+  	</init-param>
+  	<init-param>
+  	  <param-name>widgetset</param-name>
+   	 <param-value>com.boslla.maps.widgetset.GooglemapwidgetWidgetset</param-value>
+  	</init-param>
+  	 	<init-param>
+  	  <param-name>widgetset</param-name>
+   	 <param-value>com.boslla.maps.widgetset.ImageMapWidgetWidgetset</param-value>
+  	</init-param>
   </servlet>
   <servlet-mapping>
   	<servlet-name>Maps Application</servlet-name>
