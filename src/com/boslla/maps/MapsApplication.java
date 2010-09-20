@@ -216,8 +216,8 @@ public class MapsApplication extends Application implements Button.ClickListener
 //		googleMap.setSizeFull();
 //	    googleMap.setWidth("640px");
 //		googleMap.setHeight("480px");
-		
-		googleMap = new GoogleMap(this);
+		//TODO Do not hardcode Google Maps API key
+		googleMap = new GoogleMap(this,"ABQIAAAA92UangD2Jrh9WDA88P1nxBQv_GRYgHKhgXyt_6gc2Y1QXPC1GBQN1e7j3SkkcRipQUQOW2KvEx70Eg");
 		googleMap.setSizeFull();
 		setGoogleMap(allPlacesContainer);
 		
