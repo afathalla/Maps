@@ -15,6 +15,7 @@ import com.boslla.path.*;
 import com.vaadin.terminal.FileResource;
 import com.vaadin.terminal.PaintException;
 import com.vaadin.terminal.PaintTarget;
+import com.vaadin.terminal.ThemeResource;
 import com.vaadin.terminal.gwt.client.ApplicationConnection;
 import com.vaadin.terminal.gwt.client.Paintable;
 import com.vaadin.terminal.gwt.client.UIDL;
@@ -85,7 +86,8 @@ public class MapView extends AbstractComponent {
 		{
 		  	Unit currentUnit = (Unit) displayedUnits.get(0);
 			  
-		  	mapImageUrl = currentUnit.getmapImageUrl();
+//		  	mapImageUrl = currentUnit.getmapImageUrl();
+		  	mapImageUrl = currentUnit.getMap().getImageUrl();
 		  	map = (com.boslla.maps.containers.Map) MapContainer.getMap(mapImageUrl);
 		  	mapWidth= map.getMapWidth();
 		  	mapHeight= map.getMapHeight();
@@ -127,7 +129,7 @@ public class MapView extends AbstractComponent {
 		  	{
 				placesX[i]=Integer.toString(displayedUnits.get(i).getX()); 
 				placesY[i]=Integer.toString(displayedUnits.get(i).getY()); 
-				placesImages[i]= displayedUnits.get(i).getUnitIconUrl();
+				placesImages[i]= displayedUnits.get(i).getIconUrl();
 		  	}
 			
 			target.addAttribute("placesX",placesX);
@@ -217,15 +219,15 @@ public void calculateSteps()
 			//imageUrl = imageUrl.substring(imageNumber.indexOf("_") + 1,imageNumber.indexOf(".png"));
 			//Unit selectedUnit = displayedUnits.get(Integer.parseInt(imageNumber) -1);
 			
-			System.out.println(displayedUnits.get(0).getUnitIconUrl());
+			System.out.println(displayedUnits.get(0).getIconUrl());
 			
 			int i = 0;
-			while (!unitIconUrl.contains(displayedUnits.get(i).getUnitIconUrl()))
+			while (!unitIconUrl.contains(displayedUnits.get(i).getIconUrl()))
 				i++;
 			
 			Unit selectedUnit = displayedUnits.get(i);
 			
-			Window subWindow = new Window (selectedUnit.getUnitName());
+			Window subWindow = new Window (selectedUnit.getName());
 			subWindow.setModal(false);
 	        subWindow.setWidth("40%");
 	        subWindow.setHeight("40%");
@@ -238,11 +240,13 @@ public void calculateSteps()
 			layout.setSizeFull();
 			layout.setMargin(true, true, true, true);
 
-			Embedded placeImage = selectedUnit.getImageUrl();
+		//	Embedded placeImage = selectedUnit.getImageUrl();
+			Embedded placeImage = new Embedded(null, new ThemeResource(selectedUnit.getImageUrl()));
 			placeImage.setWidth(90, TextField.UNITS_PERCENTAGE);
 			placeImage.setHeight(90, TextField.UNITS_PERCENTAGE);
 			
-			String description = selectedUnit.getDescription()+"<br>"+"<br>"+"Category: "+selectedUnit.getUnitType()+"<br>"+"Location: "+selectedUnit.getMapDescription();
+//			String description = selectedUnit.getDescription()+"<br>"+"<br>"+"Category: "+selectedUnit.getType()+"<br>"+"Location: "+selectedUnit.getMapDescription();
+			String description = selectedUnit.getDescription()+"<br>"+"<br>"+"Category: "+selectedUnit.getType()+"<br>"+"Location: "+selectedUnit.getMap().getMapDescription();
 			Label placeDescription = new Label(description,Label.CONTENT_XHTML);
 			placeDescription.setWidth(90, TextField.UNITS_PERCENTAGE);
 			placeDescription.setHeight(90, TextField.UNITS_PERCENTAGE);

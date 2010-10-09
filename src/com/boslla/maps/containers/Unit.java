@@ -1,23 +1,31 @@
 package com.boslla.maps.containers;
 
+import javax.jdo.annotations.IdGeneratorStrategy;
+import javax.jdo.annotations.PersistenceCapable;
+import javax.jdo.annotations.Persistent;
+import javax.jdo.annotations.PrimaryKey;
+
+import com.google.appengine.api.datastore.Key;
 import com.vaadin.ui.Embedded;
 
-public class Unit {
+@PersistenceCapable
+public class Unit implements java.io.Serializable {
 	
-  public String getUnitName() {
-	return unitName;
+  public String getName() {
+	return name;
   }
   
-  public void setUnitName(String unitName) {
-	this.unitName = unitName;
+  public void setName(String unitName) {
+	this.name = unitName;
   }
   
-  public int getUnitId() {
-		return unitId;
-	  }
-	  public void setUnitId(int unitId) {
-		this.unitId = unitId;
-	  }
+//  public int getId() {
+//		return id;
+//  }
+// 
+//  public void setId(int unitId) {
+//	this.id = unitId;
+//  }
   
   public int getX() {
 	return x;
@@ -31,19 +39,19 @@ public class Unit {
   public void setY(int y) {
 	this.y = y;
   }
-  public void setUnitIconUrl(String unitIconUrl) {
-	this.unitIconUrl = unitIconUrl;
+  public void setIconUrl(String unitIconUrl) {
+	this.iconUrl = unitIconUrl;
   }
-  public String getUnitIconUrl() {
-	return unitIconUrl ;
+  public String getIconUrl() {
+	return iconUrl ;
   }
   
-  public void setUnitIcon (Embedded unitIcon) {
-		this.unitIcon = unitIcon;
-	  }
-  public Embedded getUnitIcon() {
-		return unitIcon;
-	  }
+//  public void setUnitIcon (Embedded unitIcon) {
+//		this.unitIcon = unitIcon;
+//	  }
+//  public Embedded getUnitIcon() {
+//		return unitIcon;
+//	  }
 	  
   public void setDescription(String description) {
 	this.description = description;
@@ -51,54 +59,81 @@ public class Unit {
   public String getDescription() {
 	return description;
   }
-  public void setImageUrl(Embedded imageUrl) {
+  public void setImageUrl(String imageUrl) {
 	this.imageUrl = imageUrl;
 }
- public Embedded getImageUrl() {
+ public String getImageUrl() {
 	return imageUrl;
 }
 
-public void setMapDescription (String mapDescription)
-{
-	this.mapDescription = mapDescription;
-}
-public String getMapDescription() {
-	return mapDescription;
-} 
+//public void setMapDescription (String mapDescription)
+//{
+//	this.mapDescription = mapDescription;
+//}
+//public String getMapDescription() {
+//	return mapDescription;
+//} 
 
-public void setMapImageUrl(String mapImageUrl) {
-		this.mapImageUrl = mapImageUrl;
-	}
-public String getmapImageUrl() {
-		return mapImageUrl;
-	}
+//public void setMapImageUrl(String mapImageUrl) {
+//		this.mapImageUrl = mapImageUrl;
+//	}
+//public String getmapImageUrl() {
+//		return mapImageUrl;
+//	}
 
-public void setUnitType(String unitType) {
-	this.unitType = unitType;
+public void setType(String unitType) {
+	this.type = unitType;
   }
-  public String getUnitType() {
-	return unitType;
+  public String getType() {
+	return type;
   }
   
-  public void setPlaceName(String placeName) {
-	  	this.placeName = placeName;
-	}
-  public String getPlaceName() {
-		return placeName;
-	}
-	  
+  public Key getKey() {
+		return key;
+  }
+  public void setKey(Key key) {
+		this.key = key;
+  }
   
+  public void setMap(Map map) {
+	this.map = map;
+  }
+
+  public Map getMap() {
+	return map;
+  }
+
+//  public void setPlaceName(String placeName) {
+//	  	this.placeName = placeName;
+//	}
+//  public String getPlaceName() {
+//		return placeName;
+//	}
+//	  
+  @PrimaryKey
+  @Persistent(valueStrategy = IdGeneratorStrategy.IDENTITY)
+  private Key key;
+  @Persistent
   private int x;
+  @Persistent
   private int y;
-  private String unitName;
+  @Persistent
+  private String name;
+  @Persistent
   private String description;
-  private String mapImageUrl;
-  private String mapDescription;
-  private Embedded imageUrl;
-  private String unitIconUrl;
-  private Embedded unitIcon;
-  private String unitType;
-  private String placeName;
-  private int unitId;
-
+ // private String mapImageUrl;
+  //private String mapDescription;
+  @Persistent
+  private String imageUrl;
+  
+  private String iconUrl;
+//  private Embedded unitIcon;
+  @Persistent
+  private String type;
+//  private String placeName;
+//  @Persistent
+//  private int id;
+  @Persistent
+  private Map map;
+  
 }

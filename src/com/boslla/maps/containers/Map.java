@@ -1,5 +1,7 @@
 package com.boslla.maps.containers;
 
+import java.util.List;
+
 import com.vaadin.ui.Embedded;
 import com.google.appengine.api.datastore.Key;
 import javax.jdo.annotations.PersistenceCapable;
@@ -75,6 +77,13 @@ public class Map implements java.io.Serializable{
 	  return place;
   }
 
+public void setUnits(List<Unit> units) {
+	this.units = units;
+}
+public List<Unit> getUnits() {
+	return units;
+}
+
 @PrimaryKey
 @Persistent(valueStrategy = IdGeneratorStrategy.IDENTITY)
 private Key key;
@@ -92,6 +101,8 @@ private int mapWidth;
 private int mapHeight;
 @Persistent
 private float mapScale;
+@Persistent(mappedBy = "map")
+private List<Unit> units;
 @Persistent
 private Place place;
 }

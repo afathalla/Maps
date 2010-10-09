@@ -53,7 +53,7 @@ public class MapContainer extends BeanItemContainer<Map>
 	  return mapContainer;
   }
   
-  public static MapContainer getMyMaps(String placeName)
+  public static MapContainer getPlaceMaps(String placeName)
   {
 	  return null;
 //	  Query query = pm.newQuery(Map.class);
@@ -125,49 +125,10 @@ public class MapContainer extends BeanItemContainer<Map>
 		  query.closeAll();
 	  }
 	  
-	  return null;
-	  
-//	  Map map = new Map();
-//	  try
-//	  {
-//	    if (conn== null) {
-//			  conn=getConn();
-//		    }
-//	    
-//		Statement select = conn.createStatement();
-//		String selectStatement= "SELECT map.Image_Url, map.Description, map.Width, map.Height, map.Scale from map where map.Image_Url="+
-//			 "\""+ mapImageUrl + "\";";
-//		System.out.println(selectStatement);
-//		ResultSet result = select.executeQuery(selectStatement);
-//
-//		
-//		while (result.next()) {
-//			
-//		map.setImageUrl(result.getString(1));
-//		//map.setMapIcon(new Embedded("Map", new ThemeResource(map.getImageUrl())));
-//		map.setMapDescription(result.getString(2));
-//		map.setMapWidth(result.getInt(3));
-//		map.setMapHeight(result.getInt(4));
-//	    map.setMapScale(result.getFloat(5));
-//		}
-//	  }  	
-//	  catch (SQLException e){
-//	      e.printStackTrace();
-//	  }
-  //    return map;
+	  return null;	  
   }
   
  public static Boolean saveMap(Map map) {
-////	 KeyFactory.Builder keyBuilder = new KeyFactory.Builder(map.getMapPlace().getKey());
-//	 KeyFactory.Builder keyBuilder = new KeyFactory.Builder(Place.class.getSimpleName(),"City Stars");
-//	 Key m = keyBuilder.getKey();
-//	 System.out.println("Map Parent Key = " + m.toString());
-//	 keyBuilder.addChild(Map.class.getSimpleName(), map.getMapName());
-//	 Key k = keyBuilder.getKey();
-//	 System.out.println("Child Key = " + k.toString());
-//	 
-//	 // Key k = KeyFactory.createKey(Map.class.getSimpleName(), map.getMapName());
-//	 map.setKey(k);
 	 Place mapPlace = map.getPlace();
 	 mapPlace.getMaps().add(map);
 	 try {

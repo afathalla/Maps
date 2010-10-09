@@ -35,7 +35,8 @@ public class ReviewView extends MapsApplication implements Button.ClickListener{
 	
 	public void getReviewsWindow(Unit unit)	{
 		
-		final Window subWindow = new Window(unit.getUnitName()+", "+unit.getMapDescription());
+	//	final Window subWindow = new Window(unit.getName()+", "+unit.getMapDescription());
+		final Window subWindow = new Window(unit.getName()+", "+unit.getMap().getMapDescription());
 		subWindow.setSizeFull();
 		subWindow.setModal(true);
 	    subWindow.setWidth("35%");
@@ -45,18 +46,16 @@ public class ReviewView extends MapsApplication implements Button.ClickListener{
 	    subWindow.setResizable(true);
 
 	    ReviewContainer reviewContainer = null;
-		try {
-			
-			reviewContainer = new ReviewContainer();
-			reviewContainer = ReviewContainer.getReviews(unit.getUnitId());
-		
-		} catch (InstantiationException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (IllegalAccessException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+//		try {
+//			//TODO Fix Review Container
+//		
+//			// reviewContainer = new ReviewContainer();
+//			//	reviewContainer = ReviewContainer.getReviews(unit.getId());
+//		} catch (InstantiationException e) {
+//			e.printStackTrace();
+//		} catch (IllegalAccessException e) {
+//			e.printStackTrace();
+//		}
 	    
 	    VerticalLayout reviewsLayout = new VerticalLayout();
 	    reviewsLayout.setSizeFull();
@@ -98,7 +97,8 @@ public class ReviewView extends MapsApplication implements Button.ClickListener{
 
 public void addReviewWindow(final Unit unit)	{
 		
-		final Window subWindow = new Window("Add your review for "+unit.getUnitName()+", "+unit.getMapDescription());
+//		final Window subWindow = new Window("Add your review for "+unit.getName()+", "+unit.getMapDescription());
+		final Window subWindow = new Window("Add your review for "+unit.getName()+", "+unit.getMap().getMapDescription());
 		subWindow.setModal(true);
 	    subWindow.setWidth("35%");
 	    subWindow.setHeight("70%");
@@ -179,7 +179,8 @@ public void addReviewWindow(final Unit unit)	{
 				review.setPhone(phone.getValue().toString());
 				review.setDescription(description.getValue().toString());
 				review.setRate(1);
-				review.setUnitId(unit.getUnitId());
+				//TODO fix review Unit Id
+	//			review.setUnitId(unit.getId());
     			    			
     			if (ReviewContainer.insertReview(review))
     			{

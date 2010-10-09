@@ -48,10 +48,12 @@ public class AdminWindow extends Window implements Property.ValueChangeListener,
 		 signOutButton.setStyleName("link");
 		 signOutButton.addListener((ClickListener)this);
 		 Select select = new Select ("Select Task");
-		 String [] tasks = new String[]{"Add new Place",
-		 "Change properties of Existing Place",
-		 "Add new Map",
-		 "Change properties of Existing Map"};
+		 String [] tasks = new String[]{"Add Place",
+		 "Edit Place",
+		 "Add Map",
+		 "Edit Map",
+		 "Add Unit",
+		 "Edit Unit"};
 		 for (int i=0; i<tasks.length;i++)
 		 select.addItem(tasks[i]);
 		 select.setImmediate(true);
@@ -66,92 +68,118 @@ public class AdminWindow extends Window implements Property.ValueChangeListener,
 
 	@Override
 	public void valueChange(ValueChangeEvent event) {
-		status.setValue("Changed " + event.getProperty());
-		
-		if (event.getProperty().toString().equals("Add new Map")) {
-			if (adminForm!= null) {
-				adminLayout.removeComponent(adminForm);
-			}
-			adminForm = new Form();
-			adminForm.setCaption(event.getProperty().toString());
-			adminForm.setDescription("Enter the details of the new Map you want to add");
-			adminForm.setFormFieldFactory(new AdminFormFieldFactory("Map"));
-			adminForm.setImmediate(true);
-			adminForm.setValidationVisibleOnCommit(true);
-			final Map newMap = new Map();
-			BeanItem item = new BeanItem(newMap);
-			adminForm.setItemDataSource(item);
-			
-			HorizontalLayout buttonLayout = new HorizontalLayout();
-			buttonLayout.setHeight("25px");
-			adminForm.getFooter().addComponent(buttonLayout);
-			saveButton = new Button("Save",new Button.ClickListener() {
-				public void buttonClick(ClickEvent event) {
-	                try {
-	                    adminForm.commit();
-	                    MapContainer.saveMap(newMap);
-	                } catch (Exception e) {
-	                    // Ignored, we'll let the Form handle the errors
-	                }
-	            }
-	        });
-
-			resetButton = new Button("Reset",new Button.ClickListener() {
-				public void buttonClick(ClickEvent event) {
-	                    adminForm.discard();    
-				}
-	        });
-			buttonLayout.addComponent(saveButton);
-			buttonLayout.addComponent(resetButton);
-			adminLayout.addComponent(adminForm);
+	//	status.setValue("Changed " + event.getProperty());		
+		 if (event.getProperty().toString().equals("Add Place")) {
+			buildNewForm("Place",event);
+		} else if (event.getProperty().toString().equals("Add Map")) {
+			buildNewForm("Map",event);
+		} else if (event.getProperty().toString().equals("Add Unit")) {
+			buildNewForm("Unit",event);
 		}
+		else if (event.getProperty().toString().equals("Edit Map")) {
+			buildEditMapForm();
+		}
+	}
+	private void buildEditMapForm() {
+		adminLayout.removeAllComponents();
 		
-		else if (event.getProperty().toString().equals("Add new Place")) {
-			if (adminForm!= null) {
-				adminLayout.removeComponent(adminForm);
-			}
-			adminForm = new Form();
-			adminForm.setCaption(event.getProperty().toString());
-			adminForm.setDescription("Enter the details of the new Place you want to add");
-			adminForm.setFormFieldFactory(new AdminFormFieldFactory("Place"));
-			adminForm.setImmediate(true);
-			adminForm.setValidationVisibleOnCommit(true);
-			final Place newPlace = new Place();
+		MapContainer existingMaps = MapContainer.getAllMaps();
+		Select mapSelect = new Select("Choose Map to Edit", existingMaps);
+		mapSelect.setItemCaptionMode(Select.ITEM_CAPTION_MODE_PROPERTY);
+		mapSelect.setItemCaptionPropertyId("mapName");
+		adminLayout.addComponent(mapSelect);
+	}
+	private void buildNewForm(final String className,ValueChangeEvent event) {
+		if (adminForm!= null) {
+			adminLayout.removeComponent(adminForm);
+		}
+		adminForm = new Form();
+		adminForm.setCaption(event.getProperty().toString());
+		adminForm.setFormFieldFactory(new AdminFormFieldFactory(className));
+		adminForm.setImmediate(true);
+		adminForm.setValidationVisibleOnCommit(true);
+		final Place newPlace = new Place();
+		final Map newMap = new Map();
+		final Unit newUnit = new Unit();
+		if (className == "Place") {
 			BeanItem item = new BeanItem(newPlace);
 			adminForm.setItemDataSource(item);
-			
-			HorizontalLayout buttonLayout = new HorizontalLayout();
-			buttonLayout.setHeight("25px");
-			adminForm.getFooter().addComponent(buttonLayout);
-			saveButton = new Button("Save",new Button.ClickListener() {
-				public void buttonClick(ClickEvent event) {
-	                try {
-	                    adminForm.commit();
-	                    PlaceContainer.savePlace(newPlace);
-	                } catch (Exception e) {
-	                    // Ignored, we'll let the Form handle the errors
-	                }
-	            }
-	        });
+		} else if (className == "Map") {
+			BeanItem item = new BeanItem(newMap);
+			adminForm.setItemDataSource(item);
+		} else if (className == "Unit") {
+			BeanItem item = new BeanItem(newUnit);
+			adminForm.setItemDataSource(item);
+		}
+		HorizontalLayout buttonLayout = new HorizontalLayout();
+		buttonLayout.setHeight("25px");
+		adminForm.getFooter().addComponent(buttonLayout);
+		saveButton = new Button("Save",new Button.ClickListener() {
+			public void buttonClick(ClickEvent event) {
+		        try {
+		            adminForm.commit();
+		            System.out.println("Class Name is " + className);
+		            if (className == "Place") {
+		            	PlaceContainer.savePlace(newPlace);
+		            }
+		            else if (className == "Map") {
+		            	MapContainer.saveMap(newMap);
+		            }
+		            else if (className == "Unit") {
+		            	//UnitContainer.saveUnit(newUnit);
+		            }
+		            
+		        } catch (Exception e) {
+		            // Ignored, we'll let the Form handle the errors
+		        }
+		    }
+		});
 
-			resetButton = new Button("Reset",new Button.ClickListener() {
-				public void buttonClick(ClickEvent event) {
-	                    adminForm.discard();    
-				}
-	        });
-			buttonLayout.addComponent(saveButton);
-			buttonLayout.addComponent(resetButton);
-			adminLayout.addComponent(adminForm);
+		resetButton = new Button("Reset",new Button.ClickListener() {
+			public void buttonClick(ClickEvent event) {
+		            adminForm.discard();    
+			}
+		});
+		buttonLayout.addComponent(saveButton);
+		buttonLayout.addComponent(resetButton);
+		adminLayout.addComponent(adminForm);
+	}
+	private void buildNewMapForm(ValueChangeEvent event) {
+		if (adminForm!= null) {
+			adminLayout.removeComponent(adminForm);
 		}
-		else if (event.getProperty().toString().equals("Change properties of Existing Map")) {
-			adminLayout.removeAllComponents();
-			
-			MapContainer existingMaps = MapContainer.getAllMaps();
-			Select mapSelect = new Select("Choose Map to Edit", existingMaps);
-			mapSelect.setItemCaptionMode(Select.ITEM_CAPTION_MODE_PROPERTY);
-			mapSelect.setItemCaptionPropertyId("mapName");
-			adminLayout.addComponent(mapSelect);
-		}
+		adminForm = new Form();
+		adminForm.setCaption(event.getProperty().toString());
+		adminForm.setDescription("Enter the details of the new Map you want to add");
+		adminForm.setFormFieldFactory(new AdminFormFieldFactory("Map"));
+		adminForm.setImmediate(true);
+		adminForm.setValidationVisibleOnCommit(true);
+		final Map newMap = new Map();
+		BeanItem item = new BeanItem(newMap);
+		adminForm.setItemDataSource(item);
+		
+		HorizontalLayout buttonLayout = new HorizontalLayout();
+		buttonLayout.setHeight("25px");
+		adminForm.getFooter().addComponent(buttonLayout);
+		saveButton = new Button("Save",new Button.ClickListener() {
+			public void buttonClick(ClickEvent event) {
+		        try {
+		            adminForm.commit();
+		            MapContainer.saveMap(newMap);
+		        } catch (Exception e) {
+		            // Ignored, we'll let the Form handle the errors
+		        }
+		    }
+		});
+
+		resetButton = new Button("Reset",new Button.ClickListener() {
+			public void buttonClick(ClickEvent event) {
+		            adminForm.discard();    
+			}
+		});
+		buttonLayout.addComponent(saveButton);
+		buttonLayout.addComponent(resetButton);
+		adminLayout.addComponent(adminForm);
 	}
 	@Override
 	public void buttonClick(ClickEvent event) {
@@ -160,46 +188,7 @@ public class AdminWindow extends Window implements Property.ValueChangeListener,
 		if (sourceButton == signOutButton) {
 			this.getApplication().close();
 		}	
-		
-		if (sourceButton == loginButton) {
-		    validateLogin();    
-		}
 	}
-	private void validateLogin() {
-		if (loginForm.isValid()) {
-			if (userText.getValue().equals("a") && passText.getValue().equals("a")) {
-				buildLayout();
-			    this.removeWindow(loginWindow);
-			}
-			else {
-				errorLabel.setCaption("Invalid Credentials, please retry");
-			}
-		}
-		else {
-			errorLabel.setCaption("Some field is missing, please retry");
-		}
-	}
-	public void login() {
-		loginWindow = new Window("Maps Administration");
-		loginWindow.setModal(true);
-		loginWindow.setWidth("25%");
-		loginWindow.setHeight("50%");
-		loginWindow.center();
-		loginForm = new Form();
-		loginForm.setCaption("Login");
-		userText = new TextField("Username");
-		passText = new TextField ("Password");
-		passText.setSecret(true);
-		loginButton= new Button("Login");
-		errorLabel = new Label();
-		loginButton.addListener((ClickListener)this);
-		loginForm.getLayout().addComponent(userText);
-		loginForm.getLayout().addComponent(passText);
-		loginForm.setFooter(new VerticalLayout());
-		loginForm.getFooter().addComponent(loginButton);
-		loginForm.getFooter().addComponent(errorLabel);
-		
-		loginWindow.addComponent(loginForm);
-		this.addWindow(loginWindow);
-	}
+
+
 }

@@ -465,7 +465,7 @@ private VerticalLayout getDirection(Unit startUnit, Unit endUnit)
 	
 	mapView.clearView();
 	
-	Label directionLabel = new Label("<h3> A direction between "+startUnit.getUnitName()+" and "+endUnit.getUnitName()+" was found on the map.</h3>",Label.CONTENT_XHTML);
+	Label directionLabel = new Label("<h3> A direction between "+startUnit.getName()+" and "+endUnit.getName()+" was found on the map.</h3>",Label.CONTENT_XHTML);
 
 	//Show Steps Button
 	final Button showDirectionStepsButton = new Button("Show Steps");
@@ -477,8 +477,8 @@ private VerticalLayout getDirection(Unit startUnit, Unit endUnit)
 	hideDirectionStepsButton.addListener((ClickListener)this);
 	hideDirectionStepsButton.setStyleName(Button.STYLE_LINK);
 	
-	System.out.println("Calculating path between: " + startUnit.getUnitName() +
-		       " and " + endUnit.getUnitName());
+	System.out.println("Calculating path between: " + startUnit.getName() +
+		       " and " + endUnit.getName());
 
 	mapView.drawPathBetweenTwoUnits(startUnit, endUnit);
 	
@@ -920,7 +920,7 @@ private VerticalLayout getDirection(Unit startUnit, Unit endUnit)
         String item;
         
         for (int i = 0; i < unitContainer.size(); i++) {
-        	item =  unitContainer.getIdByIndex(i).getUnitName();
+        	item =  unitContainer.getIdByIndex(i).getName();
         	locationComboBox.addItem(item);
         }
 		
@@ -997,7 +997,7 @@ private VerticalLayout getDirection(Unit startUnit, Unit endUnit)
     	{
     		unitContainer = UnitContainer.getUnitsPerPlace(placeName); 
         	locationLabel.setValue("<h3>Current Location: </h3>"+placeName);
-			MapContainer mapContainer = MapContainer.getMyMaps(placeName);
+			MapContainer mapContainer = MapContainer.getPlaceMaps(placeName);
 			Map map = mapContainer.getIdByIndex(0);
 			mapView.setMap(map);
 			setMainComponent(mapView);	
@@ -1015,7 +1015,7 @@ private VerticalLayout getDirection(Unit startUnit, Unit endUnit)
         String item;
         
         for (int i = 0; i < unitContainer.size(); i++) {
-        	item =  unitContainer.getIdByIndex(i).getUnitName();
+        	item =  unitContainer.getIdByIndex(i).getName();
         	startingLocationComboBox.addItem(item);
         }
         
@@ -1036,7 +1036,7 @@ private VerticalLayout getDirection(Unit startUnit, Unit endUnit)
 		endingLocationComboBox.setInputPrompt("Select Destination");
         
         for (int i = 0; i < unitContainer.size(); i++) {
-        	item =  unitContainer.getIdByIndex(i).getUnitName();
+        	item =  unitContainer.getIdByIndex(i).getName();
         	endingLocationComboBox.addItem(item);
         }
         
@@ -1089,10 +1089,10 @@ private VerticalLayout getDirection(Unit startUnit, Unit endUnit)
   			  			final Unit startUnit = UnitContainer.getUnit(startingLocationComboBox.getValue().toString());
   			  			final Unit endUnit = UnitContainer.getUnit(endingLocationComboBox.getValue().toString());
   			  			
-  			  			endUnit.setUnitIconUrl("numbers/location_"+ 2 + ".png");
-  			  			endUnit.setUnitIcon(new Embedded(null,new ThemeResource("numbers/location_"+1+".png")));
-  			  				  			
-  			  			if (startUnit.getUnitName().equals(endUnit.getUnitName()))
+  			  			endUnit.setIconUrl("numbers/location_"+ 2 + ".png");
+  			  		//endUnit.setUnitIcon(new Embedded(null,new ThemeResource("numbers/location_"+1+".png")));
+  	  			  				  			  			
+  			  			if (startUnit.getName().equals(endUnit.getName()))
   			  			{
   	            			Label label = new Label("<h3>Starting and ending Units are the same.</h3>",Label.CONTENT_XHTML);
   			  				directionLayout.addComponent(label);
@@ -1219,11 +1219,14 @@ protected VerticalLayout getUnitsLayout(UnitContainer unitContainer, String plac
 		{
 			
 		final Unit unit = unitContainer.getIdByIndex(i);
-		Embedded unitImage = unit.getImageUrl();
-		Embedded unitIcon = unit.getUnitIcon();
-		final String name = unit.getUnitName();
-		String category = unit.getUnitType();
-		String location = unit.getMapDescription();
+		//Embedded unitImage = unit.getImageUrl();
+		Embedded unitImage = new Embedded(null,new ThemeResource(unit.getImageUrl()));
+	//	Embedded unitIcon = unit.getUnitIcon();
+		Embedded unitIcon = new Embedded(null,new ThemeResource(unit.getIconUrl()));
+		final String name = unit.getName();
+		String category = unit.getType();
+		//String location = unit.getMapDescription();
+		String location = unit.getMap().getMapDescription();
 		String description= unit.getDescription();
 		
 		if (description.length()>100)
@@ -1232,7 +1235,8 @@ protected VerticalLayout getUnitsLayout(UnitContainer unitContainer, String plac
 		final String place;
 		
 		if (placeName == null)
-			place = unit.getPlaceName();
+			place = unit.getMap().getPlace().getPlaceName();
+			//	place = unit.getPlaceName();
 		else
 			place = placeName;
 
@@ -1277,7 +1281,7 @@ protected VerticalLayout getUnitsLayout(UnitContainer unitContainer, String plac
 				
 			}});
 		
-		int reviewsCount = ReviewContainer.getReviewsCount(unit.getUnitName());
+		int reviewsCount = ReviewContainer.getReviewsCount(unit.getName());
 		
 		Button viewReviewsButton = new Button("View Reviews "+"("+reviewsCount+")");
 		viewReviewsButton.setStyleName(Button.STYLE_LINK);
@@ -1392,10 +1396,13 @@ protected void viewMoreInfo(Place place) {
 
 protected void viewMoreInfo(Unit unit) {
 	
-	final Label unitName = new Label("<h3>"+unit.getPlaceName()+"</h3)",Label.CONTENT_XHTML);
-	final Embedded unitImage = unit.getImageUrl();
-	final Label category = new Label(unit.getUnitType());
-	final Label address = new Label(unit.getMapDescription());
+//	final Label unitName = new Label("<h3>"+unit.getPlaceName()+"</h3)",Label.CONTENT_XHTML);
+	final Label unitName = new Label("<h3>"+unit.getMap().getPlace().getPlaceName()+"</h3)",Label.CONTENT_XHTML);
+//	final Embedded unitImage = unit.getImageUrl();
+	final Embedded unitImage = new Embedded(null, new ThemeResource(unit.getImageUrl()));
+	final Label category = new Label(unit.getType());
+//	final Label address = new Label(unit.getMapDescription());
+	final Label address = new Label(unit.getMap().getMapDescription());
 	final Label Description= new Label(unit.getDescription());
 	
 	VerticalLayout viewInfoLayout = new VerticalLayout();
@@ -1419,7 +1426,7 @@ protected void viewMoreInfo(Unit unit) {
 	viewInfoLayout.addComponent(h);
 	viewInfoLayout.addComponent(Description);
 	
-	Window subWindow = new Window(unit.getUnitName());
+	Window subWindow = new Window(unit.getName());
 	subWindow.setModal(false);
     subWindow.setWidth("40%");
     subWindow.setHeight("40%");
@@ -2175,13 +2182,13 @@ private void cancelSetDefaultLocation() {
 			{
 				//There is no previous cookie
 				// Set Cookie
-				myPlaces = displayedUnits.get(0).getUnitName();
+				myPlaces = displayedUnits.get(0).getName();
 			}
 			else
-			if (!myPlaces.contains(displayedUnits.get(0).getUnitName()))
+			if (!myPlaces.contains(displayedUnits.get(0).getName()))
 			{
 				// Update Cookie
-				myPlaces = myPlaces + "," + displayedUnits.get(0).getUnitName();
+				myPlaces = myPlaces + "," + displayedUnits.get(0).getName();
 			}
 			
 			Cookie cookie = new Cookie("myplaces",myPlaces);
