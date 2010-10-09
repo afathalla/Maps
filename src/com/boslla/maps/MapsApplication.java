@@ -1,5 +1,7 @@
 package com.boslla.maps;
 
+import com.boslla.maps.admin.*;
+
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;	
 
@@ -1129,8 +1131,8 @@ protected VerticalLayout getPlacesLayout(final PlaceContainer placeContainer)
 	{
 			final Place place = placeContainer.getIdByIndex(i);
 	  		final String name = place.getPlaceName();
-	  	//	final Embedded placeImage = place.getPlaceIcon();
-	  		final Embedded placeImage = new Embedded(null, new ThemeResource("images/new.png"));
+	  		final Embedded placeImage = new Embedded(null, new ThemeResource(place.getPlaceIcon()));
+	  	//	final Embedded placeImage = new Embedded(null, new ThemeResource("images/new.png"));
 	  		String category = place.getPlaceType();
 	  		String address = place.getPlaceLocation();
 	  		String description= place.getPlaceDescription();
@@ -1349,8 +1351,8 @@ protected VerticalLayout getUnitsLayout(UnitContainer unitContainer, String plac
 protected void viewMoreInfo(Place place) {
 
 	final Label placeName = new Label("<h3>"+place.getPlaceName()+"</h3)",Label.CONTENT_XHTML);
-	//final Embedded placeImage = place.getPlaceIcon();
-	final Embedded placeImage = new Embedded(null, new ThemeResource("images/new.png"));
+	final Embedded placeImage = new Embedded(null, new ThemeResource(place.getPlaceIcon()));
+//	final Embedded placeImage = new Embedded(null, new ThemeResource("images/new.png"));
 	final Label category = new Label(place.getPlaceType());
 	final Label address = new Label(place.getPlaceLocation());
 	final Label Description= new Label(place.getPlaceDescription());
@@ -2326,12 +2328,19 @@ private void cancelSetDefaultLocation() {
 
 	public HorizontalLayout getGoogleMarkersInfo(Place place)
 	{
-	//	final Embedded placeImage = place.getPlaceIcon();
-		final Embedded placeImage = new Embedded(null, new ThemeResource("images/new.png"));
+		final Embedded placeImage = new Embedded(null, new ThemeResource(place.getPlaceIcon()));
+	//	final Embedded placeImage = new Embedded(null, new ThemeResource("images/new.png"));
 		final String name = place.getPlaceName();
 		final String category = place.getPlaceType();
 		final String address = place.getPlaceLocation();
-		final String Description= place.getPlaceDescription().substring(0, 50)+"...";
+		int shortLength;
+		if (place.getPlaceDescription().length() > 50) {
+			shortLength = 50;
+		}
+		else {
+			shortLength = place.getPlaceDescription().length();
+		}
+		final String Description= place.getPlaceDescription().substring(0, shortLength)+"...";
 	  	final Label placeDescription= new Label("<b>"+name+"</b>"+"<br>"+category+"<br>"+address+"<br>"+Description+"<br>",Label.CONTENT_XHTML);
 	  	
 		Button findPlaceInsideButton = new Button("Find a place inside", new Button.ClickListener() {
@@ -2376,8 +2385,8 @@ private void cancelSetDefaultLocation() {
 	         if (name.equals("admin") && super.getWindow(name) == null) {
 	          AdminWindow adminWindow = new AdminWindow ("Maps Administration");
 	          adminWindow.setName("admin");
-	          //adminWindow.buildLayout();
-	          adminWindow.login();
+	          adminWindow.buildLayout();
+	          //adminWindow.login();
 	          addWindow(adminWindow);
 	          return adminWindow;
 	         }

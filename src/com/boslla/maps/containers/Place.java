@@ -2,6 +2,7 @@ package com.boslla.maps.containers;
 
 import java.util.List;
 
+import javax.jdo.annotations.Element;
 import javax.jdo.annotations.IdGeneratorStrategy;
 import javax.jdo.annotations.PersistenceCapable;
 import javax.jdo.annotations.Persistent;
@@ -42,6 +43,15 @@ public String getPlaceLocation() {
 		return placeLocation;
 	  }
 
+public void setPlaceIcon(String placeIcon) {
+	this.placeIcon = placeIcon;
+}
+
+public String getPlaceIcon() {
+	//TODO change hardcoding placeIcon
+	return "images/new.png";
+	//return placeIcon;
+}
 //public void setPlaceIcon(Embedded placeIcon) {
 //	this.placeIcon = placeIcon;
 //	this.placeIcon.setWidth("100");
@@ -68,6 +78,15 @@ public Key getKey() {
 public void setKey(Key key) {
 	this.key = key;
 }
+public List<Map> getMaps() {
+	return maps;
+}
+public void setMaps(List<Map> maps) {
+	this.maps = maps;
+}
+
+
+
 @PrimaryKey
 @Persistent(valueStrategy = IdGeneratorStrategy.IDENTITY)
 private Key key;
@@ -83,10 +102,11 @@ private String placeType;
 private double placeLongitude;
 @Persistent
 private double placeLatitude;
-
+@Persistent(mappedBy = "place")
+private List<Map> maps;
+@Persistent
+private String placeIcon;
 //@Persistent
 //private Embedded placeIcon;
-//@Persistent(mappedBy = "mapPlace")
-//private List<Map> placeMaps;
 
 }

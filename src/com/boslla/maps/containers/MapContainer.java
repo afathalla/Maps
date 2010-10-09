@@ -30,6 +30,29 @@ public class MapContainer extends BeanItemContainer<Map>
 	super(Map.class);
   }
   
+  public static MapContainer getAllMaps() { 
+	  MapContainer mapContainer = null;
+	  Query query = pm.newQuery(Map.class);
+	  try {
+		  mapContainer = new MapContainer();
+		  List<Map> results = (List<Map>) query.execute();
+		  System.out.println("getAllMaps() returned " + results.size()+" elements");
+		  if (results.iterator().hasNext()) {
+			  for (Map p : results) {
+				  mapContainer.addBean(p);
+			  }
+		  }
+	  } catch (IllegalAccessException e) {
+		  e.printStackTrace();
+	  } catch (InstantiationException e) {
+		  e.printStackTrace();
+	  }
+	  finally {
+		  query.closeAll();
+	  }
+	  return mapContainer;
+  }
+  
   public static MapContainer getMyMaps(String placeName)
   {
 	  return null;
@@ -135,12 +158,25 @@ public class MapContainer extends BeanItemContainer<Map>
   }
   
  public static Boolean saveMap(Map map) {
-	 Key k = KeyFactory.createKey(Map.class.getSimpleName(), map.getMapName());
-	 map.setKey(k);
+////	 KeyFactory.Builder keyBuilder = new KeyFactory.Builder(map.getMapPlace().getKey());
+//	 KeyFactory.Builder keyBuilder = new KeyFactory.Builder(Place.class.getSimpleName(),"City Stars");
+//	 Key m = keyBuilder.getKey();
+//	 System.out.println("Map Parent Key = " + m.toString());
+//	 keyBuilder.addChild(Map.class.getSimpleName(), map.getMapName());
+//	 Key k = keyBuilder.getKey();
+//	 System.out.println("Child Key = " + k.toString());
+//	 
+//	 // Key k = KeyFactory.createKey(Map.class.getSimpleName(), map.getMapName());
+//	 map.setKey(k);
+	 Place mapPlace = map.getPlace();
+	 mapPlace.getMaps().add(map);
 	 try {
-		 pm.makePersistent(map);
+		 pm.makePersistent(mapPlace);
+	 } catch (Exception e) {
+		 e.printStackTrace();
 	 } finally {
-		 pm.close();
+		 System.out.println("Save of map " + map.getMapName() + " is successful");
+		 // pm.close();
 	 }
 	 return true;
  }

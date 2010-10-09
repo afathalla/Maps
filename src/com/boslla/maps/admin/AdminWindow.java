@@ -1,4 +1,4 @@
-package com.boslla.maps;
+package com.boslla.maps.admin;
 
 import com.vaadin.data.Property;
 import com.vaadin.terminal.Sizeable;
@@ -34,7 +34,7 @@ public class AdminWindow extends Window implements Property.ValueChangeListener,
 		layout.setSizeFull();
 		SplitPanel horizontalAdminSplit = new SplitPanel(SplitPanel.ORIENTATION_HORIZONTAL);
 		horizontalAdminSplit.setFirstComponent(buildAdminPanel());
-		horizontalAdminSplit.setSplitPosition(300,SplitPanel.UNITS_PIXELS);
+		horizontalAdminSplit.setSplitPosition(600,SplitPanel.UNITS_PIXELS);
 		layout.addComponent(horizontalAdminSplit);
 		layout.setExpandRatio(horizontalAdminSplit, 1);
 		this.setContent(layout);	
@@ -69,6 +69,9 @@ public class AdminWindow extends Window implements Property.ValueChangeListener,
 		status.setValue("Changed " + event.getProperty());
 		
 		if (event.getProperty().toString().equals("Add new Map")) {
+			if (adminForm!= null) {
+				adminLayout.removeComponent(adminForm);
+			}
 			adminForm = new Form();
 			adminForm.setCaption(event.getProperty().toString());
 			adminForm.setDescription("Enter the details of the new Map you want to add");
@@ -86,7 +89,7 @@ public class AdminWindow extends Window implements Property.ValueChangeListener,
 				public void buttonClick(ClickEvent event) {
 	                try {
 	                    adminForm.commit();
-	             //       MapContainer.saveMap(newMap);
+	                    MapContainer.saveMap(newMap);
 	                } catch (Exception e) {
 	                    // Ignored, we'll let the Form handle the errors
 	                }
@@ -104,6 +107,9 @@ public class AdminWindow extends Window implements Property.ValueChangeListener,
 		}
 		
 		else if (event.getProperty().toString().equals("Add new Place")) {
+			if (adminForm!= null) {
+				adminLayout.removeComponent(adminForm);
+			}
 			adminForm = new Form();
 			adminForm.setCaption(event.getProperty().toString());
 			adminForm.setDescription("Enter the details of the new Place you want to add");
@@ -136,6 +142,15 @@ public class AdminWindow extends Window implements Property.ValueChangeListener,
 			buttonLayout.addComponent(saveButton);
 			buttonLayout.addComponent(resetButton);
 			adminLayout.addComponent(adminForm);
+		}
+		else if (event.getProperty().toString().equals("Change properties of Existing Map")) {
+			adminLayout.removeAllComponents();
+			
+			MapContainer existingMaps = MapContainer.getAllMaps();
+			Select mapSelect = new Select("Choose Map to Edit", existingMaps);
+			mapSelect.setItemCaptionMode(Select.ITEM_CAPTION_MODE_PROPERTY);
+			mapSelect.setItemCaptionPropertyId("mapName");
+			adminLayout.addComponent(mapSelect);
 		}
 	}
 	@Override
@@ -184,17 +199,6 @@ public class AdminWindow extends Window implements Property.ValueChangeListener,
 		loginForm.getFooter().addComponent(loginButton);
 		loginForm.getFooter().addComponent(errorLabel);
 		
-//		LoginForm loginForm = new LoginForm();
-//		loginForm.setCaption("Login");
-//        loginForm.addListener(new LoginForm.LoginListener() {
-//            public void onLogin(LoginEvent event) {
-//                getWindow().showNotification(
-//                        "New Login",
-//                        "Username: " + event.getLoginParameter("username")
-//                                + ", password: "
-//                                + event.getLoginParameter("password"));
-//            }
-//        });
 		loginWindow.addComponent(loginForm);
 		this.addWindow(loginWindow);
 	}

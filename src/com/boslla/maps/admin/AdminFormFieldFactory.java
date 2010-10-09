@@ -1,9 +1,10 @@
-package com.boslla.maps;
+package com.boslla.maps.admin;
 
 import javax.jdo.annotations.IdGeneratorStrategy;
 import javax.jdo.annotations.Persistent;
 import javax.jdo.annotations.PrimaryKey;
 
+import com.boslla.maps.containers.PlaceContainer;
 import com.google.appengine.api.datastore.Key;
 import com.vaadin.data.Item;
 import com.vaadin.data.Validator;
@@ -13,6 +14,7 @@ import com.vaadin.data.validator.RegexpValidator;
 import com.vaadin.data.validator.StringLengthValidator;
 import com.vaadin.ui.Component;
 import com.vaadin.ui.Field;
+import com.vaadin.ui.Select;
 import com.vaadin.ui.TextField;
 
 public class AdminFormFieldFactory implements com.vaadin.ui.FormFieldFactory {
@@ -32,7 +34,7 @@ public class AdminFormFieldFactory implements com.vaadin.ui.FormFieldFactory {
 		}	
 		else if (pid.equals("mapName")) {
 			TextField mapNameText = new TextField(pid);
-			mapNameText.setDescription("Map Name");
+			mapNameText.setCaption("Map Name");
 			mapNameText.setMaxLength(20);
 			StringLengthValidator mapNameValidator = new StringLengthValidator("Map Name" +
 										"must be between 1 and 20 charachters");
@@ -80,6 +82,22 @@ public class AdminFormFieldFactory implements com.vaadin.ui.FormFieldFactory {
 			mapScaleText.addValidator(mapScaleValidator);
 			return mapScaleText;
 		}
+		if (pid.equals("imageUrl")) {
+			TextField imageUrlText = new TextField(pid);
+		    imageUrlText.setCaption("Image Url");
+			
+			imageUrlText.setMaxLength(100);
+			return imageUrlText;
+		}
+		if (pid.equals("place")) {
+			PlaceContainer existingPlaces = PlaceContainer.getAllPlaces();
+			Select mapPlaceSelect = new Select("Map Place", existingPlaces);
+			mapPlaceSelect.setItemCaptionMode(Select.ITEM_CAPTION_MODE_PROPERTY);
+			mapPlaceSelect.setItemCaptionPropertyId("placeName");
+			return mapPlaceSelect;
+		}
+		
+		
 	}
 	
 		 if (className == "Place") {

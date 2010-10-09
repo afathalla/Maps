@@ -78,8 +78,6 @@ public class PlaceContainer extends BeanItemContainer<Place>
   }
 
   public static Boolean savePlace(Place place) {
-		 Key k = KeyFactory.createKey(Place.class.getSimpleName(), place.getPlaceName());
-		 place.setKey(k);
 		 try {
 			 pm.makePersistent(place);
 		 } finally {
@@ -88,7 +86,6 @@ public class PlaceContainer extends BeanItemContainer<Place>
 		 }
 		 return true;
 	 }
-	   
 }
 
 
