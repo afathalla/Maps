@@ -2378,14 +2378,14 @@ private void cancelSetDefaultLocation() {
 	}
 	@Override
 	public Window getWindow(String name) {
-	        if (name.equals("admin") && super.getWindow(name) == null) {
-	         AdminWindow adminWindow = new AdminWindow ("Maps Administration");
-	         adminWindow.setName("admin");
-	         //adminWindow.buildLayout();
-	         adminWindow.login();
-	         addWindow(adminWindow);
-	         return adminWindow;
-	        }
+//	        if (name.equals("admin") && super.getWindow(name) == null) {
+//	         AdminWindow adminWindow = new AdminWindow ("Maps Administration");
+//	         adminWindow.setName("admin");
+//	         //adminWindow.buildLayout();
+//	         adminWindow.login();
+//	         addWindow(adminWindow);
+//	         return adminWindow;
+//	        }
 	        return super.getWindow(name);
 	 }
 }
